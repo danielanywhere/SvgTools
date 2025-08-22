@@ -1,0 +1,33 @@
+root = true
+
+[*]
+end_of_line = crlf
+insert_final_newline = true
+charset = utf-8
+indent_style = tab
+indent_size = 2
+trim_trailing_whitespace = true
+
+# Matches multiple files with brace expansion notation
+[*.cs]
+charset = utf-8
+indent_style = tab
+indent_size = 2
+trim_trailing_whitespace = true
+# CA1051: Allow (and potentially require) declaration of visible instance fields.
+dotnet_diagnostic.CA1051.severity = none
+# CA1305: Allow loose translation of string format without locale variation.
+dotnet_diagnostic.CA1305.severity = none
+# CA1711: Do not suggest removing type name reenforcers.
+dotnet_diagnostic.CA1711.severity = none
+# CA1805: Allow (and potentially require) explicit initialization to default value.
+dotnet_diagnostic.CA1805.severity = none
+
+[*.{xml,html,css,wxs,config}]
+charset = utf-8
+indent_style = tab
+indent_size = 1
+trim_trailing_whitespace = true
+
+[*.md]
+trim_trailing_whitespace = false

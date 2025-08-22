@@ -1,0 +1,24 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Explicitly declare text files to always be normalized and converted to
+# native line endings on checkout.
+# *.txt text
+
+# Declare files that will always have CRLF line endings on checkout.
+*.cmd text eol=crlf
+*.config text eol=crlf
+*.cs text eol=crlf
+*.csproj text eol=crlf
+*.css text eol=crlf
+*.html text eol=crlf
+*.js text eol=crlf
+*.json text eol=crlf
+*.md text eol=crlf
+*.PublishSettings text eol=crlf
+*.resx text eol=crlf
+*.sln text eol=crlf
+*.sql text eol=crlf
+*.svg text eol=crlf
+*.txt text eol=crlf
+*.xml text eol=crlf
