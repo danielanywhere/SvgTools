@@ -20,7 +20,7 @@ The application currently supports the following actions.
 -   **PurgeDefs**. This action removes unreferenced elements from the defs section.<p>&nbsp;</p>
 -   **RoundAllValues**. This action rounds all values to the specified precision, according to number of decimal places, and including whole ones and tens places if the precision is 0 or negative, respectively.<p>&nbsp;</p>
 -   **SaveWorkingSvg**. Only supported in batch mode, this action saves the changes to the current working SVG in memory.<p>&nbsp;</p>
--   **SortSymbols**. This action action alphabetically sorts the symbols list in the defs section of the SVG.
+-   **SortSymbols**. This action alphabetically sorts the symbols list in the defs section of the SVG.
 
 <p>&nbsp;</p>
 
