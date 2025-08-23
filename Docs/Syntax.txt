@@ -72,9 +72,9 @@ Solo            -   Run only this action within the context of the current
                     Commands: (Any)
 
 Example:
-SvgTools /action:ReduceTransformations /infile:C:\Temp\MyDrawing.svg
+SvgTools /action:ApplyTransforms /infile:C:\Temp\MyDrawing.svg
 
-The above example reduces transformations in the file MyDrawing.svg,
+The above example applies transformations in the file MyDrawing.svg,
 overwriting the original file with the changed version.
 
 Batch config file variables.
