@@ -1,0 +1,18 @@
+{
+  "profiles": {
+    "SvgTools": {
+      "commandName": "Project",
+      "commandLineArgs": "/wait /testprecision:107.65932%,0 /testprecision:107.65932px,3 /testprecision:93451.65932rem,-2"
+    },
+		"WSL":
+		{
+			"commandName": "WSL",
+			"commandLineArgs": "SvgTools.dll /wait /testprecision:107.65932%,0 /testprecision:107.65932px,3 /testprecision:93451.65932rem,-2",
+			"environmentVariables":
+			{
+				"DOTNET_ENVIRONMENT": "Development"
+			},
+			"distributionName": "Ubuntu"
+		}
+  }
+}

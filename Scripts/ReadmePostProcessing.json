@@ -49,8 +49,8 @@
 	},
 	{
 		"Remarks": "Set the marked content to bold.",
-		"FindPattern": "(?s:(?i:( |\\t)*\\{bold\\}(?<lineContent>.*?)( |\\t)*\\{/bold\\}))",
-		"ReplacePattern": "<b>${lineContent}</b>",
+		"FindPattern": "(?s:(?i:(?<lead>( |\\t)*)\\{bold\\}(?<lineContent>.*?)( |\\t)*\\{/bold\\}(?<tail>( |\\t)*)))",
+		"ReplacePattern": "${lead}<b>${lineContent}</b>${tail}",
 		"UseRegEx": 1
 	},
 	{

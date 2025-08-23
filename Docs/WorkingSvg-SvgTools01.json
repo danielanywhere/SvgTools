@@ -1,0 +1,35 @@
+{
+	"InputFilename": "FormDesign003.svg",
+	"Action": "Batch",
+	"Actions":
+	[
+		{
+			"Remarks":
+			[
+				"The working file is stored at the level where the input filename is ",
+				"defined."
+			],
+			"Action": "OpenWorkingSvg"
+		},
+		{
+			"Action": "ApplyTransforms"
+		},
+		{
+			"Action": "PurgeDefs"
+		},
+		{
+			"Action": "RoundAllValues",
+			"Properties":
+			[
+				{
+					"Name": "Precision",
+					"Value": "0"
+				}
+			]
+		},
+		{
+			"Action": "SaveWorkingSvg",
+			"OutputFilename": "FormDesign003e-Batch.svg"
+		}
+	]
+}

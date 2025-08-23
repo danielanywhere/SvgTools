@@ -1,0 +1,212 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Syntax" xml:space="preserve">
+    <value>Command-line tool suite for working with SVG files.
+
+Syntax:
+SvgTools.exe /action:{ActionName}
+    [/configfile:{Filename}]
+    [/infile:{Filename}] [/outfile:{Filename}]
+    [/properties:{NameValueArray}]
+    [/workingpath:{FolderName}]
+    [/wait]
+    [/?]
+
+ * -    Actions marked with an asterisk are only supported within a
+        configuration file.
+
+    /action     -   Describes the action to be made. Following are the
+                    recognized actions, with associated parameter names.
+                    Starred names ('*') are only available in a batch.
+                    ApplyTransforms - Apply transformations on the
+                        specified SVG document.
+                        {/infile[ /outfile]|(working SVG)}
+                    ArtToXaml - Convert the SVG UI Design Art to XAML.
+                        {/infile[ /outfile]|(working SVG)}
+                    Batch - Perform a batch of file operations from a
+                        single JSON configuration file.
+                        /infile
+                    CalculateTransform - Solve an individual transform for the
+                        provided properties.
+                        The following transforms are supported in the
+                        'transform' property:
+                            translate(x,y)
+                            rotate(a[,x,y])
+                            scale(x,y)
+                            matrix(a,b,c,d,e,f)
+                        The following accompanying properties are supported:
+                            x, y, width, height
+                        properties: transform, x, y [, width, height]
+                    OpenWorkingSvg * - Set the current working SVG to make it
+                        eligible for participating in multiple sequential
+                        operations.
+                        InputFilename
+                    PurgeDefs - Remove unused entries from the defs section.
+                        {/infile[ /outfile]|(working SVG)}
+                    RoundAllValues - Round all values to the precision
+                        supplied in the 'Precision' user property.
+                        {/infile[ /outfile]|(working SVG)}
+                    SaveWorkingSvg * - Save the current working SVG to
+                        the specified output filename.
+                        OutputFilename
+    /infile     -   Input path and filename only. Wherever infile and outfile
+                        are both specified options and the outfile parameter
+                        has not been supplied, the value of outfile is assumed
+                        to be the same as infile.
+    /outfile    -   Output path and filename only.
+    /workingpath-   Set the working path and foldername. When this parameter
+                        is specified, all of the other parameters can use
+                        relative naming.
+
+{ActionName}    -   Name of the action to execute.
+{Filename}      -   Fully qualified path and filename.
+{Foldername}    -   Fully qualified path.
+
+Options:
+Following are the available options.
+
+Mute            -   Don't run this action.
+                    Value: (none)
+                    Commands: (Any)
+Solo            -   Run only this action within the context of the current
+                    parent batch.
+                    Value: (none)
+                    Commands: (Any)
+
+Example:
+SvgTools /action:ReduceTransformations /infile:C:\Temp\MyDrawing.svg
+
+The above example reduces transformations in the file MyDrawing.svg,
+overwriting the original file with the changed version.
+
+Batch config file variables.
+
+| Name | Command Var | Type | Description |
+|------|-------------|------|-------------|
+| Action | /action | SvgActionTypeEnum | The action to be made on the file. |
+| Actions | (none) | List&lt;SvgActionItem&gt; | Collection of actions to run as a part of
+this action. |
+| InputFilename | /infile | string | The path and filename of the input file. |
+| OutputFilename | /outfile | string | The output path and filename for the operation. |
+| Properties | List&lt;NameValueItem&gt; | Collection of properties for action. |
+| WorkingPath | /workingpath | string | Working path for current operation. |</value>
+    <comment>Command line syntax and instructions.</comment>
+  </data>
+</root>
