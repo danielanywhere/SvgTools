@@ -37,15 +37,15 @@ namespace SvgToolsLibrary
 		/// <summary>
 		/// The message is informational.
 		/// </summary>
-		Information,
+		Info,
 		/// <summary>
 		/// The message is a warning.
 		/// </summary>
-		Warning,
+		Warn,
 		/// <summary>
 		/// The message is an error.
 		/// </summary>
-		Error
+		Err
 	}
 	//*-------------------------------------------------------------------------*
 

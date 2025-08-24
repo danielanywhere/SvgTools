@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -585,15 +586,15 @@ namespace SvgToolsLibrary
 						{
 							content = doc.Document.Html;
 							File.WriteAllText(item.OutputFile.FullName, content);
-							item.SendMessage($" File written: {item.OutputFile.Name}",
-								MessageImportanceEnum.Information);
+							Trace.WriteLine($" File written: {item.OutputFile.Name}",
+								$"{MessageImportanceEnum.Info}");
 						}
 					}
 				}
 				else
 				{
-					item.SendMessage($" Error: Input files were not specified.",
-						MessageImportanceEnum.Error);
+					Trace.WriteLine($" Error: Input files were not specified.",
+						$"{MessageImportanceEnum.Err}");
 				}
 			}
 		}
@@ -650,8 +651,8 @@ namespace SvgToolsLibrary
 						transform = transforms[0];
 						if(transform.Parameters.Count == 0)
 						{
-							item.SendMessage(" Error: transform has no argument values.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: transform has no argument values.",
+								$"{MessageImportanceEnum.Err}");
 							bContinue = false;
 						}
 					}
@@ -660,9 +661,9 @@ namespace SvgToolsLibrary
 						if(transform.TransformType == TransformTypeEnum.Matrix &&
 							transform.Parameters.Count < 6)
 						{
-							item.SendMessage(
+							Trace.WriteLine(
 								" Error: matrix transform requires 6 arguments.",
-								MessageImportanceEnum.Error);
+								$"{MessageImportanceEnum.Err}");
 							bContinue = false;
 						}
 					}
@@ -676,8 +677,8 @@ namespace SvgToolsLibrary
 						}
 						else
 						{
-							item.SendMessage(" Error: 'x' parameter was not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: 'x' parameter was not specified.",
+								$"{MessageImportanceEnum.Err}");
 							bContinue = false;
 						}
 						if(bContinue)
@@ -690,8 +691,8 @@ namespace SvgToolsLibrary
 							}
 							else
 							{
-								item.SendMessage(" Error: 'y' parameter was not specified.",
-									MessageImportanceEnum.Error);
+								Trace.WriteLine(" Error: 'y' parameter was not specified.",
+									$"{MessageImportanceEnum.Err}");
 								bContinue = false;
 							}
 						}
@@ -715,13 +716,13 @@ namespace SvgToolsLibrary
 							{
 								if(bWidth)
 								{
-									item.SendMessage("'width' was omitted, and will be 0.",
-										MessageImportanceEnum.Information);
+									Trace.WriteLine("'width' was omitted, and will be 0.",
+										$"{MessageImportanceEnum.Info}");
 								}
 								else
 								{
-									item.SendMessage("'height' was omitted, and will be 0.",
-										MessageImportanceEnum.Information);
+									Trace.WriteLine("'height' was omitted, and will be 0.",
+										$"{MessageImportanceEnum.Info}");
 								}
 							}
 						}
@@ -815,33 +816,33 @@ namespace SvgToolsLibrary
 									}
 									break;
 								default:
-									item.SendMessage(
+									Trace.WriteLine(
 										" Error: Transform type not implemented: " +
 										$"{transform.TransformType}",
-										MessageImportanceEnum.Error);
+										$"{MessageImportanceEnum.Err}");
 									bContinue = false;
 									break;
 							}
 						}
 						if(bContinue)
 						{
-							item.SendMessage(
+							Trace.WriteLine(
 								$"Transform {transform.TransformType} starting...",
-								MessageImportanceEnum.Information);
-							item.SendMessage($" Left:   {ix1}",
-								MessageImportanceEnum.Information);
-							item.SendMessage($" Top:    {iy1}",
-								MessageImportanceEnum.Information);
+								$"{MessageImportanceEnum.Info}");
+							Trace.WriteLine($" Left:   {ix1}",
+								$"{MessageImportanceEnum.Info}");
+							Trace.WriteLine($" Top:    {iy1}",
+								$"{MessageImportanceEnum.Info}");
 							if(bWidth || bHeight)
 							{
-								item.SendMessage($" Right:  {ix2}",
-									MessageImportanceEnum.Information);
-								item.SendMessage($" Bottom: {iy2}",
-									MessageImportanceEnum.Information);
-								item.SendMessage($" Width:  {width}",
-									MessageImportanceEnum.Information);
-								item.SendMessage($" Height: {height}",
-									MessageImportanceEnum.Information);
+								Trace.WriteLine($" Right:  {ix2}",
+									$"{MessageImportanceEnum.Info}");
+								Trace.WriteLine($" Bottom: {iy2}",
+									$"{MessageImportanceEnum.Info}");
+								Trace.WriteLine($" Width:  {width}",
+									$"{MessageImportanceEnum.Info}");
+								Trace.WriteLine($" Height: {height}",
+									$"{MessageImportanceEnum.Info}");
 							}
 						}
 						if(bContinue)
@@ -851,36 +852,36 @@ namespace SvgToolsLibrary
 								width = ox2 - ox1;
 								height = oy2 - oy1;
 							}
-							item.SendMessage("Transform completed...",
-								MessageImportanceEnum.Information);
-							item.SendMessage($" Left:   {ox1}",
-								MessageImportanceEnum.Information);
-							item.SendMessage($" Top:    {oy1}",
-								MessageImportanceEnum.Information);
+							Trace.WriteLine("Transform completed...",
+								$"{MessageImportanceEnum.Info}");
+							Trace.WriteLine($" Left:   {ox1}",
+								$"{MessageImportanceEnum.Info}");
+							Trace.WriteLine($" Top:    {oy1}",
+								$"{MessageImportanceEnum.Info}");
 							if(bWidth || bHeight)
 							{
-								item.SendMessage($" Right:  {ox2}",
-									MessageImportanceEnum.Information);
-								item.SendMessage($" Bottom: {oy2}",
-									MessageImportanceEnum.Information);
-								item.SendMessage($" Width:  {width}",
-									MessageImportanceEnum.Information);
-								item.SendMessage($" Height: {height}",
-									MessageImportanceEnum.Information);
+								Trace.WriteLine($" Right:  {ox2}",
+									$"{MessageImportanceEnum.Info}");
+								Trace.WriteLine($" Bottom: {oy2}",
+									$"{MessageImportanceEnum.Info}");
+								Trace.WriteLine($" Width:  {width}",
+									$"{MessageImportanceEnum.Info}");
+								Trace.WriteLine($" Height: {height}",
+									$"{MessageImportanceEnum.Info}");
 							}
 						}
 					}
 					else
 					{
-						item.SendMessage(
+						Trace.WriteLine(
 							$" Error: Unknown transform: '{property.Value}'",
-							MessageImportanceEnum.Error);
+							$"{MessageImportanceEnum.Err}");
 					}
 				}
 				else
 				{
-					item.SendMessage(" Error: 'transform' property not specified.",
-						MessageImportanceEnum.Error);
+					Trace.WriteLine(" Error: 'transform' property not specified.",
+						$"{MessageImportanceEnum.Err}");
 				}
 			}
 		}
@@ -944,8 +945,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: No action specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: No action specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -957,8 +958,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Base is required in this action.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Base is required in this action.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -970,8 +971,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Count is required for this action.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Count is required for this action.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -985,8 +986,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: DateTime was not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: DateTime was not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -998,8 +999,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: A value is required for Digits.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: A value is required for Digits.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1028,8 +1029,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Input files were not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Input files were not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1074,8 +1075,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Input folders were not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Input folders were not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1089,8 +1090,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: No input files specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: No input files specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1117,8 +1118,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Output filename was not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Output filename was not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1136,9 +1137,9 @@ namespace SvgToolsLibrary
 							{
 								if(sendMessages)
 								{
-									item.SendMessage(
+									Trace.WriteLine(
 										" Error: Could not create output directory.",
-										MessageImportanceEnum.Error);
+										$"{MessageImportanceEnum.Err}");
 								}
 							}
 						}
@@ -1161,8 +1162,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Output folder name was not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Output folder name was not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1174,9 +1175,9 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(
+							Trace.WriteLine(
 								" Error: Output name was not specified.",
-								MessageImportanceEnum.Error);
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1188,8 +1189,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Pattern was not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Pattern was not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1203,8 +1204,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Range was not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Range was not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1229,8 +1230,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Source folder was not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Source folder was not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1242,8 +1243,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Text parameter was not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Text parameter was not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1256,8 +1257,8 @@ namespace SvgToolsLibrary
 					{
 						if(sendMessages)
 						{
-							item.SendMessage(" Error: Working path was not specified.",
-								MessageImportanceEnum.Error);
+							Trace.WriteLine(" Error: Working path was not specified.",
+								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
 					}
@@ -1269,8 +1270,8 @@ namespace SvgToolsLibrary
 						{
 							if(sendMessages)
 							{
-								item.SendMessage(" Error: Working path does not exist.",
-									MessageImportanceEnum.Error);
+								Trace.WriteLine(" Error: Working path does not exist.",
+									$"{MessageImportanceEnum.Err}");
 							}
 							result = false;
 						}
@@ -1279,9 +1280,9 @@ namespace SvgToolsLibrary
 						{
 							if(sendMessages)
 							{
-								item.SendMessage(
+								Trace.WriteLine(
 									" Error: A file was specified as the working directory.",
-									MessageImportanceEnum.Error);
+									$"{MessageImportanceEnum.Err}");
 							}
 							result = false;
 						}
@@ -1315,16 +1316,16 @@ namespace SvgToolsLibrary
 				doc = GetSpecifiedOrWorking(item);
 				if(doc != null)
 				{
-					item.SendMessage(" Dereference Links...",
-						MessageImportanceEnum.Information);
-					item.SendMessage(" ApplyTransforms...",
-						MessageImportanceEnum.Information);
+					Trace.WriteLine(" Dereference Links...",
+						$"{MessageImportanceEnum.Info}");
+					Trace.WriteLine(" ApplyTransforms...",
+						$"{MessageImportanceEnum.Info}");
 					SvgToolsUtil.ApplyTransforms(doc.Document);
-					item.SendMessage(" PurgeDefs...",
-						MessageImportanceEnum.Information);
+					Trace.WriteLine(" PurgeDefs...",
+						$"{MessageImportanceEnum.Info}");
 					SvgToolsUtil.PurgeDefs(doc.Document);
-					item.SendMessage(" RoundAllValues...",
-						MessageImportanceEnum.Information);
+					Trace.WriteLine(" RoundAllValues...",
+						$"{MessageImportanceEnum.Info}");
 					precision = GetPrecision(item);
 					SvgToolsUtil.RoundAllValues(doc.Document, precision);
 
@@ -1333,14 +1334,14 @@ namespace SvgToolsLibrary
 						//	Per-file mode is active.
 						content = doc.Document.Html;
 						File.WriteAllText(item.OutputFile.FullName, content);
-						item.SendMessage($" File written: {item.OutputFile.Name}",
-							MessageImportanceEnum.Information);
+						Trace.WriteLine($" File written: {item.OutputFile.Name}",
+							$"{MessageImportanceEnum.Info}");
 					}
 				}
 				else
 				{
-					item.SendMessage($" Error: Input files were not specified.",
-						MessageImportanceEnum.Error);
+					Trace.WriteLine($" Error: Input files were not specified.",
+						$"{MessageImportanceEnum.Err}");
 				}
 			}
 		}
@@ -1397,15 +1398,15 @@ namespace SvgToolsLibrary
 							//	Per-file mode is active.
 							content = doc.Document.Html;
 							File.WriteAllText(item.OutputFile.FullName, content);
-							item.SendMessage($" File written: {item.OutputFile.Name}",
-								MessageImportanceEnum.Information);
+							Trace.WriteLine($" File written: {item.OutputFile.Name}",
+								$"{MessageImportanceEnum.Info}");
 						}
 					}
 				}
 				else
 				{
-					item.SendMessage($" Error: Input files were not specified.",
-						MessageImportanceEnum.Error);
+					Trace.WriteLine($" Error: Input files were not specified.",
+						$"{MessageImportanceEnum.Err}");
 				}
 			}
 		}
@@ -1439,8 +1440,8 @@ namespace SvgToolsLibrary
 					x.Name == GetPropertyByName(item, "ImageName"));
 				if(sourceImage != null)
 				{
-					item.SendMessage($" {sourceImage.Name}",
-						MessageImportanceEnum.Information);
+					Trace.WriteLine($" {sourceImage.Name}",
+						$"{MessageImportanceEnum.Info}");
 					bitmap = sourceImage.Bitmap;
 					sourceRect =
 						new SKRect(0, 0, bitmap.Width, bitmap.Height);
@@ -1505,8 +1506,8 @@ namespace SvgToolsLibrary
 						//imageName = $"Image{PadLeft("0", Images.Count, 5)}";
 						imageName = file.Name;
 					}
-					item.SendMessage($" {imageName}",
-						MessageImportanceEnum.Information);
+					Trace.WriteLine($" {imageName}",
+						$"{MessageImportanceEnum.Info}");
 					bitmap = SKBitmap.Decode(file.FullName);
 					bitmapA = new SKBitmap(bitmap.Width, bitmap.Height,
 						SKColorType.Rgba8888, SKAlphaType.Premul);
@@ -1638,26 +1639,26 @@ namespace SvgToolsLibrary
 								try
 								{
 									SaveBitmap(sourceBitmap, sourceFile.FullName);
-									item.SendMessage(
+									Trace.WriteLine(
 										$" File saved: {Path.GetFileName(sourceFile.FullName)}",
-										MessageImportanceEnum.Information);
+										$"{MessageImportanceEnum.Info}");
 								}
 								catch(Exception ex)
 								{
-									item.SendMessage($"Error: {ex.Message}",
-										MessageImportanceEnum.Error);
+									Trace.WriteLine($"Error: {ex.Message}",
+										$"{MessageImportanceEnum.Err}");
 								}
-								item.SendMessage($" {Path.GetFileName(sourceFilenameItem)}",
-									MessageImportanceEnum.Information);
+								Trace.WriteLine($" {Path.GetFileName(sourceFilenameItem)}",
+									$"{MessageImportanceEnum.Info}");
 							}
 						}
 					}
 					else
 					{
-						item.SendMessage(
+						Trace.WriteLine(
 							" Error: Source filenames could not be enumerated from the " +
 							"given range.",
-							MessageImportanceEnum.Error);
+							$"{MessageImportanceEnum.Err}");
 					}
 				}
 			}
@@ -1694,13 +1695,13 @@ namespace SvgToolsLibrary
 					try
 					{
 						SaveBitmap(WorkingImage.Bitmap, file.FullName);
-						item.SendMessage($" File saved: {file.Name}",
-							MessageImportanceEnum.Information);
+						Trace.WriteLine($" File saved: {file.Name}",
+							$"{MessageImportanceEnum.Info}");
 					}
 					catch(Exception ex)
 					{
-						item.SendMessage($"Error: {ex.Message}",
-							MessageImportanceEnum.Error);
+						Trace.WriteLine($"Error: {ex.Message}",
+							$"{MessageImportanceEnum.Err}");
 					}
 				}
 			}
@@ -1811,14 +1812,14 @@ namespace SvgToolsLibrary
 				if(property != null)
 				{
 					precision = ToInt(property.Value);
-					item.SendMessage($" Decimal Precision: {precision}",
-						MessageImportanceEnum.Information);
+					Trace.WriteLine($" Decimal Precision: {precision}",
+						$"{MessageImportanceEnum.Info}");
 				}
 				else
 				{
-					item.SendMessage(" Precision property not specified. " +
+					Trace.WriteLine(" Precision property not specified. " +
 						$"Defaulting to {precision}.",
-						MessageImportanceEnum.Information);
+						$"{MessageImportanceEnum.Info}");
 				}
 			}
 			return precision;
@@ -1867,16 +1868,16 @@ namespace SvgToolsLibrary
 						GetPropertyByName(item, nameof(WorkingPath)));
 					if(!dir.Exists)
 					{
-						item.SendMessage(" Error: Working path does not exist.",
-							MessageImportanceEnum.Error);
+						Trace.WriteLine(" Error: Working path does not exist.",
+							$"{MessageImportanceEnum.Err}");
 						result = false;
 					}
 					else if((dir.Attributes & FileAttributes.Directory) !=
 						FileAttributes.Directory)
 					{
-						item.SendMessage(
+						Trace.WriteLine(
 							" Error: A file was specified as the working directory.",
-							MessageImportanceEnum.Error);
+							$"{MessageImportanceEnum.Err}");
 						result = false;
 					}
 				}
@@ -1961,16 +1962,16 @@ namespace SvgToolsLibrary
 						GetPropertyByName(item, nameof(WorkingPath)));
 					if(!dir.Exists)
 					{
-						item.SendMessage(" Error: Working path does not exist.",
-							MessageImportanceEnum.Error);
+						Trace.WriteLine(" Error: Working path does not exist.",
+							$"{MessageImportanceEnum.Err}");
 						result = false;
 					}
 					else if((dir.Attributes & FileAttributes.Directory) !=
 						FileAttributes.Directory)
 					{
-						item.SendMessage(
+						Trace.WriteLine(
 							" Error: A file was specified as the working directory.",
-							MessageImportanceEnum.Error);
+							$"{MessageImportanceEnum.Err}");
 						result = false;
 					}
 				}
@@ -2069,8 +2070,8 @@ namespace SvgToolsLibrary
 					}
 					else
 					{
-						item.SendMessage($"Action {actionItem.Action} is muted...",
-							MessageImportanceEnum.Information);
+						Trace.WriteLine($"Action {actionItem.Action} is muted...",
+							$"{MessageImportanceEnum.Info}");
 					}
 				}
 			}
@@ -2347,8 +2348,8 @@ namespace SvgToolsLibrary
 					content = File.ReadAllText(item.InputFiles[0].FullName);
 					doc = new SvgDocumentItem(content);
 					item.WorkingSvg = doc;
-					item.SendMessage($" Working document: {item.InputFiles[0].Name}",
-						MessageImportanceEnum.Information);
+					Trace.WriteLine($" Working document: {item.InputFiles[0].Name}",
+						$"{MessageImportanceEnum.Info}");
 				}
 			}
 		}
@@ -2379,14 +2380,14 @@ namespace SvgToolsLibrary
 						//	Per-file mode is active.
 						content = doc.Document.Html;
 						File.WriteAllText(item.OutputFile.FullName, content);
-						item.SendMessage($" File written: {item.OutputFile.Name}",
-							MessageImportanceEnum.Information);
+						Trace.WriteLine($" File written: {item.OutputFile.Name}",
+							$"{MessageImportanceEnum.Info}");
 					}
 				}
 				else
 				{
-					item.SendMessage($" Error: Input files were not specified.",
-						MessageImportanceEnum.Error);
+					Trace.WriteLine($" Error: Input files were not specified.",
+						$"{MessageImportanceEnum.Err}");
 				}
 			}
 		}
@@ -2420,14 +2421,14 @@ namespace SvgToolsLibrary
 						//	Per-file mode is active.
 						content = doc.Document.Html;
 						File.WriteAllText(item.OutputFile.FullName, content);
-						item.SendMessage($" File written: {item.OutputFile.Name}",
-							MessageImportanceEnum.Information);
+						Trace.WriteLine($" File written: {item.OutputFile.Name}",
+							$"{MessageImportanceEnum.Info}");
 					}
 				}
 				else
 				{
-					item.SendMessage($" Error: Input files were not specified.",
-						MessageImportanceEnum.Error);
+					Trace.WriteLine($" Error: Input files were not specified.",
+						$"{MessageImportanceEnum.Err}");
 				}
 			}
 		}
@@ -2456,16 +2457,16 @@ namespace SvgToolsLibrary
 						await actionItem.Run();
 						if(actionItem.Stop)
 						{
-							actionItem.SendMessage("Batch stopped...",
-								MessageImportanceEnum.Information);
+							Trace.WriteLine("Batch stopped...",
+								$"{MessageImportanceEnum.Info}");
 							break;
 						}
 					}
 					else
 					{
-						actionItem.SendMessage(
+						Trace.WriteLine(
 							$"Action {actionItem.Action} is muted...",
-							MessageImportanceEnum.Information);
+							$"{MessageImportanceEnum.Info}");
 					}
 				}
 			}
@@ -2495,7 +2496,7 @@ namespace SvgToolsLibrary
 				name = GetPropertyByName(item, "SequenceName");
 				if(name?.Length > 0)
 				{
-					item.SendMessage($" {name}", MessageImportanceEnum.Information);
+					Trace.WriteLine($" {name}", $"{MessageImportanceEnum.Info}");
 					sequence =
 						item.Sequences.FirstOrDefault(x => x.SequenceName == name);
 					if(sequence != null)
@@ -2535,13 +2536,13 @@ namespace SvgToolsLibrary
 					{
 						content = item.WorkingSvg.Document.Html;
 						File.WriteAllText(item.OutputFile.FullName, content);
-						item.SendMessage($" SVG file written: {item.OutputFile.Name}",
-							MessageImportanceEnum.Information);
+						Trace.WriteLine($" SVG file written: {item.OutputFile.Name}",
+							$"{MessageImportanceEnum.Info}");
 					}
 					else
 					{
-						item.SendMessage($" Error: No working SVG file is open...",
-							MessageImportanceEnum.Error);
+						Trace.WriteLine($" Error: No working SVG file is open...",
+							$"{MessageImportanceEnum.Err}");
 					}
 				}
 			}
@@ -2570,8 +2571,8 @@ namespace SvgToolsLibrary
 				if(imageName?.Length > 0)
 				{
 					//	Image was specified.
-					item.SendMessage($" Working Image: {imageName}",
-						MessageImportanceEnum.Information);
+					Trace.WriteLine($" Working Image: {imageName}",
+						$"{MessageImportanceEnum.Info}");
 					imageInfo = Images.FirstOrDefault(x => x.Name == imageName);
 					if(imageInfo != null)
 					{
@@ -2608,8 +2609,8 @@ namespace SvgToolsLibrary
 				if(width > 0 && height > 0)
 				{
 					//	Dimensions were supplied.
-					item.SendMessage($" {width}, {height}",
-						MessageImportanceEnum.Information);
+					Trace.WriteLine($" {width}, {height}",
+						$"{MessageImportanceEnum.Info}");
 					targetRect = new SKRect(0, 0, width, height);
 					bitmap = new SKBitmap((int)targetRect.Width, (int)targetRect.Height);
 					DrawBitmap(WorkingImage.Bitmap, bitmap, targetRect);
@@ -2659,16 +2660,16 @@ namespace SvgToolsLibrary
 								//	Per-file mode is active.
 								content = doc.Document.Html;
 								File.WriteAllText(item.OutputFile.FullName, content);
-								item.SendMessage($" File written: {item.OutputFile.Name}",
-									MessageImportanceEnum.Information);
+								Trace.WriteLine($" File written: {item.OutputFile.Name}",
+									$"{MessageImportanceEnum.Info}");
 							}
 						}
 					}
 				}
 				else
 				{
-					item.SendMessage($" Error: Input files were not specified.",
-						MessageImportanceEnum.Error);
+					Trace.WriteLine($" Error: Input files were not specified.",
+						$"{MessageImportanceEnum.Err}");
 				}
 			}
 		}
@@ -2677,26 +2678,6 @@ namespace SvgToolsLibrary
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
-		//*-----------------------------------------------------------------------*
-		//* OnMessageSent																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Raise the MessageSent event when sending an operational message.
-		/// </summary>
-		/// <param name="e">
-		/// Reference to the message send event arguments to pass.
-		/// </param>
-		protected virtual void OnMessageSent(MessageSendEventArgs e)
-		{
-			MessageSent?.Invoke(this, e);
-			//	Bubble-up! :-)
-			if(!e.Handled && this.mParent != null && this.mParent.Parent != null)
-			{
-				this.mParent.Parent.OnMessageSent(e);
-			}
-		}
-		//*-----------------------------------------------------------------------*
-
 		//*************************************************************************
 		//*	Public																																*
 		//*************************************************************************
@@ -3364,15 +3345,6 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* MessageSent																														*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Fired when an operational message has been sent by this action.
-		/// </summary>
-		public event EventHandler<MessageSendEventArgs> MessageSent;
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//*	Options																																*
 		//*-----------------------------------------------------------------------*
 		private SvgActionOptionCollection mOptions =
@@ -3748,15 +3720,15 @@ namespace SvgToolsLibrary
 
 			if(mWorkingPathLast != WorkingPath)
 			{
-				SendMessage($"Working Path: {WorkingPath}",
-					MessageImportanceEnum.Information);
+				Trace.WriteLine($"Working Path: {WorkingPath}",
+					$"{MessageImportanceEnum.Info}");
 				mWorkingPathLast = WorkingPath;
 			}
 
-			SendMessage($"Action {mAction}...", MessageImportanceEnum.Information);
+			Trace.WriteLine($"Action {mAction}...", $"{MessageImportanceEnum.Info}");
 			if(Message?.Length > 0)
 			{
-				SendMessage($" {Message}", MessageImportanceEnum.Information);
+				Trace.WriteLine($" {Message}", $"{MessageImportanceEnum.Info}");
 			}
 
 			if(mAction == SvgActionTypeEnum.Batch)
@@ -3765,9 +3737,9 @@ namespace SvgToolsLibrary
 				//	ConfigFilename.
 				if(ConfigFilename?.Length > 0)
 				{
-					this.SendMessage(
+					Trace.WriteLine(
 						$"Opening configuration file: {Path.GetFileName(ConfigFilename)}",
-						MessageImportanceEnum.Information);
+						$"{MessageImportanceEnum.Info}");
 					sourceFilename = AbsolutePath(
 						GetPropertyByName(this, nameof(WorkingPath)),
 						GetPropertyByName(this, nameof(ConfigFilename)));
@@ -3807,22 +3779,22 @@ namespace SvgToolsLibrary
 								lineNumber = GetValue(match, "line");
 								position = GetValue(match, "position");
 							}
-							SendMessage(
+							Trace.WriteLine(
 								"Error loading configuration file: " +
 								$"Line: {lineNumber}, Position: {position}",
-								MessageImportanceEnum.Error);
+								$"{MessageImportanceEnum.Err}");
 						}
 					}
 					else
 					{
-						SendMessage("Error: No configuration data loaded from: " +
-							$"{sourceFilename}", MessageImportanceEnum.Error);
+						Trace.WriteLine("Error: No configuration data loaded from: " +
+							$"{sourceFilename}", $"{MessageImportanceEnum.Err}");
 					}
 				}
 				else
 				{
-					SendMessage("Error: Config filename not specified...",
-						MessageImportanceEnum.Error);
+					Trace.WriteLine("Error: Config filename not specified...",
+						$"{MessageImportanceEnum.Err}");
 				}
 			}
 			this.Actions.Parent = this;
@@ -3902,9 +3874,9 @@ namespace SvgToolsLibrary
 										GetPropertyByName(this, nameof(WorkingPath)),
 										GetPropertyByName(this, nameof(OutputName)));
 								file = new FileInfo(targetFilename);
-								SendMessage(
+								Trace.WriteLine(
 									$"Writing Rectangles to {file.Name}",
-									MessageImportanceEnum.Information);
+									$"{MessageImportanceEnum.Info}");
 								content = JsonConvert.SerializeObject(RectangleInfoList);
 								File.WriteAllText(file.FullName, content);
 								break;
@@ -4088,8 +4060,8 @@ namespace SvgToolsLibrary
 				//	break;
 				#endregion
 				default:
-					SendMessage($" Error: {Action} not implemented...",
-						MessageImportanceEnum.Error);
+					Trace.WriteLine($" Error: {Action} not implemented...",
+						$"{MessageImportanceEnum.Err}");
 					break;
 			}
 		}
@@ -4196,31 +4168,6 @@ namespace SvgToolsLibrary
 				{
 					mParent.Parent.Stop = value;
 				}
-			}
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//* SendMessage																														*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Send a message regarding the current operation.
-		/// </summary>
-		/// <param name="message">
-		/// Text of the message to send.
-		/// </param>
-		/// <param name="importance">
-		/// The importance of the message.
-		/// </param>
-		public void SendMessage(string message, MessageImportanceEnum importance)
-		{
-			if(message?.Length > 0)
-			{
-				OnMessageSent(new MessageSendEventArgs()
-				{
-					MessageText = message,
-					Importance = importance
-				});
 			}
 		}
 		//*-----------------------------------------------------------------------*

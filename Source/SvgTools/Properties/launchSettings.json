@@ -2,17 +2,15 @@
   "profiles": {
     "SvgTools": {
       "commandName": "Project",
-      "commandLineArgs": "/wait /testprecision:107.65932%,0 /testprecision:107.65932px,3 /testprecision:93451.65932rem,-2"
+      "commandLineArgs": "/wait /action:calculatetransform \"/properties:[{'Name':'transform','Value':'matrix(1,0,0,1.0027638,-4.2151489,-3.7945675)'},{'Name':'x','Value':'529.21484'},{'Name':'y','Value':'113.54385'},{'Name':'width','Value':'12.998965'},{'Name':'height','Value':'954.19031'}]\""
     },
-		"WSL":
-		{
-			"commandName": "WSL",
-			"commandLineArgs": "SvgTools.dll /wait /testprecision:107.65932%,0 /testprecision:107.65932px,3 /testprecision:93451.65932rem,-2",
-			"environmentVariables":
-			{
-				"DOTNET_ENVIRONMENT": "Development"
-			},
-			"distributionName": "Ubuntu"
-		}
+    "WSL": {
+      "commandName": "WSL",
+      "commandLineArgs": "SvgTools.dll /wait /testprecision:107.65932%,0 /testprecision:107.65932px,3 /testprecision:93451.65932rem,-2",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "distributionName": "Ubuntu"
+    }
   }
 }

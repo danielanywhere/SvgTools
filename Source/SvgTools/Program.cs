@@ -17,6 +17,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -51,17 +52,17 @@ namespace SvgToolsApp
 		/// The key value to test for a match.
 		/// </param>
 		/// <returns>
-		/// True if the provided argument equals the specified system-agnostic
-		/// key value.
+		/// A value greater than zero if the provided argument equals the specified
+		/// system-agnostic key value. Otherwise, zero.
 		/// </returns>
-		private static bool AgnosticArgEqual(string argumentValue, string keyValue)
+		private static int AgnosticArgEqual(string argumentValue, string keyValue)
 		{
-			bool result = false;
+			int result = 0;
 
 			if(argumentValue?.Length > 0 && keyValue?.Length > 0)
 			{
-				result = (argumentValue == $"/{keyValue}" ||
-					argumentValue == $"--{keyValue}");
+				result = ((argumentValue == $"/{keyValue}" ||
+					argumentValue == $"--{keyValue}") ? argumentValue.Length : 0);
 			}
 			return result;
 		}
@@ -81,56 +82,33 @@ namespace SvgToolsApp
 		/// The key value to test for a match.
 		/// </param>
 		/// <returns>
-		/// True if the provided argument starts with the specified system-agnostic
-		/// key value.
+		/// A value equal to the length of the keyvalue plus the prefix on the
+		/// argument value, if the provided argument starts with the specified
+		/// system-agnostic key value. Otherwise, zero.
 		/// </returns>
-		private static bool AgnosticArgStart(string argumentValue, string keyValue)
+		private static int AgnosticArgStart(string argumentValue, string keyValue)
 		{
-			bool result = false;
+			string prefix = "";
+			int result = 0;
 
 			if(argumentValue?.Length > 0 && keyValue?.Length > 0)
 			{
-				result = (argumentValue.StartsWith($"/{keyValue}") ||
-					argumentValue.StartsWith($"--{keyValue}"));
+				if(argumentValue.StartsWith('/'))
+				{
+					prefix = "/";
+				}
+				else if(argumentValue.StartsWith("--"))
+				{
+					prefix = "--";
+				}
+				if(prefix.Length > 0)
+				{
+					result = ((argumentValue.StartsWith($"/{keyValue}") ||
+						argumentValue.StartsWith($"--{keyValue}")) ?
+						$"{prefix}{keyValue}".Length : 0);
+				}
 			}
 			return result;
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//* mActionItem_MessageSent																								*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// A message has been sent from the action system.
-		/// </summary>
-		/// <param name="sender">
-		/// The object raising this event.
-		/// </param>
-		/// <param name="e">
-		/// Message send event arguments.
-		/// </param>
-		private static void mActionItem_MessageSent(object sender,
-			MessageSendEventArgs e)
-		{
-			if(!e.Handled)
-			{
-				switch(e.Importance)
-				{
-					case MessageImportanceEnum.Error:
-						Console.Write("!> ");
-						break;
-					case MessageImportanceEnum.Information:
-						Console.Write("i> ");
-						break;
-					case MessageImportanceEnum.None:
-						Console.Write("?> ");
-						break;
-					case MessageImportanceEnum.Warning:
-						Console.Write("W> ");
-						break;
-				}
-				Console.WriteLine(e.MessageText);
-			}
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -193,14 +171,17 @@ namespace SvgToolsApp
 			bool bShowHelp = false; //	Flag - Explicit Show Help.
 			StringBuilder builder = new StringBuilder();
 			string key = "";        //	Current Parameter Key.
+			int keyLength = 0;
 			string lowerArg = "";   //	Current Lowercase Argument.
 			StringBuilder message = new StringBuilder();
 			NameValueCollection nameValues = null;
 			Program prg = new Program();  //	Initialized instance.
 
+			ConsoleTraceListener consoleListener = new ConsoleTraceListener();
+			Trace.Listeners.Add(consoleListener);
+
 			Console.WriteLine("SvgTools.exe");
 			prg.mActionItem = new SvgActionItem();
-			prg.mActionItem.MessageSent += mActionItem_MessageSent;
 
 			foreach(string arg in args)
 			{
@@ -212,9 +193,10 @@ namespace SvgToolsApp
 					continue;
 				}
 				key = "action:";
-				if(AgnosticArgStart(lowerArg, key))
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
 				{
-					if(Enum.TryParse<SvgActionTypeEnum>(arg.Substring(key.Length),
+					if(Enum.TryParse<SvgActionTypeEnum>(arg.Substring(keyLength),
 						true, out action))
 					{
 						if(action != SvgActionTypeEnum.None)
@@ -232,42 +214,48 @@ namespace SvgToolsApp
 					continue;
 				}
 				key = "commandline";
-				if(AgnosticArgEqual(lowerArg, key))
+				keyLength = AgnosticArgEqual(lowerArg, key);
+				if(keyLength > 0)
 				{
 					bShowCommand = true;
 					continue;
 				}
 				key = "configfile:";
-				if(AgnosticArgStart(lowerArg, key))
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
 				{
-					prg.ActionItem.ConfigFilename = arg.Substring(key.Length);
+					prg.ActionItem.ConfigFilename = arg.Substring(keyLength);
 					continue;
 				}
 				key = "infile:";
-				if(AgnosticArgStart(lowerArg, key))
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
 				{
-					prg.ActionItem.InputFilename = arg.Substring(key.Length);
+					prg.ActionItem.InputFilename = arg.Substring(keyLength);
 					continue;
 				}
 				key = "option:";
-				if(AgnosticArgStart(lowerArg, key))
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
 				{
-					prg.ActionItem.Options.Add(arg.Substring(key.Length));
+					prg.ActionItem.Options.Add(arg.Substring(keyLength));
 					continue;
 				}
 				key = "outfile:";
-				if(AgnosticArgStart(lowerArg, key))
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
 				{
-					prg.ActionItem.OutputFilename = arg.Substring(key.Length);
+					prg.ActionItem.OutputFilename = arg.Substring(keyLength);
 					continue;
 				}
 				key = "properties:";
-				if(AgnosticArgStart(lowerArg, key))
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
 				{
 					try
 					{
 						nameValues = JsonConvert.DeserializeObject<NameValueCollection>(
-							arg.Substring(key.Length));
+							arg.Substring(keyLength));
 						foreach(NameValueItem propertyItem in nameValues)
 						{
 							prg.mActionItem.Properties.Add(propertyItem);
@@ -281,28 +269,32 @@ namespace SvgToolsApp
 					continue;
 				}
 				key = "testprecision:";
-				if(AgnosticArgStart(lowerArg, key))
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
 				{
-					TestPrecision(arg.Substring(key.Length));
+					TestPrecision(arg.Substring(keyLength));
 					bActivity = true;
 					continue;
 				}
 				key = "text:";
-				if(AgnosticArgStart(lowerArg, key))
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
 				{
-					prg.ActionItem.Text = arg.Substring(key.Length);
+					prg.ActionItem.Text = arg.Substring(keyLength);
 					continue;
 				}
 				key = "wait";
-				if(AgnosticArgEqual(lowerArg, key))
+				keyLength = AgnosticArgEqual(lowerArg, key);
+				if(keyLength > 0)
 				{
 					prg.mWaitAfterEnd = true;
 					continue;
 				}
 				key = "workingpath:";
-				if(AgnosticArgStart(lowerArg, key))
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
 				{
-					prg.ActionItem.WorkingPath = arg.Substring(key.Length);
+					prg.ActionItem.WorkingPath = arg.Substring(keyLength);
 					continue;
 				}
 			}
