@@ -39,6 +39,10 @@ namespace SvgToolsLibrary
 		/// </summary>
 		ApplyTransforms,
 		/// <summary>
+		/// Convert the SVG UI Design Art to GTK3.
+		/// </summary>
+		ArtToGtk3,
+		/// <summary>
 		/// Convert the SVG UI Design Art to XAML.
 		/// </summary>
 		ArtToXaml,

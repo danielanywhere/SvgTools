@@ -3846,8 +3846,12 @@ namespace SvgToolsLibrary
 				case SvgActionTypeEnum.ApplyTransforms:
 					ApplyTransforms(this);
 					break;
-				case SvgActionTypeEnum.ArtToXaml:
-					break;
+				//	TODO: !1 - Stopped here...
+				//	TODO: Work out the object and property cheat sheet, and possibly start with GTKSharp first!
+				//case SvgActionTypeEnum.ArtToGtk3:
+				//	break;
+				//case SvgActionTypeEnum.ArtToXaml:
+				//	break;
 				case SvgActionTypeEnum.Batch:
 					//	TODO: Allow multiple Soloed items to run.
 					//	This is a file batch.

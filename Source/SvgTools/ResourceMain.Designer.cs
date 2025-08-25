@@ -63,20 +63,23 @@ namespace SvgToolsApp {
         /// <summary>
         ///   Looks up a localized string similar to Command-line tool suite for working with SVG files.
         ///
+        ///
         ///Syntax:
         ///SvgTools.exe /action:{ActionName}
         ///    [/configfile:{Filename}]
         ///    [/infile:{Filename}] [/outfile:{Filename}]
+        ///    [/option:{OptionName[,OptionValue]}]
         ///    [/properties:{NameValueArray}]
         ///    [/workingpath:{FolderName}]
         ///    [/wait]
         ///    [/?]
         ///
+        ///All parameters can be prefixed with either &apos;/&apos; or &apos;--&apos;.
+        ///
         /// * -    Actions marked with an asterisk are only supported within a
         ///        configuration file.
         ///
-        ///    /action     -   Describes the action to be made. Following are the
-        ///                    recognized actions, with associated parameter nam [rest of string was truncated]&quot;;.
+        ///    /action     -   Describes the acti [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Syntax {
             get {

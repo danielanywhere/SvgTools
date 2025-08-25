@@ -120,14 +120,18 @@
   <data name="Syntax" xml:space="preserve">
     <value>Command-line tool suite for working with SVG files.
 
+
 Syntax:
 SvgTools.exe /action:{ActionName}
     [/configfile:{Filename}]
     [/infile:{Filename}] [/outfile:{Filename}]
+    [/option:{OptionName[,OptionValue]}]
     [/properties:{NameValueArray}]
     [/workingpath:{FolderName}]
     [/wait]
     [/?]
+
+All parameters can be prefixed with either '/' or '--'.
 
  * -    Actions marked with an asterisk are only supported within a
         configuration file.
@@ -153,7 +157,7 @@ SvgTools.exe /action:{ActionName}
                             matrix(a,b,c,d,e,f)
                         The following accompanying properties are supported:
                             x, y, width, height
-                        properties: transform, x, y [, width, height]
+                        Properties: transform, x, y [, width, height]
                     OpenWorkingSvg * - Set the current working SVG to make it
                         eligible for participating in multiple sequential
                         operations.
@@ -163,6 +167,7 @@ SvgTools.exe /action:{ActionName}
                     RoundAllValues - Round all values to the precision
                         supplied in the 'Precision' user property.
                         {/infile[ /outfile]|(working SVG)}
+                        Properties: Precision (optional, default = 3)
                     SaveWorkingSvg * - Save the current working SVG to
                         the specified output filename.
                         OutputFilename
@@ -170,6 +175,10 @@ SvgTools.exe /action:{ActionName}
                         are both specified options and the outfile parameter
                         has not been supplied, the value of outfile is assumed
                         to be the same as infile.
+    /option     -   Specifies a single option name and optional matching
+                        value. Multiple options can be specified per command.
+                        Options are specific to the action context in which
+                        they are specified.
     /outfile    -   Output path and filename only.
     /workingpath-   Set the working path and foldername. When this parameter
                         is specified, all of the other parameters can use
@@ -191,9 +200,9 @@ Solo            -   Run only this action within the context of the current
                     Commands: (Any)
 
 Example:
-SvgTools /action:ReduceTransformations /infile:C:\Temp\MyDrawing.svg
+SvgTools /action:ApplyTransforms /infile:C:\Temp\MyDrawing.svg
 
-The above example reduces transformations in the file MyDrawing.svg,
+The above example applies transformations in the file MyDrawing.svg,
 overwriting the original file with the changed version.
 
 Batch config file variables.

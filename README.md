@@ -30,4 +30,13 @@ This version is currently available as command-line application only, but work i
 
 Please read the <b>Docs/Syntax.txt</b> file for more information. You can also get some sample ideas from <b>Docs/CommandLines.md</b> and <b>Docs/WorkingSvg-SvgTools01.json</b>.
 
+On any system with .NET Core installed, you can get the project and run it initially using the following commands.
+
+```batch
+git clone https://github.com/danielanywhere/SvgTools
+cd SvgTools/Source/SvgTools
+dotnet run -- /? /wait
+
+```
+
 (This ReadMe file was created in LibreOffice Write!)

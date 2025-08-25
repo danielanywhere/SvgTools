@@ -23,7 +23,7 @@ Perform a clean up on a file.
 Calculate an Individual Transform
 
 ```
-/wait /action:calculatetransform "/properties:[{'Name':'transform','Value':'matrix(1,0,0,1.0027638,-4.2151489,-3.7945675)'},{'Name':'x':'Value':'529.21484'},{'Name':'y','Value':'113.54385'},{'Name':'width','Value':'12.998965'},{'Name':'height','Value':'954.19031'}]"
+/wait /action:calculatetransform "/properties:[{'Name':'transform','Value':'matrix(1,0,0,1.0027638,-4.2151489,-3.7945675)'},{'Name':'x','Value':'529.21484'},{'Name':'y','Value':'113.54385'},{'Name':'width','Value':'12.998965'},{'Name':'height','Value':'954.19031'}]"
 ```
 
 Run the batch file WorkingSvg-SvgTools01.json
