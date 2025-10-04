@@ -186,8 +186,9 @@ namespace SvgToolsApp
 			foreach(string arg in args)
 			{
 				lowerArg = arg.ToLower();
-				key = "/?";
-				if(lowerArg == key)
+				key = "?";
+				keyLength = AgnosticArgEqual(lowerArg, key);
+				if(keyLength > 0)
 				{
 					bShowHelp = true;
 					continue;
