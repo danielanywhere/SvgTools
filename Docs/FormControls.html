@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<style type="text/css">
+		body
+		{
+			font-family: Roboto;
+			font-size: 12pt;
+		}
+		fieldset
+		{
+			margin-left: 24px;
+			margin-bottom: 24px;
+			border-radius: 8px;
+		}
+		input[type="checkbox"], input[type="radio"]
+		{
+			width: 25px;
+			height: 25px;
+		}
+		legend
+		{
+			font-weight: bold;
+		}
+		.table
+		{
+			border-collapse: collapse;
+			display: flex;
+			flex-direction: column;
+			flex-wrap: wrap;
+			height: 500px;
+		}
+		.table .tr
+		{
+			display: table-row;
+		}
+		.tr>.td:first-child
+		{
+			min-width: 160px;
+		}
+		.td
+		{
+			display: table-cell;
+			padding: 8px;
+			vertical-align: middle;
+		}
+		.td>div
+		{
+			min-height: 48px;
+			display: flex;
+			align-items: center;
+		}
+/* Width between 1080px and 801px */
+@media (max-width: 1080px) and (min-width: 801px) {
+  .table {
+    height: 110vh;
+  }
+}
+
+/* Width between 800px and 601px */
+@media (max-width: 800px) and (min-width: 601px) {
+  .table {
+    height: 300vh;
+  }
+}
+
+/* Width 600px and below */
+@media (max-width: 600px) {
+  .table {
+    height: auto; /* "Unlimited" height — grows with content */
+  }
+}
+	</style>
+	<title>Form Controls</title>
+</head>
+<body>
+	<h1>Form Controls</h1>
+	<form id="frmControls">
+		<fieldset>
+			<legend>Discrete User Controls</legend>
+			<div class="table">
+				<div class="tr"><div class="td"><div>Button</div></div><div class="td"><button>Button</button></div></div>
+				<div class="tr"><div class="td"><div>CheckBox</div></div><div class="td"><input type="checkbox" /><input type="checkbox" checked/></div></div>
+				<div class="tr"><div class="td"><div>ComboBox</div></div><div class="td"><select><option>Item 1</option><option>Item 2</option></select></div></div>
+				<div class="tr"><div class="td"><div>GridView</div></div><div class="td"><img src="images/GridViewIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>Label</div></div><div class="td">Label Text</div></div>
+				<div class="tr"><div class="td"><div>ListBox</div></div><div class="td"><img src="images/ListBoxIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>ListView</div></div><div class="td"><img src="images/ListViewIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>MenuBar</div></div><div class="td"><img src="images/MenuBarIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>PictureBox</div></div><div class="td"><img src="images/PictureBoxIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>ProgressBar</div></div><div class="td"><img src="images/ProgressBarIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>RadioButton</div></div><div class="td"><input type="radio" name="radio" /><input type="radio" name="radio" checked /></div></div>
+				<div class="tr"><div class="td"><div>StatusBar</div></div><div class="td"><img src="images/StatusBarIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>TabControl</div></div><div class="td"><img src="images/TabControlIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>TextBox</div></div><div class="td"><input type="text" value="Sample text..." /></div></div>
+				<div class="tr"><div class="td"><div>TextBoxWithHelper</div></div><div class="td"><input type="text" value="Sample text..." /><button>...</button></div></div>
+				<div class="tr"><div class="td"><div>ToolBar</div></div><div class="td"><img src="images/ToolBarIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>TrackBar</div></div><div class="td"><input type="range" min="1" max="100" value="25" /></div></div>
+				<div class="tr"><div class="td"><div>TreeView</div></div><div class="td"><img src="images/TreeViewIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>UpDown</div></div><div class="td"><input type="number" min="1" max="100" value="25" /></div></div>
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>Layout Surfaces</legend>
+			<div class="table">
+				<div class="tr"><div class="td"><div>FlowPanel</div></div><div class="td"><img src="images/FlowPanelIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>Grid</div></div><div class="td"><img src="images/GridIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>GroupBox</div></div><div class="td"><img src="images/GroupBoxIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>HorizontalGrid</div></div><div class="td"><img src="images/HorizontalGridIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>HorizontalScrollPanel</div></div><div class="td"><img src="images/HorizontalScrollIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>HorizontalStackPanel</div></div><div class="td"><img src="images/HorizontalStackIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>Panel</div></div><div class="td"><img src="images/PanelIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>ScrollPanel</div></div><div class="td"><img src="images/ScrollPanelIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>SplitPanel</div></div><div class="td"><img src="images/SplitPanelIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>StaticPanel</div></div><div class="td"><img src="images/PanelIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>VerticalGrid</div></div><div class="td"><img src="images/VerticalGridIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>VerticalScrollPanel</div></div><div class="td"><img src="images/VerticalScrollIcon.png" width="40px"/></div></div>
+				<div class="tr"><div class="td"><div>VerticalStackPanel</div></div><div class="td"><img src="images/VerticalStackIcon.png" width="40px"/></div></div>
+			</div>
+		</fieldset>
+	</form>
+	<script type="text/javascript" src="scripts/jquery-3.4.1.min.js"></script>
+</body>
+</html>
