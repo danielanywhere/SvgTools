@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dans.Geometry.Library" Version="25.2820.4317" />
-    <PackageReference Include="Dans.Html.Library" Version="25.2822.3845" />
+    <PackageReference Include="Dans.Geometry.Library" Version="25.3011.3729" />
+    <PackageReference Include="Dans.Html.Library" Version="25.2910.4125" />
     <PackageReference Include="Flee" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SkiaSharp" Version="3.119.0" />

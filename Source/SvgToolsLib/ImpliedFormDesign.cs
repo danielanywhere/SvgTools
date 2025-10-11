@@ -1,3 +1,21 @@
+/*
+ * Copyright (c). 2025 Daniel Patterson, MCSD (danielanywhere).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * 
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,6 +40,55 @@ namespace SvgToolsLibrary
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		//*-----------------------------------------------------------------------*
+		//* FindLayersExtendingNodeId																							*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a collection of layers that extend the node having the specified
+		/// ID.
+		/// </summary>
+		/// <param name="doc">
+		/// Reference to the HTML document withing which to find the matching
+		/// layers.
+		/// </param>
+		/// <param name="nodeId">
+		/// The unique node ID being extended.
+		/// </param>
+		/// <returns>
+		/// Reference to a collection containing the layer nodes extending the
+		/// node with the specified ID, if found. Otherwise, an empty collection.
+		/// </returns>
+		private static List<HtmlNodeItem> FindLayersExtendingNodeId(
+			HtmlDocument doc, string nodeId)
+		{
+			List<HtmlNodeItem> items = null;
+			string lowerId = "";
+			List<HtmlNodeItem> result = new List<HtmlNodeItem>();
+
+			if(doc != null && nodeId?.Length > 0)
+			{
+				lowerId = nodeId.ToLower();
+				items = doc.Nodes.FindMatches(x => x.NodeType.ToLower() == "g" &&
+					x.Attributes.Exists(y =>
+						y.Name.ToLower() == "inkscape:groupmode" &&
+						y.Value.ToLower() == "layer") &&
+					x.Attributes.Exists(y =>
+						y.Name.ToLower() == "inkscape:label" &&
+						(y.Value.ToLower() == lowerId ||
+						y.Value.ToLower().StartsWith($"{lowerId}-"))));
+				foreach(HtmlNodeItem nodeItem in items)
+				{
+					//Trace.WriteLine(
+					//	" Found extension layer: " +
+					//	HtmlAttributeCollection.GetAttributeValue(nodeItem,
+					//		"inkscape:label"));
+					result.Add(nodeItem);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*-----------------------------------------------------------------------*
 		//* ProcessNodeZOrder																											*
 		//*-----------------------------------------------------------------------*
@@ -55,12 +122,7 @@ namespace SvgToolsLibrary
 							Node = nodeItem,
 							Intent = GetIntent(nodeItem)
 						};
-						if(!ControlAreaCollection.PlaceInFront(areas, area))
-						{
-							//	If this item isn't in front of anything, then create a
-							//	base sibling.
-							areas.Add(area);
-						}
+						ControlAreaCollection.PlaceInFront(area, areas);
 					}
 					//	Process the children of this node.
 					ProcessNodeZOrder(nodeItem, areas);
@@ -115,7 +177,9 @@ namespace SvgToolsLibrary
 		{
 			ControlAreaItem area = null;
 			ControlAreaCollection areas = null;
+			List<ControlAreaItem> flatAreas = null;
 			int indent = 1;
+			List<HtmlNodeItem> layers = null;
 			HtmlNodeItem nodeForm = null;
 
 			if(doc != null)
@@ -146,6 +210,21 @@ namespace SvgToolsLibrary
 					};
 					areas.Add(area);
 					ProcessNodeZOrder(nodeForm, areas);
+					flatAreas = ControlAreaCollection.GetFlatList(areas);
+					foreach(ControlAreaItem areaItem in flatAreas)
+					{
+						if(areaItem.Node != null &&
+							areaItem.Intent != ImpliedDesignIntentEnum.Form &&
+							areaItem.Intent != ImpliedDesignIntentEnum.None)
+						{
+							layers = FindLayersExtendingNodeId(doc.Document,
+								areaItem.Node.Id);
+							foreach(HtmlNodeItem layerItem in layers)
+							{
+								ProcessNodeZOrder(layerItem, areaItem.FrontAreas);
+							}
+						}
+					}
 					ControlAreaCollection.Dump(areas, indent);
 				}
 			}
