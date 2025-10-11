@@ -2159,6 +2159,39 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* ImpliedDesignEnumerateControls																				*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Enumerate the controls in the caller's implied form design file.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the item to be intialized.
+		/// </param>
+		private static void ImpliedDesignEnumerateControls(SvgActionItem item)
+		{
+			string content = "";
+			SvgDocumentItem doc = null;
+
+			if(item != null)
+			{
+				if(CheckElements(item,
+					ActionElementEnum.InputFilename))
+				{
+					//	Load the document if the filename was specified.
+					content = File.ReadAllText(item.InputFiles[0].FullName);
+					doc = new SvgDocumentItem(content);
+					SvgToolsUtil.ApplyTransforms(doc.Document);
+					SvgToolsUtil.RoundAllValues(doc.Document, 0);
+					item.WorkingSvg = doc;
+					Trace.WriteLine($" Working document: {item.InputFiles[0].Name}",
+						$"{MessageImportanceEnum.Info}");
+					ImpliedFormDesign.EnumerateControls(doc);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* InitializeFilenames																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -3846,7 +3879,6 @@ namespace SvgToolsLibrary
 				case SvgActionTypeEnum.ApplyTransforms:
 					ApplyTransforms(this);
 					break;
-				//	TODO: !1 - Stopped here...
 				//	TODO: Work out the object and property cheat sheet, and possibly start with GTKSharp first!
 				//case SvgActionTypeEnum.ArtToGtk3:
 				//	break;
@@ -3987,6 +4019,12 @@ namespace SvgToolsLibrary
 				//case ActionTypeEnum.ImageSetCommonBoundary:
 				//	ImageSetCommonBoundary(this);
 				//	break;
+				#endregion
+				case SvgActionTypeEnum.ImpliedDesignEnumerateControls:
+					//	Enumerate the controls in the implied form design.
+					ImpliedDesignEnumerateControls(this);
+					break;
+				#region Removed
 				//case ActionTypeEnum.LoadRectangleInfoList:
 				//	LoadRectangleInfoList(this);
 				//	break;

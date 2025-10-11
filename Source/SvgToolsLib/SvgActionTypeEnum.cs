@@ -111,6 +111,10 @@ namespace SvgToolsLibrary
 		///// </summary>
 		//ImagesClear,
 		/// <summary>
+		/// Enumerate the controls in the specified implied design file.
+		/// </summary>
+		ImpliedDesignEnumerateControls,
+		/// <summary>
 		/// Open the working SVG file to allow multiple operations to be completed
 		/// in the same session.
 		/// </summary>

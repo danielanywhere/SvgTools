@@ -152,6 +152,27 @@ namespace SvgToolsLibrary
 		//* ApplyTransforms																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
+		/// Apply transforms on the caller's SVG document and all of its nodes.
+		/// </summary>
+		/// <param name="svgDocument">
+		/// Reference to the SVG document upon which transforms will be applied.
+		/// </param>
+		public static void ApplyTransforms(HtmlDocument svgDocument)
+		{
+			HtmlNodeItem svg = null;
+
+			if(svgDocument != null)
+			{
+				HtmlDocument.FillUniqueIds(svgDocument);
+				svg = svgDocument.Nodes.FindMatch(x => x.NodeType == "svg");
+				if(svg != null)
+				{
+					ApplyTransforms(svg);
+				}
+			}
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
 		/// Apply transforms on the caller's SVG node and all of its descendants.
 		/// </summary>
 		/// <param name="svgNode">
@@ -1595,6 +1616,30 @@ namespace SvgToolsLibrary
 						result.Add($"{range.EndValue}{extension}");
 					}
 				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetArea																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the area of an area object.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the area object to inspect.
+		/// </param>
+		/// <returns>
+		/// The specified object's area, if found. Otherwise, 0.
+		/// </returns>
+		public static float GetArea(FArea area)
+		{
+			float result = 0f;
+
+			if(!FArea.IsEmpty(area))
+			{
+				result = area.Width * area.Height;
 			}
 			return result;
 		}

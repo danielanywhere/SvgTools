@@ -2,7 +2,7 @@
   "profiles": {
     "SvgTools": {
       "commandName": "Project",
-      "commandLineArgs": "/wait /action:calculatetransform \"/properties:[{'Name':'transform','Value':'matrix(1,0,0,1.0027638,-4.2151489,-3.7945675)'},{'Name':'x','Value':'529.21484'},{'Name':'y','Value':'113.54385'},{'Name':'width','Value':'12.998965'},{'Name':'height','Value':'954.19031'}]\""
+      "commandLineArgs": "/wait /action:ImpliedDesignEnumerateControls /workingpath:C:\\Files\\Dropbox\\Develop\\Shared\\SvgTools\\Drawings /infile:ProjectTaskImpliedDesign.svg"
     },
     "WSL": {
       "commandName": "WSL",
