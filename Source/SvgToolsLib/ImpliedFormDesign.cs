@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
+using Geometry;
 using Html;
 
 using static SvgToolsLibrary.SvgToolsUtil;
@@ -152,7 +153,8 @@ namespace SvgToolsLibrary
 			"grid", "groupbox", "horizontalgrid", "horizontalscrollpanel",
 			"horizontalstackpanel", "panel", "scrollpanel", "splitpanel",
 			"staticpanel", "verticalgrid", "verticalscrollpanel",
-			"verticalstackpanel"
+			"verticalstackpanel",
+			"menupanel"
 		};
 		/// <summary>
 		/// Get a reference to an array of control type names.
@@ -300,7 +302,7 @@ namespace SvgToolsLibrary
 
 			if(doc != null)
 			{
-				node = doc.Nodes.FindMatch(x => x.NodeType == "svg");
+				node = doc.Nodes.FindMatch(x => x.NodeType.ToLower() == "svg");
 				if(node != null)
 				{
 					attribute = node.Attributes.FirstOrDefault(x =>
@@ -335,7 +337,7 @@ namespace SvgToolsLibrary
 
 			if(doc != null)
 			{
-				node = doc.Nodes.FindMatch(x => x.NodeType == "svg");
+				node = doc.Nodes.FindMatch(x => x.NodeType.ToLower() == "svg");
 				if(node != null)
 				{
 					attribute = node.Attributes.FirstOrDefault(x =>
@@ -364,16 +366,15 @@ namespace SvgToolsLibrary
 		/// </returns>
 		public static float GetHeight(HtmlNodeItem node)
 		{
-			HtmlAttributeItem attribute = null;
+			BoundingObjectItem bounds = null;
 			float result = 0f;
 
 			if(node != null)
 			{
-				attribute =
-					node.Attributes.FirstOrDefault(x => x.Name.ToLower() == "height");
-				if(attribute != null)
+				bounds = CalcBounds(node);
+				if(bounds != null)
 				{
-					result = (float)ToInt(attribute.Value);
+					result = bounds.GetHeight();
 				}
 			}
 			return result;
@@ -402,6 +403,10 @@ namespace SvgToolsLibrary
 
 			if(node != null)
 			{
+				//if(node.NodeType.ToLower() == "image")
+				//{
+				//	Debug.WriteLine("GetIntent: Break here...");
+				//}
 				if(!IsLayer(node))
 				{
 					//	If the node has a label, then that intent overrides the intent
@@ -418,9 +423,17 @@ namespace SvgToolsLibrary
 					}
 					if(label.Length > 0)
 					{
-						if(Enum.TryParse<ImpliedDesignIntentEnum>(label, true, out intent))
+						if(Enum.TryParse<ImpliedDesignIntentEnum>(
+							LeftOf(label, "-"), true, out intent))
 						{
 							result = intent;
+						}
+					}
+					if(result == ImpliedDesignIntentEnum.None)
+					{
+						if(node.NodeType.ToLower() == "image")
+						{
+							result = ImpliedDesignIntentEnum.Image;
 						}
 					}
 				}
@@ -474,16 +487,15 @@ namespace SvgToolsLibrary
 		/// </returns>
 		public static float GetWidth(HtmlNodeItem node)
 		{
-			HtmlAttributeItem attribute = null;
+			BoundingObjectItem bounds = null;
 			float result = 0f;
 
 			if(node != null)
 			{
-				attribute =
-					node.Attributes.FirstOrDefault(x => x.Name.ToLower() == "width");
-				if(attribute != null)
+				bounds = CalcBounds(node);
+				if(bounds != null)
 				{
-					result = (float)ToInt(attribute.Value);
+					result = bounds.GetWidth();
 				}
 			}
 			return result;
@@ -505,15 +517,92 @@ namespace SvgToolsLibrary
 		public static float GetX(HtmlNodeItem node)
 		{
 			HtmlAttributeItem attribute = null;
+			BoundingObjectItem bounds = null;
+			string nodeType = "";
 			float result = 0f;
+			HtmlNodeItem span = null;
+			List<HtmlNodeItem> spans = null;
+			string textAnchor = "start";
+			float width = 0f;
+			float x = 0f;
 
 			if(node != null)
 			{
-				attribute =
-					node.Attributes.FirstOrDefault(x => x.Name.ToLower() == "x");
-				if(attribute != null)
+				nodeType = node.NodeType.ToLower();
+				switch(nodeType)
 				{
-					result = (float)ToInt(attribute.Value);
+					case "g":
+						bounds = CalcBounds(node);
+						if(bounds != null)
+						{
+							result = bounds.MinX;
+						}
+						break;
+					case "text":
+						spans = node.Nodes.FindAll(x => x.NodeType.ToLower() == "tspan" &&
+							x.Attributes.Exists(y => y.Name.ToLower() == "x"));
+						if(spans.Count > 0)
+						{
+							span = spans[0];
+							attribute =
+								span.Attributes.FirstOrDefault(x => x.Name.ToLower() == "x");
+							if(attribute != null)
+							{
+								//	Raw.
+								x = (float)ToInt(attribute.Value);
+								textAnchor =
+									GetActiveStyle(span, "text-anchor", textAnchor);
+								width = GetWidth(span);
+								switch(textAnchor)
+								{
+									case "end":
+										result = x - width;
+										break;
+									case "middle":
+										result = x - (width / 2f);
+										break;
+									case "start":
+									default:
+										result = x;
+										break;
+								}
+							}
+						}
+						break;
+					case "tspan":
+						span = node;
+						attribute =
+							span.Attributes.FirstOrDefault(x => x.Name.ToLower() == "x");
+						if(attribute != null)
+						{
+							//	Raw.
+							x = (float)ToInt(attribute.Value);
+							textAnchor =
+								GetActiveStyle(span, "text-anchor", textAnchor);
+							width = GetWidth(span);
+							switch(textAnchor)
+							{
+								case "end":
+									result = x - width;
+									break;
+								case "middle":
+									result = x - (width / 2f);
+									break;
+								case "start":
+								default:
+									result = x;
+									break;
+							}
+						}
+						break;
+					default:
+						attribute =
+							node.Attributes.FirstOrDefault(x => x.Name.ToLower() == "x");
+						if(attribute != null)
+						{
+							result = (float)ToInt(attribute.Value);
+						}
+						break;
 				}
 			}
 			return result;
@@ -535,15 +624,96 @@ namespace SvgToolsLibrary
 		public static float GetY(HtmlNodeItem node)
 		{
 			HtmlAttributeItem attribute = null;
+			BoundingObjectItem bounds = null;
+			string dominantBaseline = "alphabetic";
+			float height = 0f;
+			string nodeType = "";
 			float result = 0f;
+			HtmlNodeItem span = null;
+			List<HtmlNodeItem> spans = null;
+			float y = 0f;
 
 			if(node != null)
 			{
-				attribute =
-					node.Attributes.FirstOrDefault(x => x.Name.ToLower() == "y");
-				if(attribute != null)
+				nodeType = node.NodeType.ToLower();
+				switch(nodeType)
 				{
-					result = (float)ToInt(attribute.Value);
+					case "g":
+						bounds = CalcBounds(node);
+						if(bounds != null)
+						{
+							result = bounds.MinY;
+						}
+						break;
+					case "text":
+						spans = node.Nodes.FindAll(x => x.NodeType.ToLower() == "tspan" &&
+							x.Attributes.Exists(y => y.Name.ToLower() == "y"));
+						if(spans.Count > 0)
+						{
+							span = spans[0];
+							attribute =
+								span.Attributes.FirstOrDefault(x => x.Name.ToLower() == "y");
+							if(attribute != null)
+							{
+								//	Raw.
+								y = (float)ToInt(attribute.Value);
+								dominantBaseline =
+									GetActiveStyle(span, "dominant-baseline", dominantBaseline);
+								height = GetHeight(span);
+								switch(dominantBaseline)
+								{
+									case "central":
+									case "middle":
+										result = y - (height / 2f);
+										break;
+									case "hanging":
+									case "text-before-edge":
+										result = y;
+										break;
+									case "alphabetic":
+									default:
+										result = y - height;
+										break;
+								}
+							}
+						}
+						break;
+					case "tspan":
+						span = node;
+						attribute =
+							span.Attributes.FirstOrDefault(x => x.Name.ToLower() == "y");
+						if(attribute != null)
+						{
+							//	Raw.
+							y = (float)ToInt(attribute.Value);
+							dominantBaseline =
+								GetActiveStyle(span, "dominant-baseline", dominantBaseline);
+							height = GetHeight(span);
+							switch(dominantBaseline)
+							{
+								case "central":
+								case "middle":
+									result = y - (height / 2f);
+									break;
+								case "hanging":
+								case "text-before-edge":
+									result = y;
+									break;
+								case "alphabetic":
+								default:
+									result = y - height;
+									break;
+							}
+						}
+						break;
+					default:
+						attribute =
+							node.Attributes.FirstOrDefault(x => x.Name.ToLower() == "y");
+						if(attribute != null)
+						{
+							result = (float)ToInt(attribute.Value);
+						}
+						break;
 				}
 			}
 			return result;
@@ -569,13 +739,21 @@ namespace SvgToolsLibrary
 			if(node != null)
 			{
 				if((node.Attributes.Exists(x => x.Name.ToLower() == "intent" &&
-					mControlTypes.Contains(x.Value.ToLower()))) ||
+					mControlTypes.Contains(LeftOf(x.Value.ToLower(), "-")))) ||
 					(!IsLayer(node) &&
 					node.Attributes.Exists(x => x.Name.ToLower() == "inkscape:label" &&
-					mControlTypes.Contains(x.Value.ToLower()))))
+					mControlTypes.Contains(LeftOf(x.Value.ToLower(), "-")))))
 				{
 					result = true;
 				}
+				//if((node.Attributes.Exists(x => x.Name.ToLower() == "intent" &&
+				//	x.Value?.Length > 0)) ||
+				//	(!IsLayer(node) &&
+				//	node.Attributes.Exists(x => x.Name.ToLower() == "inkscape:label" &&
+				//	x.Value?.Length > 0)))
+				//{
+				//	result = true;
+				//}
 			}
 			return result;
 		}
@@ -599,7 +777,10 @@ namespace SvgToolsLibrary
 		{
 			bool result = false;
 
-			if(node != null && !IsLayer(node) && HasIntent(node))
+			if(node != null && (
+				node.NodeType.ToLower() == "image" ||
+				node.NodeType.ToLower() == "text" ||
+				(!IsLayer(node) && HasIntent(node))))
 			{
 				result = true;
 			}

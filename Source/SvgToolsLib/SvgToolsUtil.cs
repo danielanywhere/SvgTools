@@ -16,18 +16,19 @@
  * 
  */
 
-using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using SkiaSharp;
+
 using Html;
-using System.Globalization;
 using Geometry;
 
 namespace SvgToolsLibrary
@@ -57,6 +58,14 @@ namespace SvgToolsLibrary
 		private static string[] mAbsStart = new string[]
 		{
 			@"\", "/", "~", "$", @"\\", "//"
+		};
+
+		/// <summary>
+		/// Font-relative CSS measurement units.
+		/// </summary>
+		private static string[] mFontRelativeCssMeasurements = new string[]
+		{
+				"ch", "em", "ex", "rem"
 		};
 
 		/// <summary>
@@ -255,7 +264,10 @@ namespace SvgToolsLibrary
 			float ax = 0f;
 			float bx = 0f;
 			BoundingObjectItem bounds = null;
+			string fontSize = "";
 			float hx = 0f;
+			HtmlNodeItem node = null;
+			List<HtmlNodeItem> nodes = null;
 			BoundingObjectItem result = null;
 			string tl = "";
 			float wx = 0f;
@@ -363,6 +375,46 @@ namespace SvgToolsLibrary
 							};
 							break;
 						case "text":
+							//	The text object itself doesn't have a position or dimensions.
+							//	The inner tspan has x and y values.
+							//	The width and height of the text are estimated.
+							nodes = sourceNode.Nodes.FindMatches(x =>
+								x.NodeType.ToLower() == "tspan");
+							if(nodes.Count > 0)
+							{
+								//	TODO: Expand text bounds for multiple tspans.
+								node = nodes[0];
+								xx = ToFloat(GetAttributeValue(node, "x"));
+								yx = ToFloat(GetAttributeValue(node, "y"));
+								fontSize = GetActiveStyle(node, "font-size", "10pt");
+								wx = EstimateTextWidth(node.Text.Trim(), fontSize);
+								hx = EstimateTextHeight(node.Text.Trim(), fontSize);
+								ax = xx + wx;
+								bx = yx + hx;
+								result = new BoundingObjectItem()
+								{
+									MinX = Math.Min(xx, ax),
+									MinY = Math.Min(yx, bx),
+									MaxX = Math.Max(xx, ax),
+									MaxY = Math.Max(yx, bx)
+								};
+							}
+							break;
+						case "tspan":
+							xx = ToFloat(GetAttributeValue(sourceNode, "x"));
+							yx = ToFloat(GetAttributeValue(sourceNode, "y"));
+							fontSize = GetActiveStyle(sourceNode, "font-size", "10pt");
+							wx = EstimateTextWidth(sourceNode.Text.Trim(), fontSize);
+							hx = EstimateTextHeight(sourceNode.Text.Trim(), fontSize);
+							ax = xx + wx;
+							bx = yx + hx;
+							result = new BoundingObjectItem()
+							{
+								MinX = Math.Min(xx, ax),
+								MinY = Math.Min(yx, bx),
+								MaxX = Math.Max(xx, ax),
+								MaxY = Math.Max(yx, bx)
+							};
 							break;
 						case "use":
 							break;
@@ -1051,6 +1103,37 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* ConvertElementsToLower																								*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Convert all HTML tags and property names to lower case.
+		/// </summary>
+		/// <param name="doc">
+		/// Reference to the document to be updated.
+		/// </param>
+		public static void ConvertElementsToLower(HtmlDocument doc)
+		{
+			List<HtmlNodeItem> flatNodesList = null;
+
+			if(doc?.Nodes.Count > 0)
+			{
+				flatNodesList = doc.Nodes.FindMatches(x => x.Text?.Length >= 0);
+				foreach(HtmlNodeItem nodeItem in flatNodesList)
+				{
+					nodeItem.NodeType = nodeItem.NodeType.ToLower();
+					foreach(HtmlAttributeItem attributeItem in nodeItem.Attributes)
+					{
+						if(attributeItem.Name?.Length > 0)
+						{
+							attributeItem.Name = attributeItem.Name.ToLower();
+						}
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* CopyFields<T>																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1622,6 +1705,358 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* EstimateFontHeight																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the estimated height of the font, in pixels.
+		/// </summary>
+		/// <param name="fontSize">
+		/// The size of the font, in CSS units.
+		/// </param>
+		/// <returns>
+		/// The estimated height of the font, in CSS units.
+		/// </returns>
+		public static float EstimateFontHeight(string fontSize)
+		{
+			Match match = null;
+			string measure = "";
+			string number = "";
+			float result = 0f;
+			float value = 0f;
+
+			if(fontSize?.Length > 0)
+			{
+				match = Regex.Match(fontSize, ResourceMain.rxCssNumberWithMeasure);
+				if(match.Success)
+				{
+					number = GetValue(match, "number");
+					measure = GetValue(match, "measure");
+					if(number.Length > 0)
+					{
+						value = ToFloat(number);
+						switch(measure)
+						{
+							case "ch":
+								//	Relative to the width of the zero character.
+								//	Assumed size = 10pt;
+								result = 6.666667f;
+								break;
+							case "cm":
+								//	Centimeters @ 37.795275 dpcm.
+								result = value * 37.795275f;
+								break;
+							case "em":
+								//	Relative to the stated font-size of the element,
+								//	assumed 10pt.
+							case "rem":
+								//	Relative to the font-size of the root element,
+								//	assumed 10pt.
+								result = value * 13.333333f;
+								break;
+							case "ex":
+								//	Relative to the height of the X character in the current
+								//	font.
+								result = value;
+								break;
+							case "in":
+								//	Inches @ 96 dpi.
+								result = value * 96f;
+								break;
+							case "mm":
+								//	Millimeters @ 3.779528 dpmm.
+								result = value * 3.779528f;
+								break;
+							case "pc":
+								//	Picas. 1 pica = 12 points.
+								result = value * 16f;
+								break;
+							case "pt":
+								//	Points. 1 point = 1/72 inch @ 96 dpi.
+								result = value * 1.333333f;
+								break;
+							case "px":
+								//	Pixels. Return the specific value.
+							case "":
+								//	Implied pixels. Return the specific value.
+								result = value;
+								break;
+							case "vh":
+								//	Percentage of view height, assumed to be 1080.
+							case "vmin":
+								//	Percentage of minimum view dimension. Assumed height.
+								result = (value / 100f) * 1080f;
+								break;
+							case "vmax":
+								//	Percentage of maximum view dimension. Assumed width.
+							case "vw":
+								//	Percentage of view width, assumed to be 1920.
+							case "%":
+								//	Percentage of width, assumed to be view width.
+								result = (value / 100f) * 1920f;
+								break;
+						}
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* EstimateTextHeight																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the estimated text height, in pixels.
+		/// </summary>
+		/// <param name="text">
+		/// The text to measure.
+		/// </param>
+		/// <param name="fontSize">
+		/// The size of the font, with units.
+		/// </param>
+		/// <returns>
+		/// The height of the text.
+		/// </returns>
+		public static float EstimateTextHeight(string text, string fontSize)
+		{
+			float height = 0f;
+			string[] lines = null;
+
+			if(text?.Length > 0 && fontSize?.Length > 0)
+			{
+				height = EstimateFontHeight(fontSize);
+				lines = text.Split('\n');
+				height *= (lines.Length * 1.2f);
+			}
+			return height;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* EstimateTextWidth																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the estimated width of the presented text for the specified
+		/// font size.
+		/// </summary>
+		/// <param name="text">
+		/// The text to estimate.
+		/// </param>
+		/// <param name="fontSize">
+		/// The size of the font, using CSS measurement units.
+		/// </param>
+		/// <returns>
+		/// The estimated width of the text, in pixels.
+		/// </returns>
+		public static float EstimateTextWidth(string text, string fontSize)
+		{
+			float height = 0f;
+			float width = 0f;
+
+			if(text?.Length > 0 && fontSize?.Length > 0)
+			{
+				height = EstimateFontHeight(fontSize);
+				foreach(char c in text)
+				{
+					if(char.IsWhiteSpace(c))
+					{
+						width += height * 0.33f;
+					}
+					else if("il.:;!|".Contains(c))
+					{
+						width += height * 0.3f;
+					}
+					else if(char.IsUpper(c))
+					{
+						width += height * 0.6f;
+					}
+					else
+					{
+						width += height * 0.5f;
+					}
+				}
+			}
+			return width;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetActiveAttribute																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the active attribute for the specified attribute name, beginning
+		/// at the provided node and working backward in the ancestor chain until
+		/// it is found.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node for which to return the attribute.
+		/// </param>
+		/// <param name="attributeName">
+		/// Name of the attribute to retrieve.
+		/// </param>
+		/// <returns>
+		/// Reference to the specified attribute in the current node or ancestor
+		/// chain, if found. Otherwise, null.
+		/// </returns>
+		public static HtmlAttributeItem GetActiveAttribute(HtmlNodeItem node,
+			string attributeName)
+		{
+			HtmlAttributeItem result = null;
+
+			if(node != null && attributeName?.Length > 0)
+			{
+				result = node.Attributes.FirstOrDefault(x =>
+					x.Name.ToLower() == attributeName);
+				if(result == null && node.ParentNode != null)
+				{
+					result = GetActiveAttribute(node.ParentNode, attributeName);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetActiveStyle																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the active value of the specified style in the current node or
+		/// its ancestors.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the current node to be tested.
+		/// </param>
+		/// <param name="styleName">
+		/// Name of the style to check for.
+		/// </param>
+		/// <param name="defaultValue">
+		/// The default value to return in case no active value was found.
+		/// </param>
+		/// <returns>
+		/// The active value for the specified style on the provided node or its
+		/// ancestors, if found. Otherwise, the default value, if not null.
+		/// Otherwise, an empty string.
+		/// </returns>
+		public static string GetActiveStyle(HtmlNodeItem node, string styleName,
+			string defaultValue)
+		{
+			string defaultMeasure = "";
+			float defaultNumber = 0f;
+			Match match = null;
+			string measure = "";
+			string number = "";
+			string result = "";
+			string style = "";
+
+			if(node != null && styleName?.Length > 0)
+			{
+				style = HtmlAttributeCollection.GetStyle(node, styleName);
+				if(style.Length > 0)
+				{
+					match = Regex.Match(style, ResourceMain.rxCssNumberWithMeasure);
+					if(match.Success)
+					{
+						number = GetValue(match, "number");
+						measure = GetValue(match, "measure");
+						if(measure.Length > 0)
+						{
+							if(mFontRelativeCssMeasurements.Contains(measure))
+							{
+								//	This is a font-relative measurement.
+								if(node.ParentNode != null)
+								{
+									result = GetActiveStyle(node.ParentNode, "font-size", style);
+									if(result.Length == 0 && defaultValue?.Length > 0)
+									{
+										result = defaultValue;
+									}
+									else
+									{
+										result = style;
+									}
+								}
+								else
+								{
+									result = style;
+								}
+							}
+							else
+							{
+								//	The style has been resolved locally.
+								if(defaultValue?.Length > 2 &&
+									mFontRelativeCssMeasurements.Contains(
+										measure.Substring(measure.Length - 2)) &&
+									styleName == "font-size")
+								{
+									//	Currently matching on a supplied relative font size.
+									match = Regex.Match(defaultValue,
+										ResourceMain.rxCssNumberWithMeasure);
+									if(match.Success)
+									{
+										defaultNumber = ToFloat(GetValue(match, "number"));
+										defaultMeasure = GetValue(match, "measure");
+										switch(defaultMeasure)
+										{
+											case "ch":
+												defaultNumber *= 0.5f;
+												result = $"{ToFloat(number) * defaultNumber}{measure}";
+												break;
+											case "em":
+											case "ex":
+												result = $"{ToFloat(number) * defaultNumber}{measure}";
+												break;
+											case "rem":
+												if(HasAncestorStyle(node, styleName))
+												{
+													result = GetActiveStyle(node.ParentNode, "font-size",
+														defaultValue);
+												}
+												else
+												{
+													result = defaultValue;
+												}
+												break;
+										}
+									}
+								}
+								else
+								{
+									result = style;
+								}
+							}
+						}
+						else
+						{
+							result = number;
+						}
+					}
+				}
+				else if(node.ParentNode != null)
+				{
+					result = GetActiveStyle(node.ParentNode, styleName, defaultValue);
+				}
+				else if(defaultValue?.Length > 0)
+				{
+					result = defaultValue;
+				}
+				else
+				{
+					result = "";
+				}
+			}
+			else if(defaultValue?.Length > 0)
+			{
+				result = defaultValue;
+			}
+			else
+			{
+				result = "";
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetArea																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2071,6 +2506,40 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* HasAncestorStyle																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether this node's parent or one of its
+		/// ancestors contain the specified style.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node whose ancestors will be inspected.
+		/// </param>
+		/// <param name="styleName">
+		/// The name of the style to test for.
+		/// </param>
+		/// <returns>
+		/// True if the node's parent or other ancestors contain the specified
+		/// style. Otherwise, false.
+		/// </returns>
+		public static bool HasAncestorStyle(HtmlNodeItem node, string styleName)
+		{
+			bool result = false;
+
+			if(node != null && styleName?.Length > 0 && node.ParentNode != null)
+			{
+				result = HtmlAttributeCollection.StyleExists(
+					node.ParentNode.Attributes, styleName);
+				if(!result)
+				{
+					result = HasAncestorStyle(node.ParentNode, styleName);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* InitializeCompatibleSvgStructure																			*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2178,6 +2647,58 @@ namespace SvgToolsLibrary
 		{
 			byte ascii = (byte)value;
 			return ascii > 64 && ascii < 91;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* LeftOf																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the portion of the string to the left of the specified pattern.
+		/// </summary>
+		/// <param name="value">
+		/// The original value.
+		/// </param>
+		/// <param name="pattern">
+		/// The pattern at which to stop the original string.
+		/// </param>
+		/// <param name="last">
+		/// Value indicating whether to return the content to the left of the
+		/// last instance of the pattern.
+		/// </param>
+		/// <returns>
+		/// Portion of the string to the left of the specified pattern, if
+		/// found. Otherwise, the entire value if non-null. Otherwise, an
+		/// empty string.
+		/// </returns>
+		public static string LeftOf(string value, string pattern,
+			bool last = false)
+		{
+			int index = 0;
+			string result = "";
+
+			if(value?.Length > 0)
+			{
+				result = value;
+				if(pattern?.Length > 0)
+				{
+					if(last)
+					{
+						//	Last index.
+						index = value.LastIndexOf(pattern);
+					}
+					else
+					{
+						//	First index.
+						index = value.IndexOf(pattern);
+					}
+					if(index > -1)
+					{
+						result = value.Substring(0, index);
+					}
+				}
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 

@@ -207,7 +207,15 @@ namespace SvgToolsLibrary
 		/// A layout container that arranges child elements in a single vertical
 		/// line.
 		/// </summary>
-		VerticalStackPanel
+		VerticalStackPanel,
+		/// <summary>
+		/// A menu panel containing child entries for an individual menu item.
+		/// </summary>
+		MenuPanel,
+		/// <summary>
+		/// An image resource.
+		/// </summary>
+		Image
 	}
 	//*-------------------------------------------------------------------------*
 

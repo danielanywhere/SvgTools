@@ -102,7 +102,16 @@ namespace SvgToolsLibrary
 					Trace.Write(' ');
 					Trace.Write(areaItem.Intent.ToString());
 					Trace.Write(' ');
-					Trace.WriteLine(areaItem.Node.Id);
+					Trace.Write(areaItem.Node.Id);
+					Trace.Write("\t{");
+					Trace.Write(areaItem.X);
+					Trace.Write(',');
+					Trace.Write(areaItem.Y);
+					Trace.Write(',');
+					Trace.Write(areaItem.Width);
+					Trace.Write(',');
+					Trace.Write(areaItem.Height);
+					Trace.WriteLine("}");
 					Dump(areaItem.FrontAreas, indent + 1);
 				}
 			}
