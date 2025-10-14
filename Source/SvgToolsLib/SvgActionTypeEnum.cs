@@ -38,14 +38,14 @@ namespace SvgToolsLibrary
 		/// Apply all appropriate transformations in the document.
 		/// </summary>
 		ApplyTransforms,
-		/// <summary>
-		/// Convert the SVG UI Design Art to GTK3.
-		/// </summary>
-		ArtToGtk3,
-		/// <summary>
-		/// Convert the SVG UI Design Art to XAML.
-		/// </summary>
-		ArtToXaml,
+		///// <summary>
+		///// Convert the SVG UI Design Art to GTK3.
+		///// </summary>
+		//ArtToGtk3,
+		///// <summary>
+		///// Convert the SVG UI Design Art to XAML.
+		///// </summary>
+		//ArtToXaml,
 		/// <summary>
 		/// Read a configuration file to load a batch of SVG actions.
 		/// </summary>
@@ -114,6 +114,10 @@ namespace SvgToolsLibrary
 		/// Enumerate the controls in the specified implied design file.
 		/// </summary>
 		ImpliedDesignEnumerateControls,
+		/// <summary>
+		/// Translate the provided implied form design file to Avalonia AXAML.
+		/// </summary>
+		ImpliedDesignToAvaloniaXaml,
 		/// <summary>
 		/// Open the working SVG file to allow multiple operations to be completed
 		/// in the same session.

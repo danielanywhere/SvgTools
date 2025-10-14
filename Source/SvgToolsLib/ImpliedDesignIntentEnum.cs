@@ -215,7 +215,11 @@ namespace SvgToolsLibrary
 		/// <summary>
 		/// An image resource.
 		/// </summary>
-		Image
+		Image,
+		/// <summary>
+		/// General text that can be interpreted by context.
+		/// </summary>
+		Text
 	}
 	//*-------------------------------------------------------------------------*
 

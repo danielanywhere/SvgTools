@@ -2169,6 +2169,7 @@ namespace SvgToolsLibrary
 		/// </param>
 		private static void ImpliedDesignEnumerateControls(SvgActionItem item)
 		{
+			ControlAreaCollection areas = null;
 			string content = "";
 			SvgDocumentItem doc = null;
 
@@ -2185,7 +2186,47 @@ namespace SvgToolsLibrary
 					item.WorkingSvg = doc;
 					Trace.WriteLine($" Working document: {item.InputFiles[0].Name}",
 						$"{MessageImportanceEnum.Info}");
-					ImpliedFormDesign.EnumerateControls(doc);
+					areas = ImpliedFormDesign.EnumerateControls(doc);
+					if(areas?.Count > 0)
+					{
+						ControlAreaCollection.Dump(areas, 1);
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ImpliedDesignToAvaloniaXaml																						*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Translate the provided implied form design file to Avalonia AXAML.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the item to be intialized.
+		/// </param>
+		private static void ImpliedDesignToAvaloniaXaml(SvgActionItem item)
+		{
+			string content = "";
+			SvgDocumentItem doc = null;
+			ImpliedFormDesignAXaml formDesign = null;
+
+			if(item != null)
+			{
+				if(CheckElements(item,
+					ActionElementEnum.InputFilename |
+					ActionElementEnum.OutputFilename))
+				{
+					//	Load the document if the filename was specified.
+					content = File.ReadAllText(item.InputFiles[0].FullName);
+					doc = new SvgDocumentItem(content);
+					SvgToolsUtil.ApplyTransforms(doc.Document);
+					SvgToolsUtil.RoundAllValues(doc.Document, 0);
+					item.WorkingSvg = doc;
+					Trace.WriteLine($" Working document: {item.InputFiles[0].Name}",
+						$"{MessageImportanceEnum.Info}");
+					formDesign = new ImpliedFormDesignAXaml(doc);
+					content = formDesign.ToXaml();
 				}
 			}
 		}
@@ -4023,6 +4064,9 @@ namespace SvgToolsLibrary
 				case SvgActionTypeEnum.ImpliedDesignEnumerateControls:
 					//	Enumerate the controls in the implied form design.
 					ImpliedDesignEnumerateControls(this);
+					break;
+				case SvgActionTypeEnum.ImpliedDesignToAvaloniaXaml:
+					ImpliedDesignToAvaloniaXaml(this);
 					break;
 				#region Removed
 				//case ActionTypeEnum.LoadRectangleInfoList:

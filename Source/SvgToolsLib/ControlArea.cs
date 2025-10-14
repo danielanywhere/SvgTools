@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 using Geometry;
@@ -38,6 +39,41 @@ namespace SvgToolsLibrary
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		//*-----------------------------------------------------------------------*
+		//* AppendMatches																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Append items matching the specified pattern to the list of items.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of source areas to search.
+		/// </param>
+		/// <param name="targetItems">
+		/// Reference to the collection of target items.
+		/// </param>
+		/// <param name="match">
+		/// Reference to the function pattern to match.
+		/// </param>
+		private static void AppendMatches(
+			List<ControlAreaItem> areas,
+			List<ControlAreaItem> targetItems,
+			Func<ControlAreaItem, bool> match)
+		{
+			if(areas?.Count > 0 && targetItems != null && match != null)
+			{
+				foreach(ControlAreaItem areaItem in areas)
+				{
+					if(match.Invoke(areaItem) &&
+						!targetItems.Contains(areaItem))
+					{
+						targetItems.Add(areaItem);
+					}
+					AppendMatches(areaItem.FrontAreas, targetItems, match);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*-----------------------------------------------------------------------*
 		//* FillFlatAreaLevel																											*
 		//*-----------------------------------------------------------------------*
@@ -115,6 +151,84 @@ namespace SvgToolsLibrary
 					Dump(areaItem.FrontAreas, indent + 1);
 				}
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* FindMatch																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Retrieve the first match found for the specified predicate.
+		/// </summary>
+		/// <param name="match">
+		/// Reference to the predicate pattern to match.
+		/// </param>
+		/// <param name="recurse">
+		/// Value indicating whether to recurse the descendant items of the
+		/// tree while searching for matches.
+		/// </param>
+		/// <returns>
+		/// Reference to the first match found for the specified pattern, if found.
+		/// Otherwise, null.
+		/// </returns>
+		public ControlAreaItem FindMatch(Func<ControlAreaItem, bool> match,
+			bool recurse = true)
+		{
+			ControlAreaItem result = null;
+
+			if(match != null)
+			{
+				foreach(ControlAreaItem areaItem in this)
+				{
+					if(match.Invoke(areaItem))
+					{
+						result = areaItem;
+						break;
+					}
+					if(result == null && recurse && areaItem.FrontAreas.Count > 0)
+					{
+						result = areaItem.FrontAreas.FindMatch(match);
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* FindMatches																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Retrieve all of the matches found for the specified predicate.
+		/// </summary>
+		/// <param name="match">
+		/// Reference to the predicate pattern to match.
+		/// </param>
+		/// <param name="recurse">
+		/// Value indicating whether to recurse the descendant items of the
+		/// tree while searching for matches.
+		/// </param>
+		/// <returns>
+		/// Reference to a list of control areas, if found. Otherwise, an empty
+		/// list.
+		/// </returns>
+		public List<ControlAreaItem> FindMatches(Func<ControlAreaItem, bool> match,
+			bool recurse = true)
+		{
+			List<ControlAreaItem> result = new List<ControlAreaItem>();
+
+			if(match != null)
+			{
+				foreach(ControlAreaItem areaItem in this)
+				{
+					if(match.Invoke(areaItem))
+					{
+						result.Add(areaItem);
+					}
+					AppendMatches(areaItem.FrontAreas, result, match);
+				}
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -205,6 +319,33 @@ namespace SvgToolsLibrary
 				if(!bFound)
 				{
 					areas.Add(area);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* SortPosition																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Sort all of the areas of the collection by Horizontal then Vertical
+		/// directions.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of areas at which to begin sorting.
+		/// </param>
+		public static void SortPosition(ControlAreaCollection areas)
+		{
+			List<ControlAreaItem> sortedAreas = null;
+
+			if(areas?.Count > 0)
+			{
+				sortedAreas = areas.OrderBy(x => x.X).ThenBy(y => y.Y).ToList();
+				areas.Clear();
+				areas.AddRange(sortedAreas);
+				foreach(ControlAreaItem areaItem in areas)
+				{
+					SortPosition(areaItem.FrontAreas);
 				}
 			}
 		}

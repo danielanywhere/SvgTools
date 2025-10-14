@@ -107,6 +107,14 @@ namespace SvgToolsLibrary
 			"circle", "ellipse", "line", "polygon", "polyline", "rect"
 		};
 
+		/// <summary>
+		/// List of whitespace characters.
+		/// </summary>
+		private static char[] mWhitespaceCharacters = new char[]
+		{
+			' ', '\n', '\r', '\t'
+		};
+
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
@@ -1087,6 +1095,30 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 		//* Clear																																	*
 		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Clear the contents of the specified Html node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to clear.
+		/// </param>
+		public static void Clear(HtmlNodeItem node)
+		{
+			if(node != null)
+			{
+				node.Attributes.Clear();
+				node.Id = "";
+				node.Index = 0;
+				node.Name = "";
+				node.Nodes.Clear();
+				node.NodeType = "";
+				node.Original = "";
+				node.Parent = null;
+				node.SelfClosing = false;
+				node.Text = "";
+				node.TrailingText = "";
+			}
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
 		/// Clear the contents of the specified string builder.
 		/// </summary>
@@ -3220,6 +3252,28 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* Round																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a rounded version of the supplied value.
+		/// </summary>
+		/// <param name="value">
+		/// The value to round.
+		/// </param>
+		/// <param name="precision">
+		/// Number of digits of precision.
+		/// </param>
+		/// <returns>
+		/// The rounded version of the provided value.
+		/// </returns>
+		public static float Round(float value, int precision)
+		{
+			float result = (float)Math.Round((double)value, precision);
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* RoundAllValues																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -3653,7 +3707,6 @@ namespace SvgToolsLibrary
 			return result;
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
-		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
 		/// Provide fail-safe conversion of string to numeric value.
 		/// </summary>
@@ -4055,6 +4108,18 @@ namespace SvgToolsLibrary
 					}
 				}
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	WhitespaceCharacters																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Get a reference to the list of whitespace characters.
+		/// </summary>
+		public static char[] WhitespaceCharacters
+		{
+			get { return mWhitespaceCharacters; }
 		}
 		//*-----------------------------------------------------------------------*
 

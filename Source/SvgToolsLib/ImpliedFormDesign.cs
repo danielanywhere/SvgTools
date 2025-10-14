@@ -135,16 +135,10 @@ namespace SvgToolsLibrary
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
-		//*************************************************************************
-		//*	Public																																*
-		//*************************************************************************
-		//*-----------------------------------------------------------------------*
-		//* ControlTypes																													*
-		//*-----------------------------------------------------------------------*
 		/// <summary>
 		/// List of control types used in implied form design.
 		/// </summary>
-		private static string[] mControlTypes = new string[]
+		protected static string[] mControlTypes = new string[]
 		{
 			"button", "checkbox", "combobox", "gridview", "label", "listbox",
 			"listview", "menubar", "picturebox", "progressbar", "radiobutton",
@@ -156,6 +150,277 @@ namespace SvgToolsLibrary
 			"verticalstackpanel",
 			"menupanel"
 		};
+
+		/// <summary>
+		/// List of discrete control types.
+		/// </summary>
+		protected static string[] mDiscreteControlTypes = new string[]
+		{
+			"button", "checkbox", "combobox", "gridview", "label", "listbox",
+			"listview", "menubar", "picturebox", "progressbar", "radiobutton",
+			"statusbar", "tabcontrol", "textbox", "textwithhelper", "toolbar",
+			"trackbar", "treeview", "updown"
+		};
+
+		/// <summary>
+		/// List of space-occupying layout control types.
+		/// </summary>
+		protected static string[] mOrganizerControlTypes = new string[]
+		{
+			"flowpanel",
+			"grid", "groupbox", "horizontalgrid", "horizontalscrollpanel",
+			"horizontalstackpanel", "panel", "scrollpanel", "splitpanel",
+			"staticpanel", "verticalgrid", "verticalscrollpanel",
+			"verticalstackpanel"
+		};
+
+		//*-----------------------------------------------------------------------*
+		//* FillForm																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Fill the form starting at the provided collection of areas.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of control areas from which the form will
+		/// be filled.
+		/// </param>
+		/// <param name="outputNode">
+		/// Reference to the output node.
+		/// </param>
+		protected virtual void FillForm(ControlAreaCollection areas,
+			HtmlNodeItem outputNode)
+		{
+			ControlAreaItem area = null;
+			List<HtmlAttributeItem> attributes = null;
+			ControlAreaCollection childAreas = null;
+			ControlAreaItem formArea = null;
+			ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
+			List<ControlAreaItem> members = null;
+			string name = "";
+			HtmlNodeItem node = null;
+			string text = "";
+
+			if(areas?.Count > 0 && outputNode != null)
+			{
+				//	Initialize the form.
+				Clear(outputNode);
+				outputNode.NodeType = "Window";
+				outputNode.Attributes.SetAttribute(
+					"xmlns", "https://github.com/avaloniaui");
+				outputNode.Attributes.SetAttribute(
+					"xmlns:x", "http://schemas.microsoft.com/winfx/2006/xaml");
+				outputNode.Attributes.SetAttribute("Width",
+					GetFormWidth(mSvg.Document).ToString("0"));
+				outputNode.Attributes.SetAttribute("Height",
+					GetFormHeight(mSvg.Document).ToString("0"));
+				members = areas.FindMatches(x =>
+					x.Intent == ImpliedDesignIntentEnum.FormInformation);
+				foreach(ControlAreaItem memberItem in members)
+				{
+					if(memberItem.Node != null)
+					{
+						attributes = memberItem.Node.Attributes;
+						foreach(HtmlAttributeItem attributeItem in attributes)
+						{
+							name = attributeItem.Name.ToLower();
+							switch(name)
+							{
+								case "caption":
+									//	Caption.
+									outputNode.Attributes.SetAttribute(
+										"Title", attributeItem.Value);
+									break;
+								case "usebackgroundcolor":
+									//	Value indicating whether to use background colors on
+									//	dropped objects by default on this form.
+									mUseBackgroundColor = ToBool(attributeItem.Value);
+									break;
+								case "usebordercolor":
+									//	Value indicating whether to use border colors of drawing
+									//	objects by default on this form.
+									mUseBorderColor = ToBool(attributeItem.Value);
+									break;
+								case "useborderwidth":
+									//	Value indicating whether to use border widths of drawing
+									//	objects by default on this form.
+									mUseBorderWidth = ToBool(attributeItem.Value);
+									break;
+								case "usecornerradius":
+									//	Value indicating whether to use border corner radii of
+									//	drawing objects by default on this form.
+									mUseCornerRadius = ToBool(attributeItem.Value);
+									break;
+							}
+						}
+					}
+				}
+				//	Finalize the caption.
+				if(!outputNode.Attributes.Exists(x =>
+					x.Name.ToLower() == "title" && x.Value.Length > 0))
+				{
+					text = GetFormCaption(mSvg.Document);
+					if(text.Length > 0)
+					{
+						outputNode.Attributes.SetAttribute("Title", text);
+					}
+				}
+				//	Re-index to the base form.
+				formArea =
+					areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
+				if(formArea != null)
+				{
+					//	Determine the initial layout.
+					childAreas = formArea.FrontAreas;
+					if(HasOrganizer(childAreas))
+					{
+						area = GetOrganizer(childAreas);
+						node = RenderOutputNode(area);
+					}
+					else
+					{
+						//	This item needs an organizer.
+						intent = ImpliedDesignIntentEnum.VerticalGrid;
+						node = new HtmlNodeItem()
+						{
+							NodeType = "rect"
+						};
+						node.Attributes.SetAttribute(
+							"x", Round(formArea.X, 0).ToString());
+						node.Attributes.SetAttribute(
+							"y", Round(formArea.Y, 0).ToString());
+						node.Attributes.SetAttribute(
+							"width", Round(formArea.Width, 0).ToString());
+						node.Attributes.SetAttribute(
+							"height", Round(formArea.Height, 0).ToString());
+						node.Attributes.SetAttribute(
+							"Intent", intent.ToString());
+						area = new ControlAreaItem()
+						{
+							X = formArea.X,
+							Y = formArea.Y,
+							Width = formArea.Width,
+							Height = formArea.Height,
+							Intent = intent,
+							Node = node
+						};
+						area.FrontAreas.AddRange(childAreas);
+						formArea.FrontAreas.Clear();
+						formArea.FrontAreas.Add(area);
+						node = RenderOutputNode(area);
+					}
+					//	This item is a form and has an organizer.
+					PerformLayout(area, node);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* PerformLayout																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Perform layout at the current and descending levels.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area to be processed.
+		/// </param>
+		/// <param name="outputNode">
+		/// Reference to the last active output node to which child items will
+		/// be appended.
+		/// </param>
+		protected virtual void PerformLayout(ControlAreaItem area,
+			HtmlNodeItem outputNode)
+		{
+
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderOutputNode																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render one or more elements to generate the output node that properly
+		/// represents the current area presented by the caller.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <returns>
+		/// Reference to the output HTML node, in the active dialect, that
+		/// properly represents the caller's supplied control area, if
+		/// legitimate. Otherwise, null.
+		/// </returns>
+		protected virtual HtmlNodeItem RenderOutputNode(ControlAreaItem area)
+		{
+			return null;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*************************************************************************
+		//*	Public																																*
+		//*************************************************************************
+		//*-----------------------------------------------------------------------*
+		//*	_Constructor																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Create a new instance of the ImpliedFormDesign item.
+		/// </summary>
+		public ImpliedFormDesign()
+		{
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ImpliedFormDesign item.
+		/// </summary>
+		public ImpliedFormDesign(SvgDocumentItem svgDocument)
+		{
+			if(svgDocument != null)
+			{
+				mSvg = svgDocument;
+				mControlAreas = EnumerateControls(svgDocument);
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Caption																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Caption">Caption</see>.
+		/// </summary>
+		protected string mCaption = "";
+		/// <summary>
+		/// Get/Set the caption of this form.
+		/// </summary>
+		public string Caption
+		{
+			get { return mCaption; }
+			set { mCaption = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ControlAreas																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="ControlAreas">ControlAreas</see>.
+		/// </summary>
+		protected ControlAreaCollection mControlAreas =
+			new ControlAreaCollection();
+		/// <summary>
+		/// Get a reference to the collection of control areas currently active
+		/// for this instance.
+		/// </summary>
+		public ControlAreaCollection ControlAreas
+		{
+			get { return mControlAreas; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ControlTypes																													*
+		//*-----------------------------------------------------------------------*
 		/// <summary>
 		/// Get a reference to an array of control type names.
 		/// </summary>
@@ -175,7 +440,16 @@ namespace SvgToolsLibrary
 		/// <param name="doc">
 		/// Reference to the SVG document to enumerate.
 		/// </param>
-		public static void EnumerateControls(SvgDocumentItem doc)
+		/// <returns>
+		/// Reference to a control area collection where all of the recognizable
+		/// control references have been organized with the intended z-order, if
+		/// found. Otherwise, null.
+		/// </returns>
+		/// <remarks>
+		/// The X,Y placement order of the controls is not yet sorted at this
+		/// stage.
+		/// </remarks>
+		public static ControlAreaCollection EnumerateControls(SvgDocumentItem doc)
 		{
 			ControlAreaItem area = null;
 			ControlAreaCollection areas = null;
@@ -184,6 +458,8 @@ namespace SvgToolsLibrary
 			List<HtmlNodeItem> layers = null;
 			HtmlNodeItem nodeForm = null;
 
+			//	TODO: Sort the controls at each level as:
+			//	left to right, then top to bottom.
 			if(doc != null)
 			{
 				//	Get the form.
@@ -227,7 +503,48 @@ namespace SvgToolsLibrary
 							}
 						}
 					}
-					ControlAreaCollection.Dump(areas, indent);
+				}
+			}
+			if(areas?.Count > 0)
+			{
+				ControlAreaCollection.SortPosition(areas);
+			}
+			return areas;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* FillText																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Fill the provided builder with the text found in the specified control
+		/// area.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the area to inspect.
+		/// </param>
+		/// <param name="builder">
+		/// Reference to the text builder to fill.
+		/// </param>
+		public static void FillText(ControlAreaItem area, StringBuilder builder)
+		{
+			if(area != null && builder != null)
+			{
+				if((area.Intent == ImpliedDesignIntentEnum.Text ||
+					area.Intent == ImpliedDesignIntentEnum.Label) &&
+					area.Node.Text.Length > 0)
+				{
+					if(builder.Length > 0 &&
+						!WhitespaceCharacters.Contains(builder[builder.Length - 1]) &&
+						!WhitespaceCharacters.Contains(area.Node.Text[0]))
+					{
+						builder.Append(' ');
+					}
+					builder.Append(area.Node.Text);
+				}
+				foreach(ControlAreaItem areaItem in area.FrontAreas)
+				{
+					FillText(areaItem, builder);
 				}
 			}
 		}
@@ -399,6 +716,7 @@ namespace SvgToolsLibrary
 			HtmlAttributeItem attribute = null;
 			ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
 			string label = "";
+			string nodeType = "";
 			ImpliedDesignIntentEnum result = ImpliedDesignIntentEnum.None;
 
 			if(node != null)
@@ -431,9 +749,15 @@ namespace SvgToolsLibrary
 					}
 					if(result == ImpliedDesignIntentEnum.None)
 					{
-						if(node.NodeType.ToLower() == "image")
+						nodeType = node.NodeType.ToLower();
+						switch(nodeType)
 						{
-							result = ImpliedDesignIntentEnum.Image;
+							case "image":
+								result = ImpliedDesignIntentEnum.Image;
+								break;
+							case "text":
+								result = ImpliedDesignIntentEnum.Text;
+								break;
 						}
 					}
 				}
@@ -470,6 +794,57 @@ namespace SvgToolsLibrary
 				}
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetOrganizer																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the first organizer found at the current level of the provided
+		/// control area collection.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of areas to enumerate.
+		/// </param>
+		/// <returns>
+		/// Reference to the first control area serving as a
+		/// space-occupying area organizer, if found. Otherwise, null.
+		/// </returns>
+		public static ControlAreaItem GetOrganizer(ControlAreaCollection areas)
+		{
+			ControlAreaItem result = null;
+
+			if(areas?.Count > 0)
+			{
+				result = areas.FirstOrDefault(x => IsOrganizerControl(x.Node));
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetText																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return all of the text found in the provided control area and its
+		/// descendants.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the area to inspect.
+		/// </param>
+		/// <returns>
+		/// The text found in the provided area.
+		/// </returns>
+		public static string GetText(ControlAreaItem area)
+		{
+			StringBuilder builder = new StringBuilder();
+
+			if(area != null && area.Node != null)
+			{
+				FillText(area, builder);
+			}
+			return builder.ToString();
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -721,6 +1096,35 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* HasImages																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified collection or its
+		/// decendants have images.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the control area collection to inspect.
+		/// </param>
+		/// <returns>
+		/// True if one or more images are found in within the supplied tree.
+		/// Otherwise, false.
+		/// </returns>
+		public static bool HasImages(ControlAreaCollection areas)
+		{
+			bool result = false;
+
+			if(areas?.Count > 0)
+			{
+				result =
+					areas.FindMatches(x =>
+						x.Intent == ImpliedDesignIntentEnum.Image ||
+						x.Intent == ImpliedDesignIntentEnum.PictureBox).Count > 0;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* HasIntent																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -760,6 +1164,68 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* HasOrganizer																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether there is a full-area organizer at the
+		/// current level of the area collection.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of control areas to review.
+		/// </param>
+		/// <returns>
+		/// True if the current level of the provided control area collection
+		/// contains an unchallenged area organizer. Otherwise, false.
+		/// </returns>
+		public static bool HasOrganizer(ControlAreaCollection areas)
+		{
+			ControlAreaItem discrete = null;
+			ControlAreaItem organizer = null;
+			bool result = false;
+
+			if(areas?.Count > 0)
+			{
+				organizer = areas.FirstOrDefault(x => IsOrganizerControl(x.Node));
+				if(organizer != null)
+				{
+					discrete = areas.FirstOrDefault(x => IsDiscreteControl(x.Node));
+				}
+				result = (organizer != null && discrete == null);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* HasText																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified collection or its
+		/// decendants have text.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the control area collection to inspect.
+		/// </param>
+		/// <returns>
+		/// True if one or more text instances are found in within the supplied
+		/// tree. Otherwise, false.
+		/// </returns>
+		public static bool HasText(ControlAreaCollection areas)
+		{
+			bool result = false;
+
+			if(areas?.Count > 0)
+			{
+				result =
+					areas.FindMatches(x =>
+						x.Intent == ImpliedDesignIntentEnum.Text ||
+						x.Intent == ImpliedDesignIntentEnum.Label).Count > 0;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* IsControl																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -781,6 +1247,66 @@ namespace SvgToolsLibrary
 				node.NodeType.ToLower() == "image" ||
 				node.NodeType.ToLower() == "text" ||
 				(!IsLayer(node) && HasIntent(node))))
+			{
+				result = true;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* IsDiscreteControl																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the provided node represents a
+		/// discrete control.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the provided node represents a discrete control. Otherwise,
+		/// false.
+		/// </returns>
+		public static bool IsDiscreteControl(HtmlNodeItem node)
+		{
+			ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
+			bool result = false;
+
+			if(node != null)
+			{
+				intent = GetIntent(node);
+				result = mDiscreteControlTypes.Contains(intent.ToString().ToLower());
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* IsFormLayer																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified node represents the
+		/// main form layer.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to test.
+		/// </param>
+		/// <returns>
+		/// True if the provided node is the main form layer. Otherwise, false.
+		/// </returns>
+		public static bool IsFormLayer(HtmlNodeItem node)
+		{
+			bool result = false;
+
+			if(node != null &&
+				node.NodeType.ToLower() == "g" &&
+				node.Attributes.Exists(x =>
+					x.Name.ToLower() == "inkscape:groupmode" &&
+					x.Value.ToLower() == "layer") &&
+				node.Attributes.Exists(x =>
+						x.Name.ToLower() == "inkscape:label" &&
+						x.Value.ToLower().StartsWith("form")))
 			{
 				result = true;
 			}
@@ -814,6 +1340,124 @@ namespace SvgToolsLibrary
 				result = true;
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* IsOrganizerControl																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified node is an area
+		/// organizer.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the node represents a space-occupying organizer. Otherwise,
+		/// false.
+		/// </returns>
+		public static bool IsOrganizerControl(HtmlNodeItem node)
+		{
+			ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
+			bool result = false;
+
+			if(node != null)
+			{
+				intent = GetIntent(node);
+				result = mOrganizerControlTypes.Contains(intent.ToString().ToLower());
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Svg																																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Svg">Svg</see>.
+		/// </summary>
+		private SvgDocumentItem mSvg = null;
+		/// <summary>
+		/// Get/Set a reference to the active SVG document for this instance.
+		/// </summary>
+		public SvgDocumentItem Svg
+		{
+			get { return mSvg; }
+			set { mSvg = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	UseBackgroundColor																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for
+		/// <see cref="UseBackgroundColor">UseBackgroundColor</see>.
+		/// </summary>
+		protected bool mUseBackgroundColor = true;
+		/// <summary>
+		/// Get/Set a value indicating whether to use background colors on dropped
+		/// objects by default on this form.
+		/// </summary>
+		public bool UseBackgroundColor
+		{
+			get { return mUseBackgroundColor; }
+			set { mUseBackgroundColor = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	UseBorderColor																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="UseBorderColor">UseBorderColor</see>.
+		/// </summary>
+		protected bool mUseBorderColor = true;
+		/// <summary>
+		/// Get/Set a value indicating whether to use border colors of drawing
+		/// objects by default on this form.
+		/// </summary>
+		public bool UseBorderColor
+		{
+			get { return mUseBorderColor; }
+			set { mUseBorderColor = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	UseBorderWidth																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="UseBorderWidth">UseBorderWidth</see>.
+		/// </summary>
+		protected bool mUseBorderWidth = true;
+		/// <summary>
+		/// Get/Set a value indicating whether to use border widths of drawing
+		/// objects by default on this form.
+		/// </summary>
+		public bool UseBorderWidth
+		{
+			get { return mUseBorderWidth; }
+			set { mUseBorderWidth = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	UseCornerRadius																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="UseCornerRadius">UseCornerRadius</see>.
+		/// </summary>
+		protected bool mUseCornerRadius = true;
+		/// <summary>
+		/// Get/Set a value indicating whether to use border corner radii of
+		/// drawing objects by default on this form.
+		/// </summary>
+		public bool UseCornerRadius
+		{
+			get { return mUseCornerRadius; }
+			set { mUseCornerRadius = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
