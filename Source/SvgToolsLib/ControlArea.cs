@@ -113,6 +113,28 @@ namespace SvgToolsLibrary
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
+		//*	_Constructor																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Create a new instance of the ControlAreaCollection item.
+		/// </summary>
+		public ControlAreaCollection()
+		{
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ControlAreaCollection item.
+		/// </summary>
+		public ControlAreaCollection(List<ControlAreaItem> areas)
+		{
+			if(areas?.Count > 0)
+			{
+				this.AddRange(areas);
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* Dump																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

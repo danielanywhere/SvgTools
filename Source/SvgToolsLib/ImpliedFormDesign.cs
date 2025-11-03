@@ -21,10 +21,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-
+using System.Text.RegularExpressions;
+using ConversionCalc;
 using Geometry;
 using Html;
-
+using SkiaSharp;
 using static SvgToolsLibrary.SvgToolsUtil;
 
 namespace SvgToolsLibrary
@@ -209,10 +210,12 @@ namespace SvgToolsLibrary
 					"xmlns", "https://github.com/avaloniaui");
 				outputNode.Attributes.SetAttribute(
 					"xmlns:x", "http://schemas.microsoft.com/winfx/2006/xaml");
+				mFormWidth = Round(GetFormWidth(mSvg.Document), 0);
+				mFormHeight = Round(GetFormHeight(mSvg.Document), 0);
 				outputNode.Attributes.SetAttribute("Width",
-					GetFormWidth(mSvg.Document).ToString("0"));
+					mFormWidth.ToString("0"));
 				outputNode.Attributes.SetAttribute("Height",
-					GetFormHeight(mSvg.Document).ToString("0"));
+					mFormHeight.ToString("0"));
 				members = areas.FindMatches(x =>
 					x.Intent == ImpliedDesignIntentEnum.FormInformation);
 				foreach(ControlAreaItem memberItem in members)
@@ -316,6 +319,206 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* FillText																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Fill the provided builder with the text found in the specified control
+		/// area.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the area to inspect.
+		/// </param>
+		/// <param name="builder">
+		/// Reference to the text builder to fill.
+		/// </param>
+		private static void FillText(ControlAreaItem area, StringBuilder builder)
+		{
+			if(area != null && builder != null)
+			{
+				if((area.Intent == ImpliedDesignIntentEnum.Text ||
+					area.Intent == ImpliedDesignIntentEnum.Label) &&
+					area.Node.Text.Length > 0)
+				{
+					if(builder.Length > 0 &&
+						!WhitespaceCharacters.Contains(builder[builder.Length - 1]) &&
+						!WhitespaceCharacters.Contains(area.Node.Text[0]))
+					{
+						builder.Append(' ');
+					}
+					builder.Append(area.Node.Text);
+				}
+				foreach(ControlAreaItem areaItem in area.FrontAreas)
+				{
+					FillText(areaItem, builder);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* mConverter_ResolveBaseToValue																					*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Up-convert the supplied value for the provided external entry type.
+		/// </summary>
+		/// <param name="sender">
+		/// The object raising this event.
+		/// </param>
+		/// <param name="e">
+		/// Conversion event arguments.
+		/// </param>
+		private void mConverter_ResolveBaseToValue(object sender,
+			ConversionEventArgs e)
+		{
+			string name = "";
+
+			//	Relative CSS Unit Values.
+			if(e != null)
+			{
+				name = e.Definition.Name;
+				if(name == "vmax")
+				{
+					if(mFormWidth >= mFormHeight)
+					{
+						name = "vw";
+					}
+					else
+					{
+						name = "vh";
+					}
+				}
+				else if(name == "vmin")
+				{
+					if(mFormWidth >= mFormHeight)
+					{
+						name = "vh";
+					}
+					else
+					{
+						name = "vw";
+					}
+				}
+				switch(name)
+				{
+					case "ch":
+						//	1ch = height in current font and size * 0.666666667.
+						e.Value *= 1d /
+							((double)mCurrentFontSize * 0.666666667d * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "em":
+						//	1em = 'M' in current font height.
+						e.Value *= 1d / ((double)mCurrentFontSize * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "ex":
+						//	1ex = 'X' in current font height = 16px.
+						e.Value *= 1d / ((double)mCurrentFontSize * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "rem":
+						//	1rem = 'M' in root font height.
+						e.Value *= 1d / ((double)mRootFontSize * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "vh":
+						//	1vh = (viewport height / 100) pixels.
+						e.Value *= 1d /
+							(((double)mFormHeight / 100d) * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "vw":
+						//	1vw = (viewport width / 100) pixels.
+						e.Value *= 1d / (((double)mFormWidth / 100d) * e.Definition.Value);
+						e.Handled = true;
+						break;
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* mConverter_ResolveValueToBase																					*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Down-convert the supplied value for the provided external entry type.
+		/// </summary>
+		/// <param name="sender">
+		/// The object raising this event.
+		/// </param>
+		/// <param name="e">
+		/// Conversion event arguments.
+		/// </param>
+		private void mConverter_ResolveValueToBase(object sender,
+			ConversionEventArgs e)
+		{
+			string name = "";
+
+			//	Relative CSS Unit Values.
+			if(e != null)
+			{
+				name = e.Definition.Name;
+				if(name == "vmax")
+				{
+					if(mFormWidth >= mFormHeight)
+					{
+						name = "vw";
+					}
+					else
+					{
+						name = "vh";
+					}
+				}
+				else if(name == "vmin")
+				{
+					if(mFormWidth >= mFormHeight)
+					{
+						name = "vh";
+					}
+					else
+					{
+						name = "vw";
+					}
+				}
+				switch(name)
+				{
+					case "ch":
+						//	1ch = height in current font and size * 0.666666667.
+						e.Value *=
+							((double)mCurrentFontSize * 0.666666667d * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "em":
+						//	1em = 'M' in current font height.
+						e.Value *= ((double)mCurrentFontSize * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "ex":
+						//	1ex = 'X' in current font height = 16px.
+						e.Value *= ((double)mCurrentFontSize * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "rem":
+						//	1rem = 'M' in root font height.
+						e.Value *= ((double)mRootFontSize * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "vh":
+						//	1vh = (viewport height / 100) pixels.
+						e.Value *= (((double)mFormHeight / 100d) * e.Definition.Value);
+						e.Handled = true;
+						break;
+					case "vw":
+						//	1vw = (viewport width / 100) pixels.
+						e.Value *= (((double)mFormWidth / 100d) * e.Definition.Value);
+						e.Handled = true;
+						break;
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* PerformLayout																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -357,6 +560,91 @@ namespace SvgToolsLibrary
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//* RenderOutputNodes																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a collection of output nodes that will be added to a layout
+		/// panel or area.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the list of control areas containing the dimensions,
+		/// coordinates, source node, and intentions for the output.
+		/// </param>
+		/// <returns>
+		/// Reference to a list of output HTML nodes, in the active dialect, that
+		/// properly represent the caller's supplied control areas, if
+		/// legitimate. Otherwise, an empty list.
+		/// </returns>
+		protected virtual List<HtmlNodeItem> RenderOutputNodes(
+			List<ControlAreaItem> areas)
+		{
+			HtmlNodeItem node = null;
+			List<HtmlNodeItem> nodes = new List<HtmlNodeItem>();
+
+			if(areas?.Count > 0)
+			{
+				foreach(ControlAreaItem areaItem in areas)
+				{
+					switch(areaItem.Intent)
+					{
+						case ImpliedDesignIntentEnum.Button:
+						case ImpliedDesignIntentEnum.CheckBox:
+						case ImpliedDesignIntentEnum.ComboBox:
+						case ImpliedDesignIntentEnum.FlowPanel:
+						case ImpliedDesignIntentEnum.Grid:
+						case ImpliedDesignIntentEnum.GridView:
+						case ImpliedDesignIntentEnum.GroupBox:
+						case ImpliedDesignIntentEnum.HorizontalGrid:
+						case ImpliedDesignIntentEnum.HorizontalScrollPanel:
+						case ImpliedDesignIntentEnum.HorizontalStackPanel:
+						case ImpliedDesignIntentEnum.Image:
+						case ImpliedDesignIntentEnum.Label:
+						case ImpliedDesignIntentEnum.ListBox:
+						case ImpliedDesignIntentEnum.ListView:
+						case ImpliedDesignIntentEnum.MenuBar:
+						case ImpliedDesignIntentEnum.Panel:
+						case ImpliedDesignIntentEnum.PictureBox:
+						case ImpliedDesignIntentEnum.ProgressBar:
+						case ImpliedDesignIntentEnum.RadioButton:
+						case ImpliedDesignIntentEnum.ScrollPanel:
+						case ImpliedDesignIntentEnum.SplitPanel:
+						case ImpliedDesignIntentEnum.StaticPanel:
+						case ImpliedDesignIntentEnum.StatusBar:
+						case ImpliedDesignIntentEnum.TabControl:
+						case ImpliedDesignIntentEnum.Text:
+						case ImpliedDesignIntentEnum.TextBox:
+						case ImpliedDesignIntentEnum.TextWithHelper:
+						case ImpliedDesignIntentEnum.ToolBar:
+						case ImpliedDesignIntentEnum.TrackBar:
+						case ImpliedDesignIntentEnum.TreeView:
+						case ImpliedDesignIntentEnum.UpDown:
+						case ImpliedDesignIntentEnum.VerticalGrid:
+						case ImpliedDesignIntentEnum.VerticalScrollPanel:
+						case ImpliedDesignIntentEnum.VerticalStackPanel:
+							node = RenderOutputNode(areaItem);
+							if(node != null)
+							{
+								nodes.Add(node);
+							}
+							break;
+						case ImpliedDesignIntentEnum.Definitions:
+						case ImpliedDesignIntentEnum.Form:
+							//	These intents are skipped and their children are processed.
+							nodes.AddRange(RenderOutputNodes(areaItem.FrontAreas));
+							break;
+						case ImpliedDesignIntentEnum.FormInformation:
+						case ImpliedDesignIntentEnum.MenuPanel:
+						case ImpliedDesignIntentEnum.None:
+							//	This intents are not rendered.
+							break;
+					}
+				}
+			}
+			return nodes;
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*************************************************************************
 		//*	Public																																*
 		//*************************************************************************
@@ -368,12 +656,78 @@ namespace SvgToolsLibrary
 		/// </summary>
 		public ImpliedFormDesign()
 		{
+			ConversionDomainItem domain = null;
+
+			mConverter = new ConversionCalc.Converter();
+
+			mConverter.ResolveBaseToValue += mConverter_ResolveBaseToValue;
+			mConverter.ResolveValueToBase += mConverter_ResolveValueToBase;
+
+			//	Add relative Css Units to the Distance domain.
+			domain = mConverter.Data.Domains.FirstOrDefault(x =>
+				x.DomainName == "Distance");
+			if(domain != null)
+			{
+				//	All of the CSS relative conversions in this example are
+				//	based in pixels.
+				domain.Conversions.AddRange(new ConversionDefinitionItem[]
+				{
+					new ConversionDefinitionItem()
+					{
+						EntryType = ConversionDefinitionEntryType.External,
+						Name = "ch",
+						Value = 0.002645833d
+					},
+					new ConversionDefinitionItem()
+					{
+						EntryType = ConversionDefinitionEntryType.External,
+						Name = "em",
+						Value = 0.002645833d
+					},
+					new ConversionDefinitionItem()
+					{
+						EntryType = ConversionDefinitionEntryType.External,
+						Name = "ex",
+						Value = 0.002645833d
+					},
+					new ConversionDefinitionItem()
+					{
+						EntryType = ConversionDefinitionEntryType.External,
+						Name = "rem",
+						Value = 0.002645833d
+					},
+					new ConversionDefinitionItem()
+					{
+						EntryType = ConversionDefinitionEntryType.External,
+						Name = "vh",
+						Value = 0.002645833d
+					},
+					new ConversionDefinitionItem()
+					{
+						EntryType = ConversionDefinitionEntryType.External,
+						Name = "vmax",
+						Value = 0.002645833d
+					},
+					new ConversionDefinitionItem()
+					{
+						EntryType = ConversionDefinitionEntryType.External,
+						Name = "vmin",
+						Value = 0.002645833d
+					},
+					new ConversionDefinitionItem()
+					{
+						EntryType = ConversionDefinitionEntryType.External,
+						Name = "vw",
+						Value = 0.002645833d
+					}
+				});
+			}
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
 		/// Create a new instance of the ImpliedFormDesign item.
 		/// </summary>
-		public ImpliedFormDesign(SvgDocumentItem svgDocument)
+		public ImpliedFormDesign(SvgDocumentItem svgDocument) : this()
 		{
 			if(svgDocument != null)
 			{
@@ -431,6 +785,43 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	Converter																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Converter">Converter</see>.
+		/// </summary>
+		protected ConversionCalc.Converter mConverter =
+			new ConversionCalc.Converter();
+		/// <summary>
+		/// Get a reference to the conversion calculator for this instance.
+		/// </summary>
+		public ConversionCalc.Converter Converter
+		{
+			get { return mConverter; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	CurrentFontSize																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="CurrentFontSize">CurrentFontSize</see>.
+		/// </summary>
+		protected float mCurrentFontSize = 16f;
+		/// <summary>
+		/// Get/Set the current font size, in pixels.
+		/// </summary>
+		/// <remarks>
+		/// The default for this property is 16px (12pt).
+		/// </remarks>
+		public float CurrentFontSize
+		{
+			get { return mCurrentFontSize; }
+			set { mCurrentFontSize = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* EnumerateControls																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -458,8 +849,6 @@ namespace SvgToolsLibrary
 			List<HtmlNodeItem> layers = null;
 			HtmlNodeItem nodeForm = null;
 
-			//	TODO: Sort the controls at each level as:
-			//	left to right, then top to bottom.
 			if(doc != null)
 			{
 				//	Get the form.
@@ -499,7 +888,12 @@ namespace SvgToolsLibrary
 								areaItem.Node.Id);
 							foreach(HtmlNodeItem layerItem in layers)
 							{
-								ProcessNodeZOrder(layerItem, areaItem.FrontAreas);
+								area = new ControlAreaItem()
+								{
+									Intent = ImpliedDesignIntentEnum.Definitions
+								};
+								areaItem.FrontAreas.Add(area);
+								ProcessNodeZOrder(layerItem, area.FrontAreas);
 							}
 						}
 					}
@@ -514,39 +908,181 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* FillText																															*
+		//*	FormHeight																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Fill the provided builder with the text found in the specified control
-		/// area.
+		/// Private member for <see cref="FormHeight">FormHeight</see>.
 		/// </summary>
-		/// <param name="area">
-		/// Reference to the area to inspect.
-		/// </param>
-		/// <param name="builder">
-		/// Reference to the text builder to fill.
-		/// </param>
-		public static void FillText(ControlAreaItem area, StringBuilder builder)
+		protected float mFormHeight = 1080f;
+		/// <summary>
+		/// Get/Set the height of the current form.
+		/// </summary>
+		public float FormHeight
 		{
-			if(area != null && builder != null)
+			get { return mFormHeight; }
+			set { mFormHeight = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	FormWidth																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="FormWidth">FormWidth</see>.
+		/// </summary>
+		private float mFormWidth = 1920f;
+		/// <summary>
+		/// Get/Set the width of the current form.
+		/// </summary>
+		public float FormWidth
+		{
+			get { return mFormWidth; }
+			set { mFormWidth = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetColumnCount																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the count of columns found at the current control layer.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of areas to inspect.
+		/// </param>
+		/// <returns>
+		/// Count of columns found at the current control layer, if any controls
+		/// were present. Otherwise, 1.
+		/// </returns>
+		public static int GetColumnCount(ControlAreaCollection areas)
+		{
+			List<float> columns = new List<float>();
+			ControlAreaCollection definitionAreas = GetDefinitionAreas(areas);
+			List<ControlAreaItem> flatList = GetFlatList(definitionAreas);
+
+			foreach(ControlAreaItem areaItem in flatList)
 			{
-				if((area.Intent == ImpliedDesignIntentEnum.Text ||
-					area.Intent == ImpliedDesignIntentEnum.Label) &&
-					area.Node.Text.Length > 0)
+				if(!columns.Contains(areaItem.X))
 				{
-					if(builder.Length > 0 &&
-						!WhitespaceCharacters.Contains(builder[builder.Length - 1]) &&
-						!WhitespaceCharacters.Contains(area.Node.Text[0]))
-					{
-						builder.Append(' ');
-					}
-					builder.Append(area.Node.Text);
-				}
-				foreach(ControlAreaItem areaItem in area.FrontAreas)
-				{
-					FillText(areaItem, builder);
+					columns.Add(areaItem.X);
 				}
 			}
+			return columns.Count;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetDefinitionAreas																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a reference to the collection of areas serving as definition
+		/// data for the set.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to a collection of areas to inspect.
+		/// </param>
+		/// <returns>
+		/// Reference to a collection of control areas that set the definition
+		/// for the set. If one or more Definitions intents was found, the
+		/// collection will contain the children of those items. Otherwise,
+		/// the supplied areas collection will be returned. If the supplied areas
+		/// collection was blank an empty collection is returned.
+		/// </returns>
+		public static ControlAreaCollection GetDefinitionAreas(
+			ControlAreaCollection areas)
+		{
+			ControlAreaCollection result = new ControlAreaCollection();
+
+			if(areas?.Count > 0)
+			{
+				result.AddRange(areas.FindMatches(x =>
+					x.Intent == ImpliedDesignIntentEnum.Definitions));
+				if(result.Count == 0)
+				{
+					result = areas;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetFirstArea																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the first of two areas in the orientation given.
+		/// </summary>
+		/// <param name="area1">
+		/// Reference to the first area to review.
+		/// </param>
+		/// <param name="area2">
+		/// Reference to the second area to review.
+		/// </param>
+		/// <param name="orientation">
+		/// Rectilinear orientation at which to apply the test.
+		/// </param>
+		/// <returns>
+		/// Reference to the first of two areas in the specified orientation, if
+		/// found. Otherwise, a reference to the first provided item.
+		/// </returns>
+		public static ControlAreaItem GetFirstArea(ControlAreaItem area1,
+			ControlAreaItem area2, RectilinearOrientationEnum orientation)
+		{
+			float center1 = 0f;
+			float center2 = 0f;
+			ControlAreaItem result = area1;
+
+			if(area1 != null && area2 != null)
+			{
+				switch(orientation)
+				{
+					case RectilinearOrientationEnum.Horizontal:
+						center1 = area1.X + (area1.Width / 2f);
+						center2 = area2.X + (area2.Width / 2f);
+						break;
+					case RectilinearOrientationEnum.Vertical:
+						center1 = area1.Y + (area1.Height / 2f);
+						center2 = area2.Y + (area2.Height / 2f);
+						break;
+				}
+				if(center1 > center2)
+				{
+					result = area2;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetFlatList																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a flat list representation of all of the areas in the provided
+		/// tree.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of areas to flatten.
+		/// </param>
+		/// <returns>
+		/// Reference to a flat collection of areas found in the caller's
+		/// collection.
+		/// </returns>
+		public static List<ControlAreaItem> GetFlatList(
+			ControlAreaCollection areas)
+		{
+			List<ControlAreaItem> result = null;
+
+			if(areas?.Count > 0)
+			{
+				result = areas.FindMatches(x =>
+					x.Intent != ImpliedDesignIntentEnum.None);
+			}
+			if(result == null)
+			{
+				result = new List<ControlAreaItem>();
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -699,6 +1235,131 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetImageArea																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the nearest image area to the provided control area.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area to search for an image type.
+		/// </param>
+		/// <returns>
+		/// Reference to the first image-type control area, either at the
+		/// provided area, or one of its descendants, if found. Otherwise, null.
+		/// </returns>
+		public static ControlAreaItem GetImageArea(ControlAreaItem area)
+		{
+			ControlAreaItem result = null;
+
+			if(area != null)
+			{
+				if(area.Intent == ImpliedDesignIntentEnum.Image ||
+					area.Intent == ImpliedDesignIntentEnum.PictureBox)
+				{
+					result = area;
+				}
+				else
+				{
+					foreach(ControlAreaItem areaItem in area.FrontAreas)
+					{
+						result = GetImageArea(areaItem);
+						if(result != null)
+						{
+							break;
+						}
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetImageName																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the name representing the nearest image node.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area to search for an image.
+		/// </param>
+		/// <returns>
+		/// The name of the image, as it should appear in the assets folder.
+		/// </returns>
+		public static string GetImageName(ControlAreaItem area)
+		{
+			ControlAreaItem image = null;
+			string result = "";
+
+			if(area != null)
+			{
+				image = GetImageArea(area);
+				if(image != null)
+				{
+					result = GetImageName(image.Node);
+				}
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Return the name representing the image node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to an image-like HTML node.
+		/// </param>
+		/// <returns>
+		/// The name of the image, as it should appear in the assets folder.
+		/// </returns>
+		public static string GetImageName(HtmlNodeItem node)
+		{
+			HtmlAttributeItem attribute = null;
+			bool bFilenameFound = false;
+			string extension = "";
+			string result = "";
+
+			if(node != null)
+			{
+				attribute = node.Attributes.FirstOrDefault(x =>
+					x.Name.ToLower() == "xlink:href");
+				if(attribute != null && attribute.Value?.Length > 0)
+				{
+					if(attribute.Value.StartsWith("data:"))
+					{
+						extension = Between(attribute.Value, "/", ";");
+					}
+					attribute = node.Attributes.FirstOrDefault(x =>
+						x.Name.ToLower() == "id");
+					if(attribute?.Value?.Length > 0)
+					{
+						if(extension.Length == 0)
+						{
+							extension = "png";
+						}
+						result = $"{attribute.Value}.{extension}";
+						bFilenameFound = true;
+					}
+				}
+				else
+				{
+					attribute = node.Attributes.FirstOrDefault(x =>
+						x.Name.ToLower() == "id");
+					if(attribute?.Value?.Length > 0)
+					{
+						result = $"{attribute.Value}.png";
+						bFilenameFound = true;
+					}
+				}
+				if(!bFilenameFound)
+				{
+					result = $"{Guid.NewGuid().ToString("D")}.png";
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetIntent																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -824,6 +1485,86 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetOrientation																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the rectilinear orientation of the relationship between two
+		/// areas.
+		/// </summary>
+		/// <param name="area1">
+		/// Reference to the first control area for which the direction will be
+		/// found.
+		/// </param>
+		/// <param name="area2">
+		/// Reference to the second control area for which the direction will be
+		/// found.
+		/// </param>
+		/// <returns>
+		/// The orientation between the two objects, if found. Otherwise, None.
+		/// </returns>
+		public static RectilinearOrientationEnum GetOrientation(
+			ControlAreaItem area1, ControlAreaItem area2)
+		{
+			float angle = 0f;
+			FVector2 center1 = null;
+			FVector2 center2 = null;
+			RectilinearOrientationEnum result = RectilinearOrientationEnum.None;
+
+			if(area1 != null && area2 != null)
+			{
+				center1 = new FVector2(
+					area1.X + (area1.Width / 2f),
+					area1.Y + (area1.Height / 2f));
+				center2 = new FVector2(
+					area2.X + (area2.Width / 2f),
+					area2.Y + (area2.Height / 2f));
+				angle = Trig.RadToDeg(Trig.GetLineAngle(center1, center2));
+				if(angle <= 45f ||
+					(angle >= 135 && angle <= 225) ||
+					angle >= 315)
+				{
+					result = RectilinearOrientationEnum.Horizontal;
+				}
+				else
+				{
+					result = RectilinearOrientationEnum.Vertical;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetRowCount																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the count of rows found at the current control layer.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of areas to inspect.
+		/// </param>
+		/// <returns>
+		/// Count of rows found at the current control layer, if any controls
+		/// were present. Otherwise, 1.
+		/// </returns>
+		public static int GetRowCount(ControlAreaCollection areas)
+		{
+			ControlAreaCollection definitionAreas = GetDefinitionAreas(areas);
+			List<ControlAreaItem> flatList = GetFlatList(definitionAreas);
+			List<float> rows = new List<float>();
+
+			foreach(ControlAreaItem areaItem in flatList)
+			{
+				if(!rows.Contains(areaItem.Y))
+				{
+					rows.Add(areaItem.Y);
+				}
+			}
+			return rows.Count;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetText																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -845,6 +1586,86 @@ namespace SvgToolsLibrary
 				FillText(area, builder);
 			}
 			return builder.ToString();
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetTextArea																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the first text object found at the provided area or one of its
+		/// descendants.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area at which to begin searching.
+		/// </param>
+		/// <returns>
+		/// Reference to the first located text type control area, if found.
+		/// Otherwise, null.
+		/// </returns>
+		public static ControlAreaItem GetTextArea(ControlAreaItem area)
+		{
+			ControlAreaItem result = null;
+
+			if(area != null)
+			{
+				if(area.Intent == ImpliedDesignIntentEnum.Text ||
+					area.Intent == ImpliedDesignIntentEnum.Label)
+				{
+					result = area;
+				}
+				else
+				{
+					foreach(ControlAreaItem areaItem in area.FrontAreas)
+					{
+						result = GetTextArea(areaItem);
+						if(result != null)
+						{
+							break;
+						}
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetTextDefinitions																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the text-type nodes found in the definitions collection and its
+		/// descendants.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to a collection of areas to search for text definition nodes.
+		/// </param>
+		/// <returns>
+		/// Reference to a list of control areas found in the local and descendant
+		/// collections, if found. Otherwise, an empty list.
+		/// </returns>
+		public static List<ControlAreaItem> GetTextDefinitions(
+			ControlAreaCollection areas)
+		{
+			ControlAreaCollection definitionAreas = null;
+			List<ControlAreaItem> result = null;
+
+			if(areas?.Count > 0)
+			{
+				definitionAreas = GetDefinitionAreas(areas);
+				if(definitionAreas.Count > 0)
+				{
+					result = definitionAreas.FindMatches(x =>
+						x.Node != null &&
+						(x.Intent == ImpliedDesignIntentEnum.Label ||
+						x.Intent == ImpliedDesignIntentEnum.Text));
+				}
+			}
+			else
+			{
+				result = new List<ControlAreaItem>();
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1371,6 +2192,44 @@ namespace SvgToolsLibrary
 		}
 		//*-----------------------------------------------------------------------*
 
+		//	TODO: Resolve project name while running the application.
+		//*-----------------------------------------------------------------------*
+		//*	ProjectName																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="ProjectName">ProjectName</see>.
+		/// </summary>
+		protected string mProjectName = "";
+		/// <summary>
+		/// Get/Set the name of the project of which this form is a member.
+		/// </summary>
+		public string ProjectName
+		{
+			get { return mProjectName; }
+			set { mProjectName = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	RootFontSize																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="RootFontSize">RootFontSize</see>.
+		/// </summary>
+		protected float mRootFontSize = 16f;
+		/// <summary>
+		/// Get/Set the root font size, in pixels.
+		/// </summary>
+		/// <remarks>
+		/// The default for this property is 16px (12pt).
+		/// </remarks>
+		public float RootFontSize
+		{
+			get { return mRootFontSize; }
+			set { mRootFontSize = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*-----------------------------------------------------------------------*
 		//*	Svg																																		*
 		//*-----------------------------------------------------------------------*
@@ -1385,6 +2244,70 @@ namespace SvgToolsLibrary
 		{
 			get { return mSvg; }
 			set { mSvg = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* TransferUnitAttribute																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Transfer the CSS unit attribute value from the source area's
+		/// attributes to the target area.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the source node.
+		/// </param>
+		/// <param name="sourceAttributeName">
+		/// Name of the source attribute to read.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target node.
+		/// </param>
+		/// <param name="targetAttributeName">
+		/// Name of the target attribute to write.
+		/// </param>
+		public void TransferUnitAttribute(
+			HtmlNodeItem source, string sourceAttributeName,
+			HtmlNodeItem target, string targetAttributeName)
+		{
+			HtmlAttributeItem attribute = null;
+			Match match = null;
+			string measure = "";
+			string name = "";
+			string number = "";
+			string targetValue = "0";
+
+			if(source != null && target != null &&
+				sourceAttributeName?.Length > 0 && targetAttributeName?.Length > 0)
+			{
+				name = sourceAttributeName.ToLower();
+				attribute = source.Attributes.FirstOrDefault(x =>
+					x.Name.ToLower() == name);
+				if(attribute != null && attribute.Value?.Length > 0)
+				{
+					match = Regex.Match(attribute.Value,
+						ResourceMain.rxCssNumberWithMeasure);
+					if(match.Success)
+					{
+						number = GetValue(match, "number");
+						measure = GetValue(match, "measure");
+						if(number.Length > 0)
+						{
+							if(measure.Length > 0 && measure.ToLower() != "px")
+							{
+								targetValue =
+									mConverter.Convert("Distance", ToDouble(number),
+										measure, "px").ToString("0.###");
+							}
+							else
+							{
+								//	Value is already in pixels.
+								targetValue = ToFloat(number).ToString("0.###");
+							}
+						}
+					}
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
 

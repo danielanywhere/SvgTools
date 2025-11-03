@@ -16,11 +16,12 @@
  * 
  */
 
-using Html;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+using Html;
 
 namespace SvgToolsLibrary
 {
@@ -60,7 +61,11 @@ namespace SvgToolsLibrary
 					x.Value?.Length > 0);
 				if(attribute != null)
 				{
-					targetNode.Attributes.SetAttribute("x:Name", attribute.Value);
+					if(!attribute.Value.ToLower().StartsWith(
+						sourceNode.NodeType.ToLower()))
+					{
+						targetNode.Attributes.SetAttribute("x:Name", attribute.Value);
+					}
 				}
 			}
 		}
@@ -127,12 +132,26 @@ namespace SvgToolsLibrary
 		/// </returns>
 		protected override HtmlNodeItem RenderOutputNode(ControlAreaItem area)
 		{
+			List<ControlAreaItem> areas = null;
+			HtmlNodeItem childNode = null;
+			HtmlNodeItem containerNode = null;
+			ControlAreaItem firstArea = null;
+			int gridColCount = 0;
+			int gridRowCount = 0;
+			ControlAreaItem imageArea = null;
+			string imageName = "";
+			HtmlNodeItem node = null;
+			int nodeIndex = 0;
+			List<HtmlNodeItem> nodes = null;
+			RectilinearOrientationEnum orientation = RectilinearOrientationEnum.None;
 			HtmlNodeItem result = null;
+			ControlAreaItem secondArea = null;
 			int state = 0;
 			string text = "";
+			ControlAreaItem textArea = null;
 
-			//	TODO: !1 - Stopped here...
 			//	TODO: Implement AXAML version of RenderOutputNode.
+			//	TODO: Allow coordinates to be added if control is placed on panel.
 			if(area != null)
 			{
 				switch(area.Intent)
@@ -159,23 +178,143 @@ namespace SvgToolsLibrary
 								break;
 							case 2:
 								//	Images only, no text.
+								imageArea = GetImageArea(area);
+								result = new HtmlNodeItem()
+								{
+									NodeType = "Button",
+									SelfClosing = false
+								};
+								SetRenderedControlName(area.Node, result);
+								childNode = RenderOutputNode(imageArea);
+								if(childNode != null)
+								{
+									result.Nodes.Add(childNode);
+								}
 								break;
 							case 3:
 								//	Text and images.
+								imageArea = GetImageArea(area);
+								textArea = GetTextArea(area);
+								if(imageArea != null && textArea != null)
+								{
+									result = new HtmlNodeItem()
+									{
+										NodeType = "Button",
+										SelfClosing = false
+									};
+									SetRenderedControlName(area.Node, result);
+									containerNode = new HtmlNodeItem()
+									{
+										NodeType = "StackPanel"
+									};
+									containerNode.Attributes.SetAttribute("Spacing", "5");
+									result.Nodes.Add(containerNode);
+									orientation = GetOrientation(imageArea, textArea);
+									switch(orientation)
+									{
+										case RectilinearOrientationEnum.Horizontal:
+										case RectilinearOrientationEnum.None:
+											containerNode.Attributes.SetAttribute(
+												"Orientation", "Horizontal");
+											break;
+										case RectilinearOrientationEnum.Vertical:
+											containerNode.Attributes.SetAttribute(
+												"Orientation", "Vertical");
+											break;
+									}
+									firstArea = GetFirstArea(imageArea, textArea, orientation);
+									if(firstArea != null)
+									{
+										childNode = RenderOutputNode(firstArea);
+										if(childNode != null)
+										{
+											result.Nodes.Add(childNode);
+										}
+										secondArea =
+											(imageArea == firstArea ? textArea : imageArea);
+										if(secondArea != null)
+										{
+											childNode = RenderOutputNode(secondArea);
+											if(childNode != null)
+											{
+												result.Nodes.Add(childNode);
+											}
+										}
+									}
+								}
 								break;
 						}
 						break;
 					case ImpliedDesignIntentEnum.CheckBox:
+						//	A checkbox might have an integrated label or nothing else.
+						result = new HtmlNodeItem()
+						{
+							NodeType = "CheckBox",
+							SelfClosing = true
+						};
+						if(area.Node?.NodeType == "g" &&
+							HasText(area.FrontAreas))
+						{
+							//	This is a checkbox with a label.
+							text = GetText(area);
+							result.Attributes.SetAttribute("Content", text);
+						}
+						SetRenderedControlName(area.Node, result);
 						break;
 					case ImpliedDesignIntentEnum.ComboBox:
+						result = new HtmlNodeItem()
+						{
+							NodeType = "ComboBox",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						areas = GetTextDefinitions(area.FrontAreas);
+						foreach(ControlAreaItem areaItem in areas)
+						{
+							childNode = new HtmlNodeItem()
+							{
+								NodeType = "ComboBoxItem",
+								SelfClosing = false
+							};
+							if(areaItem.Node != null)
+							{
+								SetRenderedControlName(areaItem.Node, childNode);
+								childNode.Text = GetText(areaItem);
+							}
+							result.Nodes.Add(childNode);
+						}
 						break;
 					case ImpliedDesignIntentEnum.FlowPanel:
+						result = new HtmlNodeItem()
+						{
+							NodeType = "FlowPanel",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						nodes = RenderOutputNodes(area.FrontAreas);
+						foreach(HtmlNodeItem nodeItem in nodes)
+						{
+							result.Nodes.Add(nodeItem);
+						}
 						break;
 					case ImpliedDesignIntentEnum.Form:
+						//	Inner forms are not supported, but their controls can be
+						//	rendered.
+						nodes = RenderOutputNodes(area.FrontAreas);
+						foreach(HtmlNodeItem nodeItem in nodes)
+						{
+							result.Nodes.Add(nodeItem);
+						}
 						break;
 					case ImpliedDesignIntentEnum.FormInformation:
+						//	Form information is not rendered.
 						break;
 					case ImpliedDesignIntentEnum.Grid:
+						gridRowCount = GetRowCount(area.FrontAreas);
+						gridColCount = GetColumnCount(area.FrontAreas);
+						//	TODO: !1 - Stopped here...
+						//	TODO: Layout the child controls in the grid.
+						//	Consider explicit row and column enumeration.
 						break;
 					case ImpliedDesignIntentEnum.GridView:
 						break;
@@ -188,6 +327,24 @@ namespace SvgToolsLibrary
 					case ImpliedDesignIntentEnum.HorizontalStackPanel:
 						break;
 					case ImpliedDesignIntentEnum.Image:
+						imageArea = GetImageArea(area);
+						if(imageArea != null)
+						{
+							imageName = GetImageName(imageArea.Node);
+						}
+						if(imageName.Length > 0)
+						{
+							result = new HtmlNodeItem()
+							{
+								NodeType = "Image",
+								SelfClosing = true
+							};
+							SetRenderedControlName(imageArea.Node, result);
+							result.Attributes.SetAttribute("Source",
+								$"avares://{mProjectName}/Assets/{imageName}");
+							TransferUnitAttribute(imageArea.Node, "width", result, "Width");
+							TransferUnitAttribute(imageArea.Node, "height", result, "Height");
+						}
 						break;
 					case ImpliedDesignIntentEnum.Label:
 						break;
@@ -244,6 +401,7 @@ namespace SvgToolsLibrary
 			return result;
 		}
 		//*-----------------------------------------------------------------------*
+
 
 		//*************************************************************************
 		//*	Public																																*

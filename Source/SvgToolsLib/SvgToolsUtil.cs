@@ -254,6 +254,50 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* Between																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the source pattern between the left and right control patterns.
+		/// </summary>
+		/// <param name="source">
+		/// The source string containing the pattern to extract.
+		/// </param>
+		/// <param name="leftPattern">
+		/// The pattern of the left wall.
+		/// </param>
+		/// <param name="rightPattern">
+		/// The pattern of the right wall.
+		/// </param>
+		/// <returns>
+		/// The pattern found between the left and right control patterns, if
+		/// found. Otherwise, an empty string.
+		/// </returns>
+		public static string Between(string source, string leftPattern,
+			string rightPattern)
+		{
+			int end = 0;
+			string result = "";
+			int start = 0;
+
+			if(leftPattern?.Length > 0 && rightPattern?.Length > 0 &&
+				source?.Length > leftPattern.Length + rightPattern.Length)
+			{
+				start = source.IndexOf(leftPattern);
+				if(start > -1)
+				{
+					start += leftPattern.Length;
+					end = source.IndexOf(rightPattern);
+					if(end > -1 && start < end)
+					{
+						result = source.Substring(start, end - start);
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* CalcBounds																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -3681,6 +3725,49 @@ namespace SvgToolsLibrary
 			{
 				result = defaultValue;
 			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToDouble																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Provide fail-safe conversion of string to numeric value.
+		/// </summary>
+		/// <param name="value">
+		/// Value to convert.
+		/// </param>
+		/// <returns>
+		/// Double-precision floating point value. 0 if not convertible.
+		/// </returns>
+		public static double ToDouble(object value)
+		{
+			double result = 0d;
+			if(value != null)
+			{
+				result = ToDouble(value.ToString());
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Provide fail-safe conversion of string to numeric value.
+		/// </summary>
+		/// <param name="value">
+		/// Value to convert.
+		/// </param>
+		/// <returns>
+		/// Double-precision floating point value. 0 if not convertible.
+		/// </returns>
+		public static double ToDouble(string value)
+		{
+			double result = 0d;
+			try
+			{
+				result = double.Parse(value);
+			}
+			catch { }
 			return result;
 		}
 		//*-----------------------------------------------------------------------*

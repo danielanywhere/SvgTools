@@ -209,6 +209,10 @@ namespace SvgToolsLibrary
 		/// </summary>
 		VerticalStackPanel,
 		/// <summary>
+		/// A group of definitions for the current control.
+		/// </summary>
+		Definitions,
+		/// <summary>
 		/// A menu panel containing child entries for an individual menu item.
 		/// </summary>
 		MenuPanel,
