@@ -461,9 +461,37 @@ namespace SvgToolsLibrary
 							"ColumnDefinitions", string.Join(',', gridColDims));
 						break;
 					case ImpliedDesignIntentEnum.HorizontalScrollPanel:
-						//	TODO: !1 - Stopped here...
+						result = new HtmlNodeItem()
+						{
+							NodeType = "ScrollViewer",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						result.Attributes.SetAttribute(
+							"HorizontalScrollBarVisibility", "Auto");
+						result.Attributes.SetAttribute(
+							"VerticalScrollBarVisibility", "Disabled");
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "StackPanel",
+							SelfClosing = false
+						};
+						childNode.Attributes.SetAttribute("Orientation", "Horizontal");
+						childNode.Attributes.SetAttribute("Spacing", "10");
+						childNode.Nodes.AddRange(RenderOutputNodes(area.FrontAreas));
+						result.Nodes.Add(childNode);
 						break;
 					case ImpliedDesignIntentEnum.HorizontalStackPanel:
+						result = new HtmlNodeItem()
+						{
+							NodeType = "StackPanel",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						result.Attributes.SetAttribute("Orientation", "Horizontal");
+						result.Attributes.SetAttribute("Spacing", "10");
+						result.Nodes.AddRange(RenderOutputNodes(area.FrontAreas));
+						result.Nodes.Add(childNode);
 						break;
 					case ImpliedDesignIntentEnum.Image:
 						imageArea = GetImageArea(area);
@@ -568,8 +596,37 @@ namespace SvgToolsLibrary
 							"RowDefinitions", string.Join(',', gridRowDims));
 						break;
 					case ImpliedDesignIntentEnum.VerticalScrollPanel:
+						result = new HtmlNodeItem()
+						{
+							NodeType = "ScrollViewer",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						result.Attributes.SetAttribute(
+							"VerticalScrollBarVisibility", "Auto");
+						result.Attributes.SetAttribute(
+							"HorizontalScrollBarVisibility", "Disabled");
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "StackPanel",
+							SelfClosing = false
+						};
+						childNode.Attributes.SetAttribute("Orientation", "Vertical");
+						childNode.Attributes.SetAttribute("Spacing", "10");
+						childNode.Nodes.AddRange(RenderOutputNodes(area.FrontAreas));
+						result.Nodes.Add(childNode);
 						break;
 					case ImpliedDesignIntentEnum.VerticalStackPanel:
+						result = new HtmlNodeItem()
+						{
+							NodeType = "StackPanel",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						result.Attributes.SetAttribute("Orientation", "Vertical");
+						result.Attributes.SetAttribute("Spacing", "10");
+						result.Nodes.AddRange(RenderOutputNodes(area.FrontAreas));
+						result.Nodes.Add(childNode);
 						break;
 				}
 			}
