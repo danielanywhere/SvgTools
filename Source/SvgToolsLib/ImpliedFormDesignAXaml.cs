@@ -320,12 +320,12 @@ namespace SvgToolsLibrary
 						//	in a grid layout.
 						gridRowCount = GetRowCount(area.FrontAreas);
 						gridRowDims = new string[gridRowCount];
-						gridColCount = GetColumnCount(area.FrontAreas);
-						gridColDims = new string[gridColCount];
-						for(rowIndex = 0; rowIndex < gridRowCount; rowIndex ++)
+						for(rowIndex = 0; rowIndex < gridRowCount; rowIndex++)
 						{
 							gridRowDims[rowIndex] = "*";
 						}
+						gridColCount = GetColumnCount(area.FrontAreas);
+						gridColDims = new string[gridColCount];
 						for(colIndex = 0; colIndex < gridColCount; colIndex ++)
 						{
 							gridColDims[colIndex] = "*";
@@ -366,9 +366,44 @@ namespace SvgToolsLibrary
 							"ColumnDefinitions", string.Join(',', gridColDims));
 						break;
 					case ImpliedDesignIntentEnum.GridView:
-						//	TODO: !1 - Stopped here...
+						//	Avalonia doesn't explicitly have a GridView control, but
+						//	they do have a DataGrid.
+						gridColCount = GetColumnCount(area.FrontAreas);
+						gridColDims = new string[gridColCount];
+						for(colIndex = 0; colIndex < gridColCount; colIndex++)
+						{
+							gridColDims[colIndex] = "*";
+						}
+						result = new HtmlNodeItem()
+						{
+							NodeType = "DataGrid",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						result.Attributes.SetAttribute("AutoGenerateColumns", "False");
+						result.Attributes.SetAttribute("CanUserSortItems", "True");
+						if(area.FrontAreas.Count > 0)
+						{
+							node = new HtmlNodeItem()
+							{
+								NodeType = "DataGrid.Columns",
+								SelfClosing = false
+							};
+							result.Nodes.Add(node);
+							foreach(ControlAreaItem areaItem in area.FrontAreas)
+							{
+								childNode = new HtmlNodeItem()
+								{
+									NodeType = "DataGridTextColumn",
+									SelfClosing = true
+								};
+								childNode.Attributes.SetAttribute("Header", GetText(areaItem));
+								node.Nodes.Add(childNode);
+							}
+						}
 						break;
 					case ImpliedDesignIntentEnum.GroupBox:
+						//	!1 - Stopped here...
 						break;
 					case ImpliedDesignIntentEnum.HorizontalGrid:
 						break;

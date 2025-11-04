@@ -22,8 +22,6 @@ All parameters can be prefixed with either '/' or '--'.
                     ApplyTransforms - Apply transformations on the
                         specified SVG document.
                         {/infile[ /outfile]|(working SVG)}
-                    ArtToXaml - Convert the SVG UI Design Art to XAML.
-                        {/infile[ /outfile]|(working SVG)}
                     Batch - Perform a batch of file operations from a
                         single JSON configuration file.
                         /infile
