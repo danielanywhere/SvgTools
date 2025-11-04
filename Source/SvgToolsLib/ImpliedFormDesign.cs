@@ -972,6 +972,44 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetColumnIndex																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the index of the column found at the current control layer.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of areas to inspect.
+		/// </param>
+		/// <param name="x">
+		/// Reference to the location whose column will be identified.
+		/// </param>
+		/// <returns>
+		/// Column index of the area found at the current control layer, if any
+		/// controls were present. Otherwise, -1.
+		/// </returns>
+		public static int GetColumnIndex(ControlAreaCollection areas,
+			float x)
+		{
+			ControlAreaCollection definitionAreas = GetDefinitionAreas(areas);
+			List<ControlAreaItem> flatList = GetFlatList(definitionAreas);
+			int index = 0;
+			int result = -1;
+			List<float> rows = new List<float>();
+
+			foreach(ControlAreaItem areaItem in flatList)
+			{
+				if(areaItem.X <= x && areaItem.X + areaItem.Width >= x)
+				{
+					result = index;
+					break;
+				}
+				index++;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetDefinitionAreas																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1561,6 +1599,44 @@ namespace SvgToolsLibrary
 				}
 			}
 			return rows.Count;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetRowIndex																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the index of the row found at the current control layer.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of areas to inspect.
+		/// </param>
+		/// <param name="y">
+		/// Reference to the location whose row will be identified.
+		/// </param>
+		/// <returns>
+		/// Row index of the area found at the current control layer, if any
+		/// controls were present. Otherwise, -1.
+		/// </returns>
+		public static int GetRowIndex(ControlAreaCollection areas,
+			float y)
+		{
+			ControlAreaCollection definitionAreas = GetDefinitionAreas(areas);
+			List<ControlAreaItem> flatList = GetFlatList(definitionAreas);
+			int index = 0;
+			int result = -1;
+			List<float> rows = new List<float>();
+
+			foreach(ControlAreaItem areaItem in flatList)
+			{
+				if(areaItem.Y <= y && areaItem.Y + areaItem.Height >= y)
+				{
+					result = index;
+					break;
+				}
+				index++;
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
