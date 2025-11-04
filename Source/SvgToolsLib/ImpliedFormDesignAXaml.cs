@@ -403,9 +403,27 @@ namespace SvgToolsLibrary
 						}
 						break;
 					case ImpliedDesignIntentEnum.GroupBox:
-						//	!1 - Stopped here...
+						textArea = GetTextArea(area);
+						result = new HtmlNodeItem()
+						{
+							NodeType = "HeaderedContentControl",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						if(textArea != null)
+						{
+							result.Attributes.SetAttribute("Header", GetText(textArea));
+						}
+						foreach(ControlAreaItem areaItem in area.FrontAreas)
+						{
+							if(areaItem != textArea)
+							{
+								result.Nodes.Add(RenderOutputNode(areaItem));
+							}
+						}
 						break;
 					case ImpliedDesignIntentEnum.HorizontalGrid:
+						//	TODO: !1 - Stopped here...
 						break;
 					case ImpliedDesignIntentEnum.HorizontalScrollPanel:
 						break;
