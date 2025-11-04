@@ -423,9 +423,45 @@ namespace SvgToolsLibrary
 						}
 						break;
 					case ImpliedDesignIntentEnum.HorizontalGrid:
-						//	TODO: !1 - Stopped here...
+						//	Avalonia doesn't have a horizontal grid.
+						//	However, their normal grid supports columns-only operation.
+						//	The direct front area items will be the only participants
+						//	in a grid layout.
+						gridColCount = GetColumnCount(area.FrontAreas);
+						gridColDims = new string[gridColCount];
+						for(colIndex = 0; colIndex < gridColCount; colIndex++)
+						{
+							gridColDims[colIndex] = "*";
+						}
+						result = new HtmlNodeItem()
+						{
+							NodeType = "Grid",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						foreach(ControlAreaItem areaItem in area.FrontAreas)
+						{
+							node = RenderOutputNode(areaItem);
+							if(node != null)
+							{
+								//	Assign the child-specified column dimensions.
+								colIndex = GetColumnIndex(area.FrontAreas, areaItem.X);
+								if(colIndex > -1)
+								{
+									attributeValue = node.Attributes.GetValue("ColumnWidth");
+									if(attributeValue?.Length > 0)
+									{
+										gridColDims[colIndex] = attributeValue;
+									}
+								}
+								result.Nodes.Add(node);
+							}
+						}
+						result.Attributes.SetAttribute(
+							"ColumnDefinitions", string.Join(',', gridColDims));
 						break;
 					case ImpliedDesignIntentEnum.HorizontalScrollPanel:
+						//	TODO: !1 - Stopped here...
 						break;
 					case ImpliedDesignIntentEnum.HorizontalStackPanel:
 						break;
@@ -494,6 +530,42 @@ namespace SvgToolsLibrary
 					case ImpliedDesignIntentEnum.UpDown:
 						break;
 					case ImpliedDesignIntentEnum.VerticalGrid:
+						//	Avalonia doesn't have a vertical grid.
+						//	However, their normal grid supports rows-only operation.
+						//	The direct front area items will be the only participants
+						//	in a grid layout.
+						gridRowCount = GetRowCount(area.FrontAreas);
+						gridRowDims = new string[gridRowCount];
+						for(rowIndex = 0; rowIndex < gridRowCount; rowIndex++)
+						{
+							gridRowDims[rowIndex] = "*";
+						}
+						result = new HtmlNodeItem()
+						{
+							NodeType = "Grid",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						foreach(ControlAreaItem areaItem in area.FrontAreas)
+						{
+							node = RenderOutputNode(areaItem);
+							if(node != null)
+							{
+								//	Assign the child-specified row dimensions.
+								rowIndex = GetRowIndex(area.FrontAreas, areaItem.Y);
+								if(rowIndex > -1)
+								{
+									attributeValue = node.Attributes.GetValue("RowHeight");
+									if(attributeValue?.Length > 0)
+									{
+										gridRowDims[rowIndex] = attributeValue;
+									}
+								}
+								result.Nodes.Add(node);
+							}
+						}
+						result.Attributes.SetAttribute(
+							"RowDefinitions", string.Join(',', gridRowDims));
 						break;
 					case ImpliedDesignIntentEnum.VerticalScrollPanel:
 						break;
