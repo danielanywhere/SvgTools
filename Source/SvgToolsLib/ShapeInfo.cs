@@ -22,12 +22,12 @@ using System.Linq;
 using System.Text;
 
 using Html;
-using static SvgToolsLibrary.SvgToolsUtil;
+using static SvgToolsLib.SvgToolsUtil;
 using System.Text.RegularExpressions;
 using Geometry;
 using System.Diagnostics;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	ShapeInfoCollection																											*

@@ -22,8 +22,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Newtonsoft.Json;
-using SvgToolsLibrary;
-using static SvgToolsLibrary.SvgToolsUtil;
+using SvgToolsLib;
+
+using static SvgToolsLib.SvgToolsUtil;
 
 namespace SvgToolsApp
 {

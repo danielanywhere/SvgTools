@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	ImpliedDesignIntentEnum																									*
@@ -48,6 +48,10 @@ namespace SvgToolsLibrary
 		/// predefined set or type in their own input.
 		/// </summary>
 		ComboBox,
+		/// <summary>
+		/// A group of definitions for the current control.
+		/// </summary>
+		Definitions,
 		/// <summary>
 		/// A layout container that arranges child elements sequentially,
 		/// horizontally or vertically, wrapping them as needed.
@@ -95,6 +99,10 @@ namespace SvgToolsLibrary
 		/// </summary>
 		HorizontalStackPanel,
 		/// <summary>
+		/// An image resource.
+		/// </summary>
+		Image,
+		/// <summary>
 		/// A simple text element used to display static information or
 		/// instructions to guide users within a form.
 		/// </summary>
@@ -114,6 +122,10 @@ namespace SvgToolsLibrary
 		/// quick access to key features.
 		/// </summary>
 		MenuBar,
+		/// <summary>
+		/// A menu panel containing child entries for an individual menu item.
+		/// </summary>
+		MenuPanel,
 		/// <summary>
 		/// A flexible layout surface that allows designers to position child
 		/// controls at exact coordinates and sizes.
@@ -161,6 +173,10 @@ namespace SvgToolsLibrary
 		/// </summary>
 		TabControl,
 		/// <summary>
+		/// General text that can be interpreted by context.
+		/// </summary>
+		Text,
+		/// <summary>
 		/// An input field that lets users enter or edit text, essential for
 		/// collecting information like names, passwords, or comments in a form.
 		/// </summary>
@@ -207,23 +223,7 @@ namespace SvgToolsLibrary
 		/// A layout container that arranges child elements in a single vertical
 		/// line.
 		/// </summary>
-		VerticalStackPanel,
-		/// <summary>
-		/// A group of definitions for the current control.
-		/// </summary>
-		Definitions,
-		/// <summary>
-		/// A menu panel containing child entries for an individual menu item.
-		/// </summary>
-		MenuPanel,
-		/// <summary>
-		/// An image resource.
-		/// </summary>
-		Image,
-		/// <summary>
-		/// General text that can be interpreted by context.
-		/// </summary>
-		Text
+		VerticalStackPanel
 	}
 	//*-------------------------------------------------------------------------*
 

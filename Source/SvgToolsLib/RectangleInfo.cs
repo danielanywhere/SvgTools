@@ -22,7 +22,7 @@ using System.Text;
 
 using Newtonsoft.Json;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	RectangleInfoCollection																									*

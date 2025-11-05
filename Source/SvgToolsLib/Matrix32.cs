@@ -22,7 +22,7 @@ using System.Text;
 using Geometry;
 using SkiaSharp;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	Matrix32																																*

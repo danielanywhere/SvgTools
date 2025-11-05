@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="rxControlStyleName" xml:space="preserve">
+    <value>(?i:(?&lt;pattern&gt;controlstyle(-\d+){0,1}))</value>
+    <comment>Regular expression pattern to identify user control style name variations.</comment>
+  </data>
   <data name="rxCssNumberWithMeasure" xml:space="preserve">
     <value>(?&lt;number&gt;-{0,1}[0-9]+(\.[0-9]*){0,1})(?&lt;measure&gt;[a-z\%]*)</value>
     <comment>Regular expression pattern for extracting the number and measure from a CSS value.</comment>
@@ -140,6 +144,18 @@
   <data name="rxJsonErrorLinePosition" xml:space="preserve">
     <value>(?i:(?s:line\s+(?&lt;line&gt;\d+).*?position\s+(?&lt;position&gt;\d+)))</value>
     <comment>Regular expression to extract the line and position from a Newtonsoft Json parser error message.</comment>
+  </data>
+  <data name="rxNameEqualsValue" xml:space="preserve">
+    <value>(?i:(?&lt;name&gt;[a-z]+)\s*=\s*\"(?&lt;value&gt;[^\"]+)\")</value>
+    <comment>Regular expression pattern to find name = quoted value pairs.</comment>
+  </data>
+  <data name="rxNodeExtensionAssignment" xml:space="preserve">
+    <value>(?&lt;nodeExtensionAssignment&gt;(?&lt;=^\w+-|;)(?&lt;name&gt;\w+)\:(?&lt;value&gt;\w+))</value>
+    <comment>Regular expression pattern to find all of the name/value assignments to apply for elements in a node extension layer label.</comment>
+  </data>
+  <data name="rxNumber" xml:space="preserve">
+    <value>(?&lt;number&gt;\d+)</value>
+    <comment>Regular expression to extract only numbers from the string.</comment>
   </data>
   <data name="rxNumeric" xml:space="preserve">
     <value>(?i:(?&lt;pattern&gt;-{0,1}[0-9]+(\.[0-9]+){0,1}(e-{0,1}[0-9]+){0,1}))</value>

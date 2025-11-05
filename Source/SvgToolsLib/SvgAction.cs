@@ -36,9 +36,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using SkiaSharp;
 
-using static SvgToolsLibrary.SvgToolsUtil;
+using static SvgToolsLib.SvgToolsUtil;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	SvgActionCollection																											*

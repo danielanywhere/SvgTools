@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SvgToolsLibrary {
+namespace SvgToolsLib {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SvgToolsLibrary {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SvgToolsLibrary.ResourceMain", typeof(ResourceMain).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SvgToolsLib.ResourceMain", typeof(ResourceMain).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,15 @@ namespace SvgToolsLibrary {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (?i:(?&lt;pattern&gt;controlstyle(-\d+){0,1})).
+        /// </summary>
+        internal static string rxControlStyleName {
+            get {
+                return ResourceManager.GetString("rxControlStyleName", resourceCulture);
             }
         }
         
@@ -111,6 +120,33 @@ namespace SvgToolsLibrary {
         internal static string rxJsonErrorLinePosition {
             get {
                 return ResourceManager.GetString("rxJsonErrorLinePosition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (?i:(?&lt;name&gt;[a-z]+)\s*=\s*\&quot;(?&lt;value&gt;[^\&quot;]+)\&quot;).
+        /// </summary>
+        internal static string rxNameEqualsValue {
+            get {
+                return ResourceManager.GetString("rxNameEqualsValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (?&lt;nodeExtensionAssignment&gt;(?&lt;=^\w+-|;)(?&lt;name&gt;\w+)\:(?&lt;value&gt;\w+)).
+        /// </summary>
+        internal static string rxNodeExtensionAssignment {
+            get {
+                return ResourceManager.GetString("rxNodeExtensionAssignment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (?&lt;number&gt;\d+).
+        /// </summary>
+        internal static string rxNumber {
+            get {
+                return ResourceManager.GetString("rxNumber", resourceCulture);
             }
         }
         

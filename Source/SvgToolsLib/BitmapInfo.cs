@@ -22,7 +22,7 @@ using System.Text;
 
 using SkiaSharp;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	BitmapInfoCollection																										*

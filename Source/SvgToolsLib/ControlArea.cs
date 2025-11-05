@@ -24,9 +24,9 @@ using System.Text;
 
 using Geometry;
 using Html;
-using static SvgToolsLibrary.SvgToolsUtil;
+using static SvgToolsLib.SvgToolsUtil;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	ControlAreaCollection																										*
@@ -160,7 +160,10 @@ namespace SvgToolsLibrary
 					Trace.Write(' ');
 					Trace.Write(areaItem.Intent.ToString());
 					Trace.Write(' ');
-					Trace.Write(areaItem.Node.Id);
+					if(areaItem.Node != null)
+					{
+						Trace.Write(areaItem.Node.Id);
+					}
 					Trace.Write("\t{");
 					Trace.Write(areaItem.X);
 					Trace.Write(',');
@@ -394,6 +397,28 @@ namespace SvgToolsLibrary
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
+		//*	_Constructor																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Create a new instance of the ControlAreaItem item.
+		/// </summary>
+		public ControlAreaItem()
+		{
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+		/// <summary>
+		/// Create a new instance of the ControlAreaItem item.
+		/// </summary>
+		public ControlAreaItem(ControlAreaItem area)
+		{
+			if(area != null)
+			{
+				TransferValues(area, this);
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	FrontAreas																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -440,6 +465,52 @@ namespace SvgToolsLibrary
 		{
 			get { return mNode; }
 			set { mNode = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* TransferValues																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Transfer the base member values from the source area to the target.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the source area to be copied.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target area to receive copies of the values.
+		/// </param>
+		/// <remarks>
+		/// The FrontAreas collection is copied at the list level.
+		/// </remarks>
+		public static void TransferValues(ControlAreaItem source,
+			ControlAreaItem target)
+		{
+			if(source != null && target != null)
+			{
+				FArea.TransferValues(source, target);
+				target.mIntent = source.mIntent;
+				target.mNode = source.mNode;
+				target.mFrontAreas.AddRange(source.mFrontAreas);
+				NameValueCollection.TransferValues(source.mProperties,
+					target.mProperties);
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Properties																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Properties">Properties</see>.
+		/// </summary>
+		private NameValueCollection mProperties = new NameValueCollection();
+		/// <summary>
+		/// Get a reference to the collection of custom properties for this area.
+		/// </summary>
+		public NameValueCollection Properties
+		{
+			get { return mProperties; }
 		}
 		//*-----------------------------------------------------------------------*
 

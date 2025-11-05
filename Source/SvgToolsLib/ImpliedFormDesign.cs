@@ -26,9 +26,9 @@ using ConversionCalc;
 using Geometry;
 using Html;
 using SkiaSharp;
-using static SvgToolsLibrary.SvgToolsUtil;
+using static SvgToolsLib.SvgToolsUtil;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	ImpliedFormDesign																												*
@@ -199,6 +199,7 @@ namespace SvgToolsLibrary
 			List<ControlAreaItem> members = null;
 			string name = "";
 			HtmlNodeItem node = null;
+			RenderTokenItem renderToken = new RenderTokenItem();
 			string text = "";
 
 			if(areas?.Count > 0 && outputNode != null)
@@ -277,7 +278,7 @@ namespace SvgToolsLibrary
 					if(HasOrganizer(childAreas))
 					{
 						area = GetOrganizer(childAreas);
-						node = RenderOutputNode(area);
+						node = RenderOutputNode(area, renderToken);
 					}
 					else
 					{
@@ -309,7 +310,7 @@ namespace SvgToolsLibrary
 						area.FrontAreas.AddRange(childAreas);
 						formArea.FrontAreas.Clear();
 						formArea.FrontAreas.Add(area);
-						node = RenderOutputNode(area);
+						node = RenderOutputNode(area, renderToken);
 					}
 					//	This item is a form and has an organizer.
 					PerformLayout(area, node);
@@ -549,12 +550,16 @@ namespace SvgToolsLibrary
 		/// Reference to the control area containing the dimensions, coordinates,
 		/// source node, and intention for the output.
 		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
 		/// <returns>
 		/// Reference to the output HTML node, in the active dialect, that
 		/// properly represents the caller's supplied control area, if
 		/// legitimate. Otherwise, null.
 		/// </returns>
-		protected virtual HtmlNodeItem RenderOutputNode(ControlAreaItem area)
+		protected virtual HtmlNodeItem RenderOutputNode(ControlAreaItem area,
+			RenderTokenItem renderToken)
 		{
 			return null;
 		}
@@ -571,13 +576,16 @@ namespace SvgToolsLibrary
 		/// Reference to the list of control areas containing the dimensions,
 		/// coordinates, source node, and intentions for the output.
 		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
 		/// <returns>
 		/// Reference to a list of output HTML nodes, in the active dialect, that
 		/// properly represent the caller's supplied control areas, if
 		/// legitimate. Otherwise, an empty list.
 		/// </returns>
 		protected virtual List<HtmlNodeItem> RenderOutputNodes(
-			List<ControlAreaItem> areas)
+			List<ControlAreaItem> areas, RenderTokenItem renderToken)
 		{
 			HtmlNodeItem node = null;
 			List<HtmlNodeItem> nodes = new List<HtmlNodeItem>();
@@ -622,7 +630,7 @@ namespace SvgToolsLibrary
 						case ImpliedDesignIntentEnum.VerticalGrid:
 						case ImpliedDesignIntentEnum.VerticalScrollPanel:
 						case ImpliedDesignIntentEnum.VerticalStackPanel:
-							node = RenderOutputNode(areaItem);
+							node = RenderOutputNode(areaItem, renderToken);
 							if(node != null)
 							{
 								nodes.Add(node);
@@ -631,12 +639,13 @@ namespace SvgToolsLibrary
 						case ImpliedDesignIntentEnum.Definitions:
 						case ImpliedDesignIntentEnum.Form:
 							//	These intents are skipped and their children are processed.
-							nodes.AddRange(RenderOutputNodes(areaItem.FrontAreas));
+							nodes.AddRange(
+								RenderOutputNodes(areaItem.FrontAreas, renderToken));
 							break;
 						case ImpliedDesignIntentEnum.FormInformation:
 						case ImpliedDesignIntentEnum.MenuPanel:
 						case ImpliedDesignIntentEnum.None:
-							//	This intents are not rendered.
+							//	These intents are not rendered.
 							break;
 					}
 				}
@@ -733,6 +742,75 @@ namespace SvgToolsLibrary
 			{
 				mSvg = svgDocument;
 				mControlAreas = EnumerateControls(svgDocument);
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* AddUserStyle																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Add a user style abbreviation to the output nodes collection.
+		/// </summary>
+		/// <param name="nodes">
+		/// Reference to the collection of nodes to which the style will be
+		/// appended.
+		/// </param>
+		/// <param name="styleValue">
+		/// The abbreviated user style value to append.
+		/// </param>
+		public static void AddUserStyle(HtmlNodeCollection nodes,
+			string styleValue)
+		{
+			char[] charColon = new char[] { ':' };
+			char[] charComma = new char[] { ',' };
+			char[] charSemicolon = new char[] { ';' };
+			HtmlNodeItem childNode = null;
+			HtmlNodeItem node = null;
+			string selector = "";
+			string[] setters = new string[0];
+			string[] values = null;
+
+			if(nodes != null && styleValue?.Length > 0)
+			{
+				values = styleValue.Split(charSemicolon);
+				if(values.Length > 0)
+				{
+					selector = values[0].Replace("&quot;", "\"");
+					if(values.Length > 1)
+					{
+						setters = values[1].Split(charComma);
+					}
+					node = new HtmlNodeItem()
+					{
+						NodeType = "Style",
+						SelfClosing = false
+					};
+					if(selector.Length > 0)
+					{
+						node.Attributes.SetAttribute("Selector",
+							GetValue(selector, ResourceMain.rxNameEqualsValue, "value"));
+					}
+					foreach(string setterItem in setters)
+					{
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "Setter",
+							SelfClosing = true
+						};
+						values = setterItem.Split(charColon);
+						if(values.Length > 0)
+						{
+							childNode.Attributes.SetAttribute("Property", values[0]);
+							if(values.Length > 1)
+							{
+								childNode.Attributes.SetAttribute("Value", values[1]);
+							}
+						}
+						node.Nodes.Add(childNode);
+					}
+					nodes.Add(node);
+				}
 			}
 		}
 		//*-----------------------------------------------------------------------*
@@ -844,6 +922,8 @@ namespace SvgToolsLibrary
 		{
 			ControlAreaItem area = null;
 			ControlAreaCollection areas = null;
+			MatchCollection assignments = null;
+			HtmlAttributeItem attribute = null;
 			List<ControlAreaItem> flatAreas = null;
 			int indent = 1;
 			List<HtmlNodeItem> layers = null;
@@ -892,6 +972,20 @@ namespace SvgToolsLibrary
 								{
 									Intent = ImpliedDesignIntentEnum.Definitions
 								};
+								//	Assignments are in inkscape:label
+								attribute = layerItem.Attributes.FirstOrDefault(x =>
+									x.Name.ToLower() == "inkscape:label");
+								if(attribute != null)
+								{
+									assignments = Regex.Matches(attribute.Value,
+										ResourceMain.rxNodeExtensionAssignment);
+									foreach(Match matchItem in assignments)
+									{
+										area.Properties.SetValue(
+											GetValue(matchItem, "name"),
+											GetValue(matchItem, "value"));
+									}
+								}
 								areaItem.FrontAreas.Add(area);
 								ProcessNodeZOrder(layerItem, area.FrontAreas);
 							}
@@ -1641,6 +1735,78 @@ namespace SvgToolsLibrary
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetSegmentAreas																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a list of distinct segment areas, which are overlapping areas
+		/// shared by multiple objects or distinct areas occupied by individual
+		/// items.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of areas to be analyzed.
+		/// </param>
+		/// <returns>
+		/// Reference to a list of distinct, non-intersecting areas found within
+		/// the caller's area and descendents.
+		/// </returns>
+		public static List<ControlAreaItem> GetSegmentAreas(
+			ControlAreaCollection areas)
+		{
+			ControlAreaItem area = null;
+			ControlAreaItem areaCopy = null;
+			ControlAreaItem definition = null;
+			List<ControlAreaItem> definitions = null;
+			FArea farea = null;
+			List<FArea> fareas = new List<FArea>();
+			List<ControlAreaItem> flatList = null;
+			List<ControlAreaItem> result = new List<ControlAreaItem>();
+
+			if(areas?.Count > 0)
+			{
+				definitions = GetDefinitionAreas(areas);
+				flatList = GetFlatList(areas);
+				flatList.RemoveAll(x =>
+					x.Intent == ImpliedDesignIntentEnum.Definitions);
+				foreach(ControlAreaItem areaItem in flatList)
+				{
+					//	Group all overlapping areas.
+					area = result.FirstOrDefault(x =>
+						FArea.HasIntersection(areaItem, x));
+					if(area == null)
+					{
+						//	This area didn't overlap any others.
+						area = new ControlAreaItem(areaItem);
+						result.Add(area);
+					}
+					areaCopy = new ControlAreaItem(areaItem);
+					area.FrontAreas.Add(areaCopy);
+					//	Transfer all associated user properties to the
+					//	first level areas of each definition.
+					definition = definitions.FirstOrDefault(x =>
+						x.FrontAreas.Contains(areaItem));
+					if(definition?.Properties.Count > 0)
+					{
+						NameValueCollection.TransferValues(
+							definition.Properties, areaCopy.Properties);
+					}
+				}
+				//	Set the boundaries for the area from the constituents.
+				foreach(ControlAreaItem areaItem in result)
+				{
+					fareas.Clear();
+					fareas.AddRange(areaItem.FrontAreas);
+					farea = FArea.BoundingBox(fareas);
+					areaItem.X = farea.X;
+					areaItem.Y = farea.Y;
+					areaItem.Width = farea.Width;
+					areaItem.Height = farea.Height;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetText																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1740,6 +1906,81 @@ namespace SvgToolsLibrary
 			else
 			{
 				result = new List<ControlAreaItem>();
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetUserControlStyles																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return an array of control style definitions for a user control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the source node to inspect.
+		/// </param>
+		/// <returns>
+		/// An array of style definitions, if found. Otherwise, an empty array.
+		/// </returns>
+		public static string[] GetUserControlStyles(ControlAreaItem area)
+		{
+			Match match = null;
+			string[] result = new string[0];
+			List<string> values = new List<string>();
+
+			if(area?.Node != null)
+			{
+				foreach(HtmlAttributeItem attributeItem in area.Node.Attributes)
+				{
+					match = Regex.Match(attributeItem.Name,
+						ResourceMain.rxControlStyleName);
+					if(match.Success && match.Length == attributeItem.Name.Length)
+					{
+						values.Add(attributeItem.Value);
+					}
+				}
+				if(values.Count > 0)
+				{
+					result = values.ToArray();
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetUserValue																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the value of the specified user property.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the source node to inspect.
+		/// </param>
+		/// <param name="propertyName">
+		/// Name of the property to retrieve.
+		/// </param>
+		/// <returns>
+		/// Value of the specified user property, if found. Otherwise, a blank
+		/// string.
+		/// </returns>
+		public static string GetUserValue(ControlAreaItem area,
+			string propertyName)
+		{
+			HtmlAttributeItem attribute = null;
+			string lowerName = "";
+			string result = "";
+
+			if(area?.Node != null && propertyName?.Length > 0)
+			{
+				lowerName = propertyName.ToLower();
+				attribute = area.Node.Attributes.FirstOrDefault(x =>
+					x.Name.ToLower() == lowerName);
+				if(attribute != null)
+				{
+					result = attribute.Value;
+				}
 			}
 			return result;
 		}
@@ -2303,6 +2544,47 @@ namespace SvgToolsLibrary
 		{
 			get { return mRootFontSize; }
 			set { mRootFontSize = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* SetControlStyles																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the user-defined control styles on the target node.
+		/// </summary>
+		/// <param name="styleCollectionName">
+		/// Name of the style collection to create if there are styles.
+		/// </param>
+		/// <param name="area">
+		/// The area whose source node will be inspected for custom control styles.
+		/// </param>
+		/// <param name="node">
+		/// Reference to the target node to which the styles will be output.
+		/// </param>
+		public static void SetControlStyles(string styleCollectionName,
+			ControlAreaItem area, HtmlNodeItem node)
+		{
+			string[] controlStyleValues = null;
+			HtmlNodeItem result = null;
+
+			if(styleCollectionName?.Length > 0 && area?.Node != null && node != null)
+			{
+				controlStyleValues = GetUserControlStyles(area);
+				if(controlStyleValues.Length > 0)
+				{
+					result = new HtmlNodeItem()
+					{
+						NodeType = styleCollectionName,
+						SelfClosing = false
+					};
+					foreach(string styleItem in controlStyleValues)
+					{
+						AddUserStyle(result.Nodes, styleItem);
+					}
+					node.Nodes.Add(result);
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
 

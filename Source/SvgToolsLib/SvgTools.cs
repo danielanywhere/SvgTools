@@ -20,7 +20,7 @@ using System;
 
 using Html;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	SvgTools																																*

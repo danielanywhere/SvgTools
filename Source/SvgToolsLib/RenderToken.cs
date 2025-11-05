@@ -16,21 +16,20 @@
  * 
  */
 
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Newtonsoft.Json;
-
 namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	StartEndCollection																											*
+	//*	RenderTokenCollection																										*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Collection of StartEndItem Items.
+	/// Collection of RenderTokenItem Items.
 	/// </summary>
-	public class StartEndCollection : List<StartEndItem>
+	public class RenderTokenCollection : List<RenderTokenItem>
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -47,12 +46,12 @@ namespace SvgToolsLib
 	//*-------------------------------------------------------------------------*
 
 	//*-------------------------------------------------------------------------*
-	//*	StartEndItem																														*
+	//*	RenderTokenItem																													*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Individual definition of a start and end value.
+	/// Information about an individual render token.
 	/// </summary>
-	public class StartEndItem
+	public class RenderTokenItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -64,32 +63,95 @@ namespace SvgToolsLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
-		//*	EndValue																														*
+		//*	DeepCopy																															*
 		//*-----------------------------------------------------------------------*
-		private string mEndValue = "";
 		/// <summary>
-		/// Get/Set the end value.
+		/// Return a deep member-values copy of the supplied token.
 		/// </summary>
-		[JsonProperty(PropertyName = "End")]
-		public string EndValue
+		/// <param name="token">
+		/// Reference to the token to be copied.
+		/// </param>
+		/// <returns>
+		/// Reference to a new token object with matching memberwise values to
+		/// the provided source, if legitimate. Otherwise, null.
+		/// </returns>
+		public static RenderTokenItem DeepCopy(RenderTokenItem token)
 		{
-			get { return mEndValue; }
-			set { mEndValue = value; }
+			string content = "";
+			RenderTokenItem result = null;
+
+			if(token != null)
+			{
+				content = JsonConvert.SerializeObject(token);
+				try
+				{
+					result = JsonConvert.DeserializeObject<RenderTokenItem>(content);
+				}
+				catch { }
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	StartValue																														*
+		//*	DeepCopyWithRemove																										*
 		//*-----------------------------------------------------------------------*
-		private string mStartValue = "";
 		/// <summary>
-		/// Get/Set the start value.
+		/// Return a deep member-values copy of the supplied token, removing any
+		/// of the specified properties in the process.
 		/// </summary>
-		[JsonProperty(PropertyName = "Start")]
-		public string StartValue
+		/// <param name="token">
+		/// Reference to the token to be copied.
+		/// </param>
+		/// <param name="removeProperties">
+		/// Optional array of property names to remove during the cloning process.
+		/// </param>
+		/// <returns>
+		/// Reference to a new token object with matching memberwise values to
+		/// the provided source, if legitimate. Otherwise, null.
+		/// </returns>
+		public static RenderTokenItem DeepCopyWithRemove(RenderTokenItem token,
+			params string[] removeProperties)
 		{
-			get { return mStartValue; }
-			set { mStartValue = value; }
+			string content = "";
+			string lowerName = "";
+			RenderTokenItem result = null;
+
+			if(token != null)
+			{
+				content = JsonConvert.SerializeObject(token);
+				try
+				{
+					result = JsonConvert.DeserializeObject<RenderTokenItem>(content);
+					if(removeProperties?.Length > 0)
+					{
+						foreach(string propertyNameItem in removeProperties)
+						{
+							lowerName = propertyNameItem.ToLower();
+							result.mProperties.RemoveAll(x => x.Name.ToLower() == lowerName);
+						}
+					}
+				}
+				catch { }
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Properties																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Properties">Properties</see>.
+		/// </summary>
+		private NameValueCollection mProperties = new NameValueCollection();
+		/// <summary>
+		/// Get a reference to the collection of name/value pairs to use in this
+		/// instance.
+		/// </summary>
+		public NameValueCollection Properties
+		{
+			get { return mProperties; }
 		}
 		//*-----------------------------------------------------------------------*
 

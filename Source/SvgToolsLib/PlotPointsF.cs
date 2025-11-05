@@ -22,9 +22,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using SkiaSharp;
 
-using static SvgToolsLibrary.SvgToolsUtil;
+using static SvgToolsLib.SvgToolsUtil;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	PlotPointsFCollection																										*

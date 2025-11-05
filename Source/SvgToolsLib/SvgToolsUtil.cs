@@ -31,7 +31,7 @@ using SkiaSharp;
 using Html;
 using Geometry;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	SvgToolsUtil																														*
@@ -2188,6 +2188,44 @@ namespace SvgToolsLibrary
 				}
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetCommaDelimitedIntegerNumber																				*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a comma-delimited integer numerical value for the
+		/// caller-supplied text.
+		/// </summary>
+		/// <param name="text">
+		/// The text that might contain incorrect formatting.
+		/// </param>
+		/// <returns>
+		/// A comma-delimited numerical value.
+		/// </returns>
+		public static string GetCommaDelimitedIntegerNumber(string text)
+		{
+			MatchCollection matches = null;
+			StringBuilder result = new StringBuilder();
+
+			if(text?.Length > 0)
+			{
+				matches = Regex.Matches(text, ResourceMain.rxNumber);
+				foreach(Match matchItem in matches)
+				{
+					if(result.Length > 0)
+					{
+						result.Append(',');
+					}
+					result.Append(GetValue(matchItem, "number"));
+				}
+			}
+			if(result.Length == 0)
+			{
+				result.Append('0');
+			}
+			return result.ToString();
 		}
 		//*-----------------------------------------------------------------------*
 

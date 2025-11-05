@@ -20,10 +20,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Geometry;
 using Html;
 
-namespace SvgToolsLibrary
+using static SvgToolsLib.SvgToolsUtil;
+
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	ImpliedFormDesignAXaml																									*
@@ -37,6 +39,174 @@ namespace SvgToolsLibrary
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		//*-----------------------------------------------------------------------*
+		//* ApplyCommonProperties																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the common properties on the target node from the source area.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the drawing source area whose HTML node might contain
+		/// common attributes to place on the target.
+		/// </param>
+		/// <param name="target">
+		/// Referenec to the target HTML node whose attributes can be updated
+		/// by common property values.
+		/// </param>
+		private static void ApplyCommonProperties(ControlAreaItem source,
+			HtmlNodeItem target)
+		{
+			string lowerName = "";
+			HtmlNodeItem node = null;
+
+			if(source?.Node != null && target != null)
+			{
+				node = source.Node;
+				foreach(HtmlAttributeItem attributeItem in node.Attributes)
+				{
+					lowerName = attributeItem.Name.ToLower();
+					switch(lowerName)
+					{
+						case "background":
+							target.Attributes.SetAttribute(
+								"Background", attributeItem.Value);
+							break;
+						case "borderbrush":
+							target.Attributes.SetAttribute(
+								"BorderBrush", attributeItem.Value);
+							break;
+						case "borderthickness":
+							target.Attributes.SetAttribute(
+								"BorderThickness", attributeItem.Value);
+							break;
+						case "margin":
+							target.Attributes.SetAttribute(
+								"Margin",
+								GetCommaDelimitedIntegerNumber(attributeItem.Value));
+							break;
+						case "padding":
+							target.Attributes.SetAttribute(
+								"Padding",
+								GetCommaDelimitedIntegerNumber(attributeItem.Value));
+							break;
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ApplyPreemptiveProperties																							*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Apply any applicable properties to an outer shell object, returning
+		/// either the outer object, if created, or the original supplied object
+		/// if no changes were made.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area for which the preemptive change will
+		/// be applied.
+		/// </param>
+		/// <param name="node">
+		/// Reference to the node in focus.
+		/// </param>
+		/// <returns>
+		/// Reference to the original supplied output node, if no changes were
+		/// made, or the new encapsulating object, if a preemptive shell was
+		/// required.
+		/// </returns>
+		private static HtmlNodeItem ApplyPreemptiveProperties(ControlAreaItem area,
+			HtmlNodeItem node)
+		{
+			HtmlNodeItem border = null;
+			string lowerName = "";
+			HtmlNodeItem result = node;
+			HtmlNodeItem sourceNode = null;
+
+			if(area?.Node != null && node != null)
+			{
+				sourceNode = area.Node;
+				foreach(HtmlAttributeItem attributeItem in sourceNode.Attributes)
+				{
+					lowerName = attributeItem.Name.ToLower();
+					switch(lowerName)
+					{
+						case "boxshadow":
+						case "cornerradius":
+							if(border == null)
+							{
+								border = new HtmlNodeItem()
+								{
+									NodeType = "Border",
+									SelfClosing = false
+								};
+							}
+							break;
+					}
+					if(border != null)
+					{
+						break;
+					}
+				}
+				if(border != null)
+				{
+					foreach(HtmlAttributeItem attributeItem in sourceNode.Attributes)
+					{
+						lowerName = attributeItem.Name.ToLower();
+						switch(lowerName)
+						{
+							case "boxshadow":
+								border.Attributes.SetAttribute(
+									"BoxShadow", attributeItem.Value);
+								break;
+							case "cornerradius":
+								border.Attributes.SetAttribute(
+									"CornerRadius", attributeItem.Value);
+								break;
+						}
+					}
+					result = border;
+					result.Nodes.Add(node);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ApplyTokenProperties																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Apply properties from the rendering token to the current output node.
+		/// </summary>
+		/// <param name="renderToken">
+		/// Reference to the rendering token containing information to apply
+		/// on the output node.
+		/// </param>
+		/// <param name="node">
+		/// Reference to the output XAML node.
+		/// </param>
+		private static void ApplyTokenProperties(RenderTokenItem renderToken,
+			HtmlNodeItem node)
+		{
+			if(renderToken != null && node != null)
+			{
+				foreach(NameValueItem propertyItem in renderToken.Properties)
+				{
+					switch(propertyItem.Name)
+					{
+						case "GridColumnIndex":
+							node.Attributes.SetAttribute("Grid.Column", propertyItem.Value);
+							break;
+						case "GridRowIndex":
+							node.Attributes.SetAttribute("Grid.Row", propertyItem.Value);
+							break;
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*-----------------------------------------------------------------------*
 		//* SetRenderedControlName																								*
 		//*-----------------------------------------------------------------------*
@@ -125,17 +295,26 @@ namespace SvgToolsLibrary
 		/// Reference to the control area containing the dimensions, coordinates,
 		/// source node, and intention for the output.
 		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
 		/// <returns>
 		/// Reference to the output HTML node, in the active dialect, that
 		/// properly represents the caller's supplied control area, if
 		/// legitimate. Otherwise, null.
 		/// </returns>
-		protected override HtmlNodeItem RenderOutputNode(ControlAreaItem area)
+		protected override HtmlNodeItem RenderOutputNode(ControlAreaItem area,
+			RenderTokenItem renderToken)
 		{
 			List<ControlAreaItem> areas = null;
-			HtmlAttributeItem attribute = null;
 			string attributeValue = "";
+			char[] charColon = new char[] { ':' };
+			char[] charComma = new char[] { ',' };
+			char[] charSemicolon = new char[] { ';' };
 			HtmlNodeItem childNode = null;
+			RenderTokenItem childToken = null;
+			HtmlNodeItem childNode2 = null;
+			HtmlNodeItem childNode3 = null;
 			int colIndex = 0;
 			HtmlNodeItem containerNode = null;
 			ControlAreaItem firstArea = null;
@@ -146,12 +325,12 @@ namespace SvgToolsLibrary
 			ControlAreaItem imageArea = null;
 			string imageName = "";
 			HtmlNodeItem node = null;
-			int nodeIndex = 0;
 			List<HtmlNodeItem> nodes = null;
 			RectilinearOrientationEnum orientation = RectilinearOrientationEnum.None;
 			HtmlNodeItem result = null;
 			int rowIndex = 0;
 			ControlAreaItem secondArea = null;
+			List<ControlAreaItem> segmentAreas = null;
 			int state = 0;
 			string text = "";
 			ControlAreaItem textArea = null;
@@ -160,6 +339,11 @@ namespace SvgToolsLibrary
 			//	TODO: Allow coordinates to be added if control is placed on panel.
 			if(area != null)
 			{
+				if(renderToken != null)
+				{
+					childToken = RenderTokenItem.DeepCopyWithRemove(renderToken,
+						"Dock", "GridColumnIndex", "GridRowIndex");
+				}
 				switch(area.Intent)
 				{
 					case ImpliedDesignIntentEnum.Button:
@@ -191,7 +375,7 @@ namespace SvgToolsLibrary
 									SelfClosing = false
 								};
 								SetRenderedControlName(area.Node, result);
-								childNode = RenderOutputNode(imageArea);
+								childNode = RenderOutputNode(imageArea, childToken);
 								if(childNode != null)
 								{
 									result.Nodes.Add(childNode);
@@ -231,7 +415,7 @@ namespace SvgToolsLibrary
 									firstArea = GetFirstArea(imageArea, textArea, orientation);
 									if(firstArea != null)
 									{
-										childNode = RenderOutputNode(firstArea);
+										childNode = RenderOutputNode(firstArea, childToken);
 										if(childNode != null)
 										{
 											result.Nodes.Add(childNode);
@@ -240,7 +424,7 @@ namespace SvgToolsLibrary
 											(imageArea == firstArea ? textArea : imageArea);
 										if(secondArea != null)
 										{
-											childNode = RenderOutputNode(secondArea);
+											childNode = RenderOutputNode(secondArea, childToken);
 											if(childNode != null)
 											{
 												result.Nodes.Add(childNode);
@@ -297,7 +481,7 @@ namespace SvgToolsLibrary
 							SelfClosing = false
 						};
 						SetRenderedControlName(area.Node, result);
-						nodes = RenderOutputNodes(area.FrontAreas);
+						nodes = RenderOutputNodes(area.FrontAreas, childToken);
 						foreach(HtmlNodeItem nodeItem in nodes)
 						{
 							result.Nodes.Add(nodeItem);
@@ -306,7 +490,7 @@ namespace SvgToolsLibrary
 					case ImpliedDesignIntentEnum.Form:
 						//	Inner forms are not supported, but their controls can be
 						//	rendered.
-						nodes = RenderOutputNodes(area.FrontAreas);
+						nodes = RenderOutputNodes(area.FrontAreas, childToken);
 						foreach(HtmlNodeItem nodeItem in nodes)
 						{
 							result.Nodes.Add(nodeItem);
@@ -338,20 +522,32 @@ namespace SvgToolsLibrary
 						SetRenderedControlName(area.Node, result);
 						foreach(ControlAreaItem areaItem in area.FrontAreas)
 						{
-							node = RenderOutputNode(areaItem);
+							colIndex = GetColumnIndex(area.FrontAreas, areaItem.X);
+							rowIndex = GetRowIndex(area.FrontAreas, areaItem.Y);
+							if(colIndex > -1)
+							{
+								childToken.Properties.SetValue(
+									"GridColumnIndex", colIndex.ToString());
+							}
+							if(rowIndex > -1)
+							{
+								childToken.Properties.SetValue(
+									"GridRowIndex", rowIndex.ToString());
+							}
+							node = RenderOutputNode(areaItem, childToken);
 							if(node != null)
 							{
 								//	Assign the child-specified grid and column dimensions.
-								colIndex = GetColumnIndex(area.FrontAreas, areaItem.X);
-								rowIndex = GetRowIndex(area.FrontAreas, areaItem.Y);
 								if(colIndex > -1 && rowIndex > -1)
 								{
-									attributeValue = node.Attributes.GetValue("ColumnWidth");
+									attributeValue =
+										areaItem.Node.Attributes.GetValue("ColumnWidth");
 									if(attributeValue?.Length > 0)
 									{
 										gridColDims[colIndex] = attributeValue;
 									}
-									attributeValue = node.Attributes.GetValue("RowHeight");
+									attributeValue =
+										areaItem.Node.Attributes.GetValue("RowHeight");
 									if(attributeValue?.Length > 0)
 									{
 										gridRowDims[rowIndex] = attributeValue;
@@ -418,7 +614,7 @@ namespace SvgToolsLibrary
 						{
 							if(areaItem != textArea)
 							{
-								result.Nodes.Add(RenderOutputNode(areaItem));
+								result.Nodes.Add(RenderOutputNode(areaItem, childToken));
 							}
 						}
 						break;
@@ -441,14 +637,20 @@ namespace SvgToolsLibrary
 						SetRenderedControlName(area.Node, result);
 						foreach(ControlAreaItem areaItem in area.FrontAreas)
 						{
-							node = RenderOutputNode(areaItem);
+							colIndex = GetColumnIndex(area.FrontAreas, areaItem.X);
+							if(colIndex > -1)
+							{
+								childToken.Properties.SetValue(
+									"GridColumnIndex", colIndex.ToString());
+							}
+							node = RenderOutputNode(areaItem, childToken);
 							if(node != null)
 							{
 								//	Assign the child-specified column dimensions.
-								colIndex = GetColumnIndex(area.FrontAreas, areaItem.X);
 								if(colIndex > -1)
 								{
-									attributeValue = node.Attributes.GetValue("ColumnWidth");
+									attributeValue =
+										areaItem.Node.Attributes.GetValue("ColumnWidth");
 									if(attributeValue?.Length > 0)
 									{
 										gridColDims[colIndex] = attributeValue;
@@ -478,7 +680,8 @@ namespace SvgToolsLibrary
 						};
 						childNode.Attributes.SetAttribute("Orientation", "Horizontal");
 						childNode.Attributes.SetAttribute("Spacing", "10");
-						childNode.Nodes.AddRange(RenderOutputNodes(area.FrontAreas));
+						childNode.Nodes.AddRange(
+							RenderOutputNodes(area.FrontAreas, childToken));
 						result.Nodes.Add(childNode);
 						break;
 					case ImpliedDesignIntentEnum.HorizontalStackPanel:
@@ -490,7 +693,8 @@ namespace SvgToolsLibrary
 						SetRenderedControlName(area.Node, result);
 						result.Attributes.SetAttribute("Orientation", "Horizontal");
 						result.Attributes.SetAttribute("Spacing", "10");
-						result.Nodes.AddRange(RenderOutputNodes(area.FrontAreas));
+						result.Nodes.AddRange(
+							RenderOutputNodes(area.FrontAreas, childToken));
 						result.Nodes.Add(childNode);
 						break;
 					case ImpliedDesignIntentEnum.Image:
@@ -514,10 +718,149 @@ namespace SvgToolsLibrary
 						}
 						break;
 					case ImpliedDesignIntentEnum.Label:
+						result = new HtmlNodeItem()
+						{
+							NodeType = "Label",
+							SelfClosing = true
+						};
+						SetRenderedControlName(imageArea.Node, result);
+						result.Attributes.SetAttribute("Content", GetText(area));
 						break;
 					case ImpliedDesignIntentEnum.ListBox:
+						result = new HtmlNodeItem()
+						{
+							NodeType = "ListBox",
+							SelfClosing = false
+						};
+						SetRenderedControlName(imageArea.Node, node);
+						result.Attributes.SetAttribute("HorizontalAlignment", "Stretch");
+						//	Items panel.
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "ListBox.ItemsPanel",
+							SelfClosing = false
+						};
+						childNode2 = new HtmlNodeItem()
+						{
+							NodeType = "ItemsPanelTemplate",
+							SelfClosing = false
+						};
+						childNode3 = new HtmlNodeItem()
+						{
+							NodeType = "StackPanel",
+							SelfClosing = true
+						};
+						childNode3.Attributes.SetAttribute("Orientation", "Vertical");
+						childNode3.Attributes.SetAttribute(
+							"HorizontalAlignment", "Stretch");
+						childNode2.Nodes.Add(childNode3);
+						childNode.Nodes.Add(childNode2);
+						result.Nodes.Add(childNode);
+
+						SetControlStyles("ListBox.Styles", area, result);
+
+						//	ListBox items can be shown directly over the control or upon
+						//	a node extension layer. In the case that one or more node
+						//	extension layers exist for this control, there may be one
+						//	or more Definitions-type areas in the area.FrontAreas
+						//	collection, and in that case, there might also be
+						//	one or more properties on the Definitions-type area that
+						//	should be applied to the target elements created as a result
+						//	of that definition.
+
+						//	Whether or not multiple sources exist, the number of list
+						//	items is defined as the count of objects in common spaces
+						//	over the control or its extended layer.
+						segmentAreas = GetSegmentAreas(area.FrontAreas);
+						foreach(ControlAreaItem areaItem in segmentAreas)
+						{
+							childNode = new HtmlNodeItem()
+							{
+								NodeType = "ListBoxItem",
+								SelfClosing = false
+							};
+							if(areaItem.FrontAreas.Count > 0)
+							{
+								if(areaItem.FrontAreas.Count == 1 &&
+									areaItem.FrontAreas[0].Intent ==
+									ImpliedDesignIntentEnum.Text)
+								{
+									//	This is a single text entry.
+									childNode.Attributes.SetAttribute(
+										"Content", GetText(areaItem));
+								}
+								else if(areaItem.FrontAreas[0].Intent ==
+									ImpliedDesignIntentEnum.Text)
+								{
+									//	Multiple text entries.
+									childNode2 = new HtmlNodeItem()
+									{
+										NodeType = "StackPanel",
+										SelfClosing = false
+									};
+									childNode2.Attributes.SetAttribute(
+										"Orientation", "Vertical");
+									foreach(ControlAreaItem textAreaItem in areaItem.FrontAreas)
+									{
+										childNode3 = new HtmlNodeItem()
+										{
+											NodeType = "TextBlock",
+											SelfClosing = false
+										};
+										foreach(NameValueItem nameValueItem in
+											textAreaItem.Properties)
+										{
+											childNode3.Attributes.SetAttribute(
+												nameValueItem.Name, nameValueItem.Value);
+										}
+										childNode2.Nodes.Add(childNode3);
+									}
+									childNode.Nodes.Add(childNode2);
+								}
+								else if(areaItem.FrontAreas[0].Intent ==
+									ImpliedDesignIntentEnum.Image)
+								{
+									//	One or more image entries.
+									//	TODO: Add support for Image filename in Source property.
+									//	Filename syntax '/Assets/Images/{filename}'
+									childNode2 = new HtmlNodeItem()
+									{
+										NodeType = "Grid",
+										SelfClosing = false
+									};
+									childNode2.Attributes.SetAttribute(
+										"Width", areaItem.FrontAreas[0].Width.ToString());
+									childNode2.Attributes.SetAttribute(
+										"Height", areaItem.FrontAreas[0].Height.ToString());
+									foreach(ControlAreaItem imageAreaItem in areaItem.FrontAreas)
+									{
+										childNode3 = new HtmlNodeItem()
+										{
+											NodeType = "Image",
+											SelfClosing = true,
+										};
+										childNode3.Attributes.SetAttribute(
+											"x:Name", imageArea.Node.Id);
+										childNode3.Attributes.SetAttribute(
+											"Stretch", "None");
+										childNode3.Attributes.SetAttribute(
+											"IsHitTestVisible", "False");
+										foreach(NameValueItem nameValueItem in
+											imageAreaItem.Properties)
+										{
+											childNode3.Attributes.SetAttribute(
+												nameValueItem.Name, nameValueItem.Value);
+										}
+										childNode2.Nodes.Add(childNode3);
+									}
+									childNode.Nodes.Add(childNode2);
+								}
+							}
+							result.Nodes.Add(childNode);
+						}
 						break;
 					case ImpliedDesignIntentEnum.ListView:
+						//	TODO: !1 - Stopped here...
 						break;
 					case ImpliedDesignIntentEnum.MenuBar:
 						break;
@@ -576,14 +919,20 @@ namespace SvgToolsLibrary
 						SetRenderedControlName(area.Node, result);
 						foreach(ControlAreaItem areaItem in area.FrontAreas)
 						{
-							node = RenderOutputNode(areaItem);
+							rowIndex = GetRowIndex(area.FrontAreas, areaItem.Y);
+							if(rowIndex > -1)
+							{
+								childToken.Properties.SetValue(
+									"GridRowIndex", rowIndex.ToString());
+							}
+							node = RenderOutputNode(areaItem, childToken);
 							if(node != null)
 							{
 								//	Assign the child-specified row dimensions.
-								rowIndex = GetRowIndex(area.FrontAreas, areaItem.Y);
 								if(rowIndex > -1)
 								{
-									attributeValue = node.Attributes.GetValue("RowHeight");
+									attributeValue =
+										areaItem.Node.Attributes.GetValue("RowHeight");
 									if(attributeValue?.Length > 0)
 									{
 										gridRowDims[rowIndex] = attributeValue;
@@ -613,7 +962,8 @@ namespace SvgToolsLibrary
 						};
 						childNode.Attributes.SetAttribute("Orientation", "Vertical");
 						childNode.Attributes.SetAttribute("Spacing", "10");
-						childNode.Nodes.AddRange(RenderOutputNodes(area.FrontAreas));
+						childNode.Nodes.AddRange(
+							RenderOutputNodes(area.FrontAreas, childToken));
 						result.Nodes.Add(childNode);
 						break;
 					case ImpliedDesignIntentEnum.VerticalStackPanel:
@@ -625,15 +975,21 @@ namespace SvgToolsLibrary
 						SetRenderedControlName(area.Node, result);
 						result.Attributes.SetAttribute("Orientation", "Vertical");
 						result.Attributes.SetAttribute("Spacing", "10");
-						result.Nodes.AddRange(RenderOutputNodes(area.FrontAreas));
+						result.Nodes.AddRange(
+							RenderOutputNodes(area.FrontAreas, childToken));
 						result.Nodes.Add(childNode);
 						break;
+				}
+				if(result != null)
+				{
+					ApplyCommonProperties(area, result);
+					ApplyTokenProperties(renderToken, result);
+					result = ApplyPreemptiveProperties(area, result);
 				}
 			}
 			return result;
 		}
 		//*-----------------------------------------------------------------------*
-
 
 		//*************************************************************************
 		//*	Public																																*

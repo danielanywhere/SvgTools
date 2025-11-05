@@ -20,9 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	NameValueCollection																											*
@@ -90,6 +89,79 @@ namespace SvgToolsLibrary
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//*	SetValue																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the value of the property of the specified name, creating a new
+		/// item in the collection, if necessary.
+		/// </summary>
+		/// <param name="name">
+		/// Name of the property to set.
+		/// </param>
+		/// <param name="value">
+		/// Value to place on the property.
+		/// </param>
+		public void SetValue(string name, string value)
+		{
+			string lowerName = "";
+			NameValueItem item = null;
+
+			if(name?.Length > 0)
+			{
+				lowerName = name.ToLower();
+				item = this.FirstOrDefault(x => x.Name.ToLower() == lowerName);
+				if(item == null)
+				{
+					item = new NameValueItem()
+					{
+						Name = name
+					};
+					this.Add(item);
+				}
+				if(value?.Length > 0)
+				{
+					item.Value = value;
+				}
+				else
+				{
+					item.Value = "";
+				}	
+			}
+
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* TransferValues																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Copy the member values of each item in the source collection to new
+		/// items on the target collection.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the source collection to copy.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target collection to receive the new values.
+		/// </param>
+		public static void TransferValues(List<NameValueItem> source,
+			List<NameValueItem> target)
+		{
+			if(source?.Count > 0 && target != null)
+			{
+				target.Clear();
+				foreach(NameValueItem nameValueItem in source)
+				{
+					target.Add(new NameValueItem()
+					{
+						Name = nameValueItem.Name,
+						Value = nameValueItem.Value
+					});
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
 
 	}
 	//*-------------------------------------------------------------------------*

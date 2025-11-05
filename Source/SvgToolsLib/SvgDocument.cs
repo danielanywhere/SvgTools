@@ -22,7 +22,7 @@ using System.Text;
 
 using Html;
 
-namespace SvgToolsLibrary
+namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
 	//*	SvgDocumentCollection																										*
