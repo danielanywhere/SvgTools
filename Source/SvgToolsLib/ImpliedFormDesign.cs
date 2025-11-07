@@ -122,7 +122,8 @@ namespace SvgToolsLib
 							Width = GetWidth(nodeItem),
 							Height = GetHeight(nodeItem),
 							Node = nodeItem,
-							Intent = GetIntent(nodeItem)
+							Intent = GetIntent(nodeItem),
+							Reference = GetReference(nodeItem)
 						};
 						ControlAreaCollection.PlaceInFront(area, areas);
 					}
@@ -141,15 +142,14 @@ namespace SvgToolsLib
 		/// </summary>
 		protected static string[] mControlTypes = new string[]
 		{
-			"button", "checkbox", "combobox", "gridview", "label", "listbox",
-			"listview", "menubar", "picturebox", "progressbar", "radiobutton",
-			"statusbar", "tabcontrol", "textbox", "textwithhelper", "toolbar",
-			"trackbar", "treeview", "updown", "forminformation", "flowpanel",
-			"grid", "groupbox", "horizontalgrid", "horizontalscrollpanel",
-			"horizontalstackpanel", "panel", "scrollpanel", "splitpanel",
-			"staticpanel", "verticalgrid", "verticalscrollpanel",
-			"verticalstackpanel",
-			"menupanel"
+			"button", "checkbox", "combobox", "dockpanel", "gridview", "label",
+			"listbox", "listview", "menubar", "menuitem", "menupanel", "picturebox",
+			"progressbar", "radiobutton", "statusbar", "tabcontrol", "textbox",
+			"textwithhelper", "toolbar", "trackbar", "treeview", "updown",
+			"forminformation", "flowpanel", "grid", "groupbox", "horizontalgrid",
+			"horizontalscrollpanel", "horizontalstackpanel", "panel", "scrollpanel",
+			"splitpanel", "staticpanel", "verticalgrid", "verticalscrollpanel",
+			"verticalstackpanel"
 		};
 
 		/// <summary>
@@ -168,7 +168,7 @@ namespace SvgToolsLib
 		/// </summary>
 		protected static string[] mOrganizerControlTypes = new string[]
 		{
-			"flowpanel",
+			"dockpanel", "flowpanel",
 			"grid", "groupbox", "horizontalgrid", "horizontalscrollpanel",
 			"horizontalstackpanel", "panel", "scrollpanel", "splitpanel",
 			"staticpanel", "verticalgrid", "verticalscrollpanel",
@@ -332,7 +332,11 @@ namespace SvgToolsLib
 		/// <param name="builder">
 		/// Reference to the text builder to fill.
 		/// </param>
-		private static void FillText(ControlAreaItem area, StringBuilder builder)
+		/// <param name="recursive">
+		/// Value indicating whether to append text from all descendants
+		/// </param>
+		private static void FillText(ControlAreaItem area, StringBuilder builder,
+			bool recursive = true)
 		{
 			if(area != null && builder != null)
 			{
@@ -348,9 +352,12 @@ namespace SvgToolsLib
 					}
 					builder.Append(area.Node.Text);
 				}
-				foreach(ControlAreaItem areaItem in area.FrontAreas)
+				if(recursive)
 				{
-					FillText(areaItem, builder);
+					foreach(ControlAreaItem areaItem in area.FrontAreas)
+					{
+						FillText(areaItem, builder);
+					}
 				}
 			}
 		}
@@ -643,9 +650,10 @@ namespace SvgToolsLib
 								RenderOutputNodes(areaItem.FrontAreas, renderToken));
 							break;
 						case ImpliedDesignIntentEnum.FormInformation:
+						case ImpliedDesignIntentEnum.MenuItem:
 						case ImpliedDesignIntentEnum.MenuPanel:
 						case ImpliedDesignIntentEnum.None:
-							//	These intents are not rendered.
+							//	These intents are not rendered directly.
 							break;
 					}
 				}
@@ -1015,6 +1023,32 @@ namespace SvgToolsLib
 		{
 			get { return mFormHeight; }
 			set { mFormHeight = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* FormatShortcut																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the caller's text with any shortcut key symbols consistently
+		/// formatted.
+		/// </summary>
+		/// <param name="textWithShortcut">
+		/// The text that might contain a shortcut decorator.
+		/// </param>
+		/// <returns>
+		/// A version of the caller's text where the shortcut decorator has been
+		/// formatted to be consistent, if legitimate. Otherwise, an empty string.
+		/// </returns>
+		public static string FormatShortcut(string textWithShortcut)
+		{
+			string result = "";
+
+			if(textWithShortcut?.Length > 0)
+			{
+				result = textWithShortcut.Replace('&', '_');
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1509,8 +1543,10 @@ namespace SvgToolsLib
 			HtmlAttributeItem attribute = null;
 			ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
 			string label = "";
+			Match match = null;
 			string nodeType = "";
 			ImpliedDesignIntentEnum result = ImpliedDesignIntentEnum.None;
+			string text = "";
 
 			if(node != null)
 			{
@@ -1522,22 +1558,27 @@ namespace SvgToolsLib
 				{
 					//	If the node has a label, then that intent overrides the intent
 					//	attribute.
-					label = GetLabel(node);
-					if(label.Length == 0)
+					text = GetLabel(node);
+					if(text.Length == 0)
 					{
 						attribute = node.Attributes.FirstOrDefault(x =>
 							x.Name.ToLower() == "intent");
 						if(attribute != null && attribute.Value?.Length > 0)
 						{
-							label = attribute.Value;
+							text = attribute.Value;
 						}
 					}
-					if(label.Length > 0)
+					if(text.Length > 0)
 					{
-						if(Enum.TryParse<ImpliedDesignIntentEnum>(
-							LeftOf(label, "-"), true, out intent))
+						match = Regex.Match(text, ResourceMain.rxIntentWithLabel);
+						if(match.Success)
 						{
-							result = intent;
+							label = GetValue(match, "label");
+							if(Enum.TryParse<ImpliedDesignIntentEnum>(
+								label, true, out intent))
+							{
+								result = intent;
+							}
 						}
 					}
 					if(result == ImpliedDesignIntentEnum.None)
@@ -1660,6 +1701,56 @@ namespace SvgToolsLib
 				else
 				{
 					result = RectilinearOrientationEnum.Vertical;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetReference																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the interpreted reference of the caller's node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the HTML node to inspect.
+		/// </param>
+		/// <returns>
+		/// The implied form design intent reference of the provided node, if it
+		/// could be found. Otherwise, none.
+		/// </returns>
+		public static string GetReference(HtmlNodeItem node)
+		{
+			HtmlAttributeItem attribute = null;
+			Match match = null;
+			string result = "";
+			string text = "";
+
+			if(node != null)
+			{
+				if(!IsLayer(node))
+				{
+					//	If the node has a label, then that intent overrides the intent
+					//	attribute.
+					text = GetLabel(node);
+					if(text.Length == 0)
+					{
+						attribute = node.Attributes.FirstOrDefault(x =>
+							x.Name.ToLower() == "intent");
+						if(attribute != null && attribute.Value?.Length > 0)
+						{
+							text = attribute.Value;
+						}
+					}
+					if(text.Length > 0)
+					{
+						match = Regex.Match(text, ResourceMain.rxIntentWithLabel);
+						if(match.Success)
+						{
+							result = GetValue(match, "reference");
+						}
+					}
 				}
 			}
 			return result;
@@ -1825,7 +1916,7 @@ namespace SvgToolsLib
 
 			if(area != null && area.Node != null)
 			{
-				FillText(area, builder);
+				FillText(area, builder, true);
 			}
 			return builder.ToString();
 		}
@@ -1908,6 +1999,30 @@ namespace SvgToolsLib
 				result = new List<ControlAreaItem>();
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetTextLocal																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return all of the text found directly in the provided control area.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the area to inspect.
+		/// </param>
+		/// <returns>
+		/// The text found in the provided area.
+		/// </returns>
+		public static string GetTextLocal(ControlAreaItem area)
+		{
+			StringBuilder builder = new StringBuilder();
+
+			if(area != null && area.Node != null)
+			{
+				FillText(area, builder, false);
+			}
+			return builder.ToString();
 		}
 		//*-----------------------------------------------------------------------*
 

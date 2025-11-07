@@ -2464,6 +2464,47 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetIntersectingArea																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the intersecting area between two rectangles.
+		/// </summary>
+		/// <param name="area1">
+		/// The first area to compare.
+		/// </param>
+		/// <param name="area2">
+		/// The second area to compare.
+		/// </param>
+		/// <returns>
+		/// Reference to the area intersecting the caller's two original areas,
+		/// if legitimate. Otherwise, null.
+		/// </returns>
+		public static FArea GetIntersectingArea(FArea area1, FArea area2)
+		{
+			FArea result = null;
+			float x1 = 0f;
+			float x2 = 0f;
+			float y1 = 0f;
+			float y2 = 0f;
+
+			if(FArea.HasVolume(area1) && FArea.HasVolume(area2))
+			{
+				x1 = Math.Max(area1.Left, area2.Left);
+				y1 = Math.Max(area1.Top, area2.Top);
+				x2 = Math.Min(area1.Right, area2.Right);
+				y2 = Math.Min(area1.Bottom, area2.Bottom);
+
+				if(x2 > x1 && y2 > y1)
+				{
+					//	An intersection exists.
+					result = new FArea(x1, y1, x2 - x1, y2 - y1);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetOrigin																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

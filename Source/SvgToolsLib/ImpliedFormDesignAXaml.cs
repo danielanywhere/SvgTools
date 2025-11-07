@@ -40,6 +40,65 @@ namespace SvgToolsLib
 		//*	Private																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
+		//* AddMenuPanels																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Add the contents of matching menu panels to the provided base menu.
+		/// </summary>
+		/// <param name="targetNodes">
+		/// Reference to the collection of HTML output nodes to which matches
+		/// will be added.
+		/// </param>
+		/// <param name="baseMenu">
+		/// Reference to the base menu item to be matched.
+		/// </param>
+		/// <param name="definitions">
+		/// Reference to the set of definitions within which the MenuPanel objects
+		/// can be found.
+		/// </param>
+		private static void AddMenuPanels(HtmlNodeCollection targetNodes,
+			ControlAreaItem baseMenu, ControlAreaCollection definitions)
+		{
+			string lowerName = "";
+			List<ControlAreaItem> menuItems = null;
+			HtmlNodeItem node = null;
+			List<ControlAreaItem> panels = null;
+
+			if(targetNodes != null && baseMenu != null && baseMenu.Node != null &&
+				definitions?.Count > 0)
+			{
+				lowerName = baseMenu.Node.Id.ToLower();
+				foreach(ControlAreaItem definitionItem in definitions)
+				{
+					panels = definitionItem.FrontAreas.FindAll(x =>
+						x.Intent == ImpliedDesignIntentEnum.MenuPanel &&
+						x.Reference.ToLower() == lowerName);
+					foreach(ControlAreaItem panelItem in panels)
+					{
+						//	The panel isn't directly rendered.
+						menuItems = panelItem.FrontAreas.FindAll(x =>
+							x.Intent == ImpliedDesignIntentEnum.MenuItem ||
+							x.Intent == ImpliedDesignIntentEnum.Text);
+						foreach(ControlAreaItem menuItem in menuItems)
+						{
+							node = new HtmlNodeItem()
+							{
+								NodeType = "MenuItem",
+								SelfClosing = false
+							};
+							SetRenderedControlName(menuItem.Node, node);
+							node.Attributes.SetAttribute(
+								"Header", FormatShortcut(GetTextLocal(menuItem)));
+							targetNodes.Add(node);
+							AddMenuPanels(node.Nodes, menuItem, definitions);
+						}
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ApplyCommonProperties																									*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -78,6 +137,10 @@ namespace SvgToolsLib
 						case "borderthickness":
 							target.Attributes.SetAttribute(
 								"BorderThickness", attributeItem.Value);
+							break;
+						case "dock":
+							target.Attributes.SetAttribute(
+								"DockPanel.Dock", attributeItem.Value);
 							break;
 						case "margin":
 							target.Attributes.SetAttribute(
@@ -1141,6 +1204,160 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RenderListView																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a ListView control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the ListView control.
+		/// </returns>
+		private HtmlNodeItem RenderListView(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			string attributeValue = "";
+			HtmlNodeItem childNode = null;
+			int colIndex = 0;
+			int gridColCount = 0;
+			string[] gridColDims = null;
+			HtmlNodeItem node = null;
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				gridColCount = GetColumnCount(area.FrontAreas);
+				gridColDims = new string[gridColCount];
+				for(colIndex = 0; colIndex < gridColCount; colIndex++)
+				{
+					gridColDims[colIndex] = "*";
+				}
+				result = new HtmlNodeItem()
+				{
+					NodeType = "ListView",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, result);
+				result.Attributes.SetAttribute(
+					"Items", $"{{Binding {area.Node.Id}Items}}");
+				if(area.FrontAreas.Count > 0)
+				{
+					node = new HtmlNodeItem()
+					{
+						NodeType = "ListBox.ItemTemplate",
+						SelfClosing = false
+					};
+					result.Nodes.Add(node);
+					childNode = new HtmlNodeItem()
+					{
+						NodeType = "DataTemplate",
+						SelfClosing = false
+					};
+					node.Nodes.Add(childNode);
+					node = new HtmlNodeItem()
+					{
+						NodeType = "Grid",
+						SelfClosing = false
+					};
+					childNode.Nodes.Add(node);
+					foreach(ControlAreaItem areaItem in area.FrontAreas)
+					{
+						if(areaItem.Intent == ImpliedDesignIntentEnum.Text)
+						{
+							childNode = new HtmlNodeItem()
+							{
+								NodeType = "TextBlock",
+								SelfClosing = true
+							};
+							childNode.Attributes.SetAttribute("Text", GetText(areaItem));
+							colIndex = GetColumnIndex(area.FrontAreas, areaItem.X);
+							if(colIndex > -1)
+							{
+								childNode.Attributes.SetAttribute(
+									"Grid.Column", colIndex.ToString());
+								attributeValue =
+									areaItem.Node.Attributes.GetValue("ColumnWidth");
+								if(attributeValue?.Length > 0)
+								{
+									gridColDims[colIndex] = attributeValue;
+								}
+							}
+							node.Nodes.Add(childNode);
+						}
+					}
+					node.Attributes.SetAttribute(
+						"ColumnDefinitions", string.Join(',', gridColDims));
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderMenuBar																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a MenuBar control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the MenuBar control.
+		/// </returns>
+		private HtmlNodeItem RenderMenuBar(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			List<ControlAreaItem> baseMenuItems = null;
+			HtmlNodeItem childNode = null;
+			ControlAreaCollection definitions = null;
+			string lowerName = "";
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "Menu",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, result);
+				definitions = GetDefinitionAreas(area.FrontAreas);
+				foreach(ControlAreaItem definitionItem in definitions)
+				{
+					baseMenuItems = definitionItem.FrontAreas.FindAll(x =>
+						x.Intent == ImpliedDesignIntentEnum.MenuItem);
+					foreach(ControlAreaItem menuItem in baseMenuItems)
+					{
+						lowerName = menuItem.Node.Id.ToLower();
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "MenuItem",
+							SelfClosing = false
+						};
+						SetRenderedControlName(menuItem.Node, childNode);
+						childNode.Attributes.SetAttribute(
+							"Header", FormatShortcut(GetTextLocal(menuItem)));
+						result.Nodes.Add(childNode);
+						AddMenuPanels(childNode.Nodes, menuItem, definitions);
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* RenderVerticalGrid																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1440,6 +1657,13 @@ namespace SvgToolsLib
 					case ImpliedDesignIntentEnum.ComboBox:
 						result = RenderComboBox(area, renderToken);
 						break;
+					case ImpliedDesignIntentEnum.DockPanel:
+						//	TODO: In the dock panel, remember that all controls have ...
+						//	been ordered from left to right, top to bottom, so they will need to
+						//	be given placement priority through their original node's
+						//	AbsoluteIndex property.
+						//	TODO: Render DockPanel control.
+						break;
 					case ImpliedDesignIntentEnum.FlowPanel:
 						result = RenderFlowPanel(area, renderToken, childToken);
 						break;
@@ -1484,15 +1708,18 @@ namespace SvgToolsLib
 						result = RenderListBox(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.ListView:
-						//	TODO: !1 - Stopped here...
+						result = RenderListView(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.MenuBar:
+						result = RenderMenuBar(area, renderToken);
 						break;
+					case ImpliedDesignIntentEnum.MenuItem:
 					case ImpliedDesignIntentEnum.MenuPanel:
-						break;
 					case ImpliedDesignIntentEnum.None:
+						//	Not rendered directly.
 						break;
 					case ImpliedDesignIntentEnum.Panel:
+						//	TODO: !1 - Stopped here...
 						break;
 					case ImpliedDesignIntentEnum.PictureBox:
 						break;

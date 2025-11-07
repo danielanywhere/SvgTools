@@ -53,6 +53,10 @@ namespace SvgToolsLib
 		/// </summary>
 		Definitions,
 		/// <summary>
+		/// A docking panel to which nearby child objects are attached.
+		/// </summary>
+		DockPanel,
+		/// <summary>
 		/// A layout container that arranges child elements sequentially,
 		/// horizontally or vertically, wrapping them as needed.
 		/// </summary>
@@ -122,6 +126,11 @@ namespace SvgToolsLib
 		/// quick access to key features.
 		/// </summary>
 		MenuBar,
+		/// <summary>
+		/// Individual menu item, typically used to identify the base menus for a
+		/// menu bar.
+		/// </summary>
+		MenuItem,
 		/// <summary>
 		/// A menu panel containing child entries for an individual menu item.
 		/// </summary>

@@ -149,6 +149,8 @@ namespace SvgToolsLib
 		/// </param>
 		public static void Dump(ControlAreaCollection areas, int indent)
 		{
+			string text = "";
+
 			if(areas?.Count > 0)
 			{
 				foreach(ControlAreaItem areaItem in areas)
@@ -157,12 +159,16 @@ namespace SvgToolsLib
 					{
 						Trace.Write(new string('-', indent - 1));
 					}
-					Trace.Write(' ');
-					Trace.Write(areaItem.Intent.ToString());
-					Trace.Write(' ');
+					Trace.Write($" {areaItem.Intent}");
 					if(areaItem.Node != null)
 					{
-						Trace.Write(areaItem.Node.Id);
+						Trace.Write($" #{areaItem.Node.AbsoluteIndex}");
+						Trace.Write($" id:{areaItem.Node.Id}");
+						text = areaItem.Node.Attributes.GetValue("inkscape:label");
+						if(text.Length > 0)
+						{
+							Trace.Write($"; label:{text}");
+						}
 					}
 					Trace.Write("\t{");
 					Trace.Write(areaItem.X);
@@ -305,8 +311,8 @@ namespace SvgToolsLib
 			List<ControlAreaItem> flat = null;
 			ControlAreaItem item = null;
 			int index = 0;
-			FArea overlap = null;
-			List<FArea> overlapItems = new List<FArea>();
+			FArea intersection = null;
+			//List<FArea> overlapItems = new List<FArea>();
 
 			if(areas != null && area != null)
 			{
@@ -326,15 +332,12 @@ namespace SvgToolsLib
 					{
 						//	The area wasn't fully within the target, but there is an
 						//	overlap.
-						overlapItems.Clear();
-						overlapItems.Add(item);
-						overlapItems.Add(area);
-						overlap = FArea.BoundingBox(overlapItems);
-
-						if(Math.Abs(GetArea(overlap) - GetArea(item)) <
-							(0.2f * Math.Min(GetArea(overlap), GetArea(item))))
+						intersection = GetIntersectingArea(item, area);
+						if(intersection != null &&
+							GetArea(intersection) > (GetArea(area) * 0.8f))
 						{
 							//	The current item is 'mostly' overlapping the parent area.
+							//	80%+.
 							item.FrontAreas.Add(area);
 							bFound = true;
 							break;
@@ -465,6 +468,23 @@ namespace SvgToolsLib
 		{
 			get { return mNode; }
 			set { mNode = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Reference																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Reference">Reference</see>.
+		/// </summary>
+		private string mReference = "";
+		/// <summary>
+		/// Get/Set the name of the reference to which this item applies.
+		/// </summary>
+		public string Reference
+		{
+			get { return mReference; }
+			set { mReference = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

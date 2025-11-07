@@ -115,6 +115,15 @@ namespace SvgToolsLib {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (?i:(?&lt;intent&gt;[a-z]+)(-(?&lt;reference&gt;[a-z]+[0-9a-z_]*)){0,1}).
+        /// </summary>
+        internal static string rxIntentWithLabel {
+            get {
+                return ResourceManager.GetString("rxIntentWithLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (?i:(?s:line\s+(?&lt;line&gt;\d+).*?position\s+(?&lt;position&gt;\d+))).
         /// </summary>
         internal static string rxJsonErrorLinePosition {

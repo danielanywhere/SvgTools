@@ -141,6 +141,10 @@
     <value>(?s:(?i:(?&lt;command&gt;(?&lt;name&gt;[a-z]+)\s*\(\s*(?&lt;params&gt;[^\)]*)\s*\))))</value>
     <comment>Regular expression pattern to find all of the transform commands in the SVG transform string.</comment>
   </data>
+  <data name="rxIntentWithLabel" xml:space="preserve">
+    <value>(?i:(?&lt;intent&gt;[a-z]+)(-(?&lt;reference&gt;[a-z]+[0-9a-z_]*)){0,1})</value>
+    <comment>Regular expression pattern to extract the intent label with an optional reference value.</comment>
+  </data>
   <data name="rxJsonErrorLinePosition" xml:space="preserve">
     <value>(?i:(?s:line\s+(?&lt;line&gt;\d+).*?position\s+(?&lt;position&gt;\d+)))</value>
     <comment>Regular expression to extract the line and position from a Newtonsoft Json parser error message.</comment>
