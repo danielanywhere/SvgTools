@@ -1358,6 +1358,352 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RenderPanel																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a Panel control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <param name="childToken">
+		/// Reference to the rendering token for the next level.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the Panel control.
+		/// </returns>
+		private HtmlNodeItem RenderPanel(ControlAreaItem area,
+			RenderTokenItem renderToken, RenderTokenItem childToken)
+		{
+			List<HtmlNodeItem> nodes = null;
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "Panel",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, result);
+				nodes = RenderOutputNodes(area.FrontAreas, childToken);
+				foreach(HtmlNodeItem nodeItem in nodes)
+				{
+					result.Nodes.Add(nodeItem);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderProgressBar																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a ProgressBar control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the ProgressBar control.
+		/// </returns>
+		private HtmlNodeItem RenderProgressBar(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "ProgressBar",
+					SelfClosing = true
+				};
+				SetRenderedControlName(area.Node, result);
+				TransferAttribute(area.Node, "Maximum", result, "Maximum", "100");
+				TransferAttribute(area.Node, "Minimum", result, "Minimum", "0");
+				TransferAttribute(area.Node, "Value", result, "Value", "0");
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderRadioButton																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a RadioButton control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the RadioButton control.
+		/// </returns>
+		private HtmlNodeItem RenderRadioButton(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "RadioButton",
+					SelfClosing = true
+				};
+				SetRenderedControlName(area.Node, result);
+				TransferAttribute(area.Node, "GroupName", result, "GroupName");
+				TransferAttribute(area.Node, "Content", result, "Content");
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderScrollPanel																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a ScrollPanel
+		/// control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <param name="childToken">
+		/// Reference to the rendering token for the next level.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the ScrollPanel control.
+		/// </returns>
+		private HtmlNodeItem RenderScrollPanel(ControlAreaItem area,
+			RenderTokenItem renderToken, RenderTokenItem childToken)
+		{
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "ScrollViewer",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, result);
+				result.Attributes.SetAttribute(
+					"HorizontalScrollBarVisibility", "Auto");
+				result.Attributes.SetAttribute(
+					"VerticalScrollBarVisibility", "Auto");
+				result.Nodes.AddRange(
+					RenderOutputNodes(area.FrontAreas, childToken));
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderSplitPanel																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a SplitPanel
+		/// control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <param name="childToken">
+		/// Reference to the rendering token for the next level.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the SplitPanel control.
+		/// </returns>
+		private HtmlNodeItem RenderSplitPanel(ControlAreaItem area,
+			RenderTokenItem renderToken, RenderTokenItem childToken)
+		{
+			string attributeValue = "";
+			HtmlNodeItem childNode = null;
+			HtmlNodeItem node = null;
+			RectilinearOrientationEnum orientation = RectilinearOrientationEnum.None;
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "Grid",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, result);
+				if(area.FrontAreas.Count > 1)
+				{
+					orientation = GetOrientation(area.FrontAreas[0], area.FrontAreas[1]);
+				}
+				switch(orientation)
+				{
+					case RectilinearOrientationEnum.Horizontal:
+					case RectilinearOrientationEnum.None:
+						node = new HtmlNodeItem()
+						{
+							NodeType = "Grid.ColumnDefinitions",
+							SelfClosing = false
+						};
+						attributeValue = area.Node.Attributes.GetValue("PanelASize");
+						if(attributeValue.Length == 0)
+						{
+							attributeValue = "Auto";
+						}
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "ColumnDefinition",
+							SelfClosing = true
+						};
+						childNode.Attributes.SetAttribute("Width", attributeValue);
+						node.Nodes.Add(childNode);
+						attributeValue = area.Node.Attributes.GetValue("SplitterSize");
+						if(attributeValue.Length == 0)
+						{
+							attributeValue = "5";
+						}
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "ColumnDefinition",
+							SelfClosing = true
+						};
+						childNode.Attributes.SetAttribute("Width", attributeValue);
+						node.Nodes.Add(childNode);
+						attributeValue = area.Node.Attributes.GetValue("PanelBSize");
+						if(attributeValue.Length == 0)
+						{
+							attributeValue = "*";
+						}
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "ColumnDefinition",
+							SelfClosing = true
+						};
+						childNode.Attributes.SetAttribute("Width", attributeValue);
+						node.Nodes.Add(childNode);
+						break;
+					case RectilinearOrientationEnum.Vertical:
+						node = new HtmlNodeItem()
+						{
+							NodeType = "Grid.RowDefinitions",
+							SelfClosing = false
+						};
+						attributeValue = area.Node.Attributes.GetValue("PanelASize");
+						if(attributeValue.Length == 0)
+						{
+							attributeValue = "Auto";
+						}
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "RowDefinition",
+							SelfClosing = true
+						};
+						childNode.Attributes.SetAttribute("Height", attributeValue);
+						node.Nodes.Add(childNode);
+						attributeValue = area.Node.Attributes.GetValue("SplitterSize");
+						if(attributeValue.Length == 0)
+						{
+							attributeValue = "5";
+						}
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "RowDefinition",
+							SelfClosing = true
+						};
+						childNode.Attributes.SetAttribute("Height", attributeValue);
+						node.Nodes.Add(childNode);
+						attributeValue = area.Node.Attributes.GetValue("PanelBSize");
+						if(attributeValue.Length == 0)
+						{
+							attributeValue = "*";
+						}
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "RowDefinition",
+							SelfClosing = true
+						};
+						childNode.Attributes.SetAttribute("Height", attributeValue);
+						node.Nodes.Add(childNode);
+						break;
+				}
+				result.Nodes.Add(node);
+				if(area.FrontAreas.Count > 0)
+				{
+					switch(orientation)
+					{
+						case RectilinearOrientationEnum.Horizontal:
+						case RectilinearOrientationEnum.None:
+							childToken.Properties.SetValue("Grid.Column", "0");
+							break;
+						case RectilinearOrientationEnum.Vertical:
+							childToken.Properties.SetValue("Grid.Row", "0");
+							break;
+					}
+					result.Nodes.Add(RenderOutputNode(area.FrontAreas[0], childToken));
+				}
+				node = new HtmlNodeItem()
+				{
+					NodeType = "GridSplitter",
+					SelfClosing = true
+				};
+				switch(orientation)
+				{
+					case RectilinearOrientationEnum.Horizontal:
+					case RectilinearOrientationEnum.None:
+						node.Attributes.SetAttribute("Grid.Column", "1");
+						node.Attributes.SetAttribute("ResizeDirection", "Columns");
+						break;
+					case RectilinearOrientationEnum.Vertical:
+						node.Attributes.SetAttribute("Grid.Row", "1");
+						node.Attributes.SetAttribute("ResizeDirection", "Rows");
+						break;
+				}
+				node.Attributes.SetAttribute("Background", "DarkGray");
+				node.Attributes.SetAttribute("HorizontalAlignment", "Stretch");
+				node.Attributes.SetAttribute("VerticalAlignment", "Stretch");
+				result.Nodes.Add(node);
+				if(area.FrontAreas.Count > 1)
+				{
+					switch(orientation)
+					{
+						case RectilinearOrientationEnum.Horizontal:
+						case RectilinearOrientationEnum.None:
+							childToken.Properties.SetValue("Grid.Column", "2");
+							break;
+						case RectilinearOrientationEnum.Vertical:
+							childToken.Properties.SetValue("Grid.Row", "2");
+							break;
+					}
+					result.Nodes.Add(RenderOutputNode(area.FrontAreas[^1], childToken));
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* RenderVerticalGrid																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1431,6 +1777,50 @@ namespace SvgToolsLib
 				}
 				result.Attributes.SetAttribute(
 					"RowDefinitions", string.Join(',', gridRowDims));
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderStatusBar																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a StatusBar control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the StatusBar control.
+		/// </returns>
+		private HtmlNodeItem RenderStatusBar(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			HtmlNodeItem node = null;
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "Border",
+					SelfClosing = false
+				};
+				result.Attributes.SetAttribute("Height", "30");
+				node = new HtmlNodeItem()
+				{
+					NodeType = "TextBlock",
+					SelfClosing = true
+				};
+				SetRenderedControlName(area.Node, node);
+				node.Attributes.SetAttribute("Text", GetText(area));
+				node.Attributes.SetAttribute("Margin", "10,0");
+				result.Nodes.Add(node);
 			}
 			return result;
 		}
@@ -1719,21 +2109,31 @@ namespace SvgToolsLib
 						//	Not rendered directly.
 						break;
 					case ImpliedDesignIntentEnum.Panel:
-						//	TODO: !1 - Stopped here...
+						result = RenderPanel(area, renderToken, childToken);
 						break;
 					case ImpliedDesignIntentEnum.PictureBox:
+						result = RenderImage(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.ProgressBar:
+						result = RenderProgressBar(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.RadioButton:
+						result = RenderRadioButton(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.ScrollPanel:
+						result = RenderScrollPanel(area, renderToken, childToken);
 						break;
 					case ImpliedDesignIntentEnum.SplitPanel:
+						result = RenderSplitPanel(area, renderToken, childToken);
 						break;
 					case ImpliedDesignIntentEnum.StaticPanel:
+						//	For the time-being, this will be a normal panel. If
+						//	we go ahead with statically-positioned things, we'll
+						//	let you know.
+						result = RenderPanel(area, renderToken, childToken);
 						break;
 					case ImpliedDesignIntentEnum.StatusBar:
+						result = RenderStatusBar(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.TabControl:
 						break;

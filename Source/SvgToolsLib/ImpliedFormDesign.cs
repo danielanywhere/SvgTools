@@ -1672,16 +1672,21 @@ namespace SvgToolsLib
 		/// Reference to the second control area for which the direction will be
 		/// found.
 		/// </param>
+		/// <param name="defaultOrientation">
+		/// Default orientation if no specific answer is found.
+		/// </param>
 		/// <returns>
 		/// The orientation between the two objects, if found. Otherwise, None.
 		/// </returns>
 		public static RectilinearOrientationEnum GetOrientation(
-			ControlAreaItem area1, ControlAreaItem area2)
+			ControlAreaItem area1, ControlAreaItem area2,
+			RectilinearOrientationEnum defaultOrientation =
+				RectilinearOrientationEnum.None)
 		{
 			float angle = 0f;
 			FVector2 center1 = null;
 			FVector2 center2 = null;
-			RectilinearOrientationEnum result = RectilinearOrientationEnum.None;
+			RectilinearOrientationEnum result = defaultOrientation;
 
 			if(area1 != null && area2 != null)
 			{
@@ -2717,6 +2722,61 @@ namespace SvgToolsLib
 		{
 			get { return mSvg; }
 			set { mSvg = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* TransferAttribute																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Transfer the attribute value from the source to the target object.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the source node.
+		/// </param>
+		/// <param name="sourceAttributeName">
+		/// Name of the source attribute to read.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target node.
+		/// </param>
+		/// <param name="targetAttributeName">
+		/// Name of the target attribute to write.
+		/// </param>
+		/// <param name="defaultValue">
+		/// Optional default value to set if the source is not found.
+		/// </param>
+		public void TransferAttribute(
+			HtmlNodeItem source, string sourceAttributeName,
+			HtmlNodeItem target, string targetAttributeName,
+			string defaultValue = null)
+		{
+			HtmlAttributeItem attribute = null;
+			string name = "";
+
+			if(source != null && target != null &&
+				sourceAttributeName?.Length > 0 && targetAttributeName?.Length > 0)
+			{
+				name = sourceAttributeName.ToLower();
+				attribute = source.Attributes.FirstOrDefault(x =>
+					x.Name.ToLower() == name);
+				if(attribute != null)
+				{
+					if(attribute.Value?.Length > 0)
+					{
+						target.Attributes.SetAttribute(targetAttributeName,
+							attribute.Value);
+					}
+					else
+					{
+						target.Attributes.SetAttribute(targetAttributeName, "");
+					}
+				}
+				else if(defaultValue != null)
+				{
+					target.Attributes.SetAttribute(targetAttributeName, defaultValue);
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
