@@ -42,6 +42,33 @@ namespace SvgToolsLib
 		//*************************************************************************
 
 		//*-----------------------------------------------------------------------*
+		//*	_Indexer																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the first matching property with the specified case-insensitive
+		/// name.
+		/// </summary>
+		/// <param name="name">
+		/// Name of the property to find.
+		/// </param>
+		public NameValueItem this[string name]
+		{
+			get
+			{
+				string lowerName = "";
+				NameValueItem result = null;
+
+				if(name?.Length > 0)
+				{
+					lowerName = name.ToLower();
+					result = this.FirstOrDefault(x => x.Name.ToLower() == lowerName);
+				}
+				return result;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ParseSemi																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

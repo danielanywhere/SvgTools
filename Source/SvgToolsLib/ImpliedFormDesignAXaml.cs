@@ -1704,6 +1704,151 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RenderTabControl																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a TabControl
+		/// control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <param name="childToken">
+		/// Reference to the rendering token for the next level.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the TabControl control.
+		/// </returns>
+		private HtmlNodeItem RenderTabControl(ControlAreaItem area,
+			RenderTokenItem renderToken, RenderTokenItem childToken)
+		{
+			ControlAreaCollection definitions = null;
+			HtmlNodeItem node = null;
+			NameValueItem property = null;
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "TabControl",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, result);
+				definitions = GetDefinitionAreas(area.FrontAreas);
+				foreach(ControlAreaItem definitionItem in definitions)
+				{
+					node = new HtmlNodeItem()
+					{
+						NodeType = "TabItem",
+						SelfClosing = false
+					};
+					SetRenderedControlName(definitionItem.Node, node);
+					property = definitionItem.Properties["Header"];
+					if(property?.Value?.Length > 0)
+					{
+						node.Attributes.SetAttribute("Header", property.Value);
+					}
+					node.Nodes.AddRange(
+						RenderOutputNodes(definitionItem.FrontAreas, childToken));
+					result.Nodes.Add(node);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderTextBlock																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a TextBlock control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the TextBlock control.
+		/// </returns>
+		private HtmlNodeItem RenderTextBlock(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "TextBlock",
+					SelfClosing = true
+				};
+				SetRenderedControlName(area.Node, result);
+				result.Attributes.SetAttribute("Text", GetText(area));
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderTextBox																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a TextBox control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the TextBox control.
+		/// </returns>
+		private HtmlNodeItem RenderTextBox(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			HtmlNodeItem result = null;
+			string text = null;
+			ControlAreaItem textArea = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "TextBox",
+					SelfClosing = true
+				};
+				SetRenderedControlName(area.Node, result);
+				textArea = area.FrontAreas.FirstOrDefault(x =>
+					x.Intent == ImpliedDesignIntentEnum.Text);
+				if(textArea != null)
+				{
+					text = GetText(textArea);
+					if(text.Length == 0)
+					{
+						text = null;
+					}
+				}
+				TransferAttribute(area.Node, "AcceptsReturn", result, "AcceptsReturn");
+				TransferAttribute(area.Node, "PasswordChar", result, "PasswordChar");
+				TransferAttribute(area.Node, "Prompt", result, "Watermark");
+				TransferAttribute(area.Node, "Text", result, "Text", text);
+				TransferAttribute(area.Node, "TextWrapping", result, "TextWrapping");
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* RenderVerticalGrid																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2136,10 +2281,13 @@ namespace SvgToolsLib
 						result = RenderStatusBar(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.TabControl:
+						result = RenderTabControl(area, renderToken, childToken);
 						break;
 					case ImpliedDesignIntentEnum.Text:
+						result = RenderTextBlock(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.TextBox:
+						result = RenderTextBox(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.TextWithHelper:
 						break;

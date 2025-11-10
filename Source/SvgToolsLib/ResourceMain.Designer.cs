@@ -142,7 +142,7 @@ namespace SvgToolsLib {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to (?&lt;nodeExtensionAssignment&gt;(?&lt;=^\w+-|;)(?&lt;name&gt;\w+)\:(?&lt;value&gt;\w+)).
+        ///   Looks up a localized string similar to (?i:(?&lt;nodeExtensionAssignment&gt;(?&lt;=^\w+-|;)(?&lt;name&gt;\w+)\:(?&lt;value&gt;[^\:\;]+))).
         /// </summary>
         internal static string rxNodeExtensionAssignment {
             get {

@@ -154,7 +154,7 @@
     <comment>Regular expression pattern to find name = quoted value pairs.</comment>
   </data>
   <data name="rxNodeExtensionAssignment" xml:space="preserve">
-    <value>(?&lt;nodeExtensionAssignment&gt;(?&lt;=^\w+-|;)(?&lt;name&gt;\w+)\:(?&lt;value&gt;\w+))</value>
+    <value>(?i:(?&lt;nodeExtensionAssignment&gt;(?&lt;=^\w+-|;)(?&lt;name&gt;\w+)\:(?&lt;value&gt;[^\:\;]+)))</value>
     <comment>Regular expression pattern to find all of the name/value assignments to apply for elements in a node extension layer label.</comment>
   </data>
   <data name="rxNumber" xml:space="preserve">
