@@ -537,6 +537,57 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RenderDockPanel																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a DockPanel control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <param name="childToken">
+		/// Reference to the rendering token for the next level.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the DockPanel control.
+		/// </returns>
+		private HtmlNodeItem RenderDockPanel(ControlAreaItem area,
+			RenderTokenItem renderToken, RenderTokenItem childToken)
+		{
+			//	In the dock panel, remember that all controls have been ordered from
+			//	left to right, top to bottom, so they will need to be given placement
+			//	priority through their original node's AbsoluteIndex property.
+
+			List<HtmlNodeItem> nodes = null;
+			List<ControlAreaItem> orderedAreas = null;
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "DockPanel",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, result);
+				orderedAreas =
+					area.FrontAreas.FindAll(x => x.Node != null).
+					OrderBy(y => y.Node.AbsoluteIndex).ToList();
+				nodes = RenderOutputNodes(orderedAreas, childToken);
+				foreach(HtmlNodeItem nodeItem in nodes)
+				{
+					result.Nodes.Add(nodeItem);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* RenderFlowPanel																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2683,11 +2734,7 @@ namespace SvgToolsLib
 						result = RenderComboBox(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.DockPanel:
-						//	TODO: In the dock panel, remember that all controls have ...
-						//	been ordered from left to right, top to bottom, so they will need to
-						//	be given placement priority through their original node's
-						//	AbsoluteIndex property.
-						//	TODO: Render DockPanel control.
+						result = RenderDockPanel(area, renderToken, childToken);
 						break;
 					case ImpliedDesignIntentEnum.FlowPanel:
 						result = RenderFlowPanel(area, renderToken, childToken);
