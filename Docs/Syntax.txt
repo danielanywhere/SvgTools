@@ -36,6 +36,12 @@ All parameters can be prefixed with either '/' or '--'.
                         The following accompanying properties are supported:
                             x, y, width, height
                         Properties: transform, x, y [, width, height]
+                    ImpliedDesignEnumerateControls - Enumerate the identified
+                        controls within an SVG source file.
+                        /infile
+                    ImpliedDesignToAvaloniaXaml - Render an Avalonia XAML file
+                        from an Implied Design SVG file.
+                        /infile /outfile
                     OpenWorkingSvg * - Set the current working SVG to make it
                         eligible for participating in multiple sequential
                         operations.

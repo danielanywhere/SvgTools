@@ -142,8 +142,6 @@ All parameters can be prefixed with either '/' or '--'.
                     ApplyTransforms - Apply transformations on the
                         specified SVG document.
                         {/infile[ /outfile]|(working SVG)}
-                    ArtToXaml - Convert the SVG UI Design Art to XAML.
-                        {/infile[ /outfile]|(working SVG)}
                     Batch - Perform a batch of file operations from a
                         single JSON configuration file.
                         /infile
@@ -158,6 +156,12 @@ All parameters can be prefixed with either '/' or '--'.
                         The following accompanying properties are supported:
                             x, y, width, height
                         Properties: transform, x, y [, width, height]
+                    ImpliedDesignEnumerateControls - Enumerate the identified
+                        controls within an SVG source file.
+                        /infile
+                    ImpliedDesignToAvaloniaXaml - Render an Avalonia XAML file
+                        from an Implied Design SVG file.
+                        /infile /outfile
                     OpenWorkingSvg * - Set the current working SVG to make it
                         eligible for participating in multiple sequential
                         operations.
