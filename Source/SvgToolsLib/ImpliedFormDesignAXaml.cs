@@ -283,11 +283,14 @@ namespace SvgToolsLib
 		/// <param name="renderToken">
 		/// Reference to the rendering state token provided by the parent.
 		/// </param>
+		/// <param name="buttonType">
+		/// The type of button to render. Default = "Button".
+		/// </param>
 		/// <returns>
 		/// XAML node representing the Button control.
 		/// </returns>
 		private HtmlNodeItem RenderButton(ControlAreaItem area,
-			RenderTokenItem renderToken)
+			RenderTokenItem renderToken, string buttonType = "Button")
 		{
 			HtmlNodeItem childNode = null;
 			RenderTokenItem childToken = null;
@@ -301,7 +304,7 @@ namespace SvgToolsLib
 			string text = "";
 			ControlAreaItem textArea = null;
 
-			if(area != null)
+			if(area != null && buttonType?.Length > 0)
 			{
 				state =
 					(HasImages(area.FrontAreas) ? 0x2 : 0x0) |
@@ -316,7 +319,7 @@ namespace SvgToolsLib
 						text = GetText(area);
 						result = new HtmlNodeItem()
 						{
-							NodeType = "Button",
+							NodeType = buttonType,
 							SelfClosing = true
 						};
 						result.Attributes.SetAttribute("Content", text);
@@ -327,7 +330,7 @@ namespace SvgToolsLib
 						imageArea = GetImageArea(area);
 						result = new HtmlNodeItem()
 						{
-							NodeType = "Button",
+							NodeType = buttonType,
 							SelfClosing = false
 						};
 						SetRenderedControlName(area.Node, result);
@@ -345,7 +348,7 @@ namespace SvgToolsLib
 						{
 							result = new HtmlNodeItem()
 							{
-								NodeType = "Button",
+								NodeType = buttonType,
 								SelfClosing = false
 							};
 							SetRenderedControlName(area.Node, result);
@@ -2079,6 +2082,67 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RenderToolBar																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a ToolBar control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the ToolBar control.
+		/// </returns>
+		private HtmlNodeItem RenderToolBar(ControlAreaItem area,
+			RenderTokenItem renderToken, RenderTokenItem childToken)
+		{
+			HtmlNodeItem childNode = null;
+			HtmlNodeItem node = null;
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "ToolBarTray",
+					SelfClosing = false
+				};
+				node = new HtmlNodeItem()
+				{
+					NodeType = "ToolBar",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, node);
+				foreach(ControlAreaItem areaItem in area.FrontAreas)
+				{
+					switch(areaItem.Intent)
+					{
+						case ImpliedDesignIntentEnum.Button:
+							//	Process the button node.
+							node.Nodes.Add(RenderOutputNode(areaItem, childToken));
+							break;
+						case ImpliedDesignIntentEnum.Separator:
+							//	Process the separator node.
+							childNode = new HtmlNodeItem()
+							{
+								NodeType = "Separator",
+								SelfClosing = true
+							};
+							node.Nodes.Add(childNode);
+							break;
+					}
+				}
+				result.Nodes.Add(node);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* RenderVerticalScrollPanel																							*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2402,6 +2466,7 @@ namespace SvgToolsLib
 						result = RenderTextWithHelper(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.ToolBar:
+						result = RenderToolBar(area, renderToken, childToken);
 						break;
 					case ImpliedDesignIntentEnum.TrackBar:
 						break;

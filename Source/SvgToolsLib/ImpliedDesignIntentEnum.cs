@@ -161,6 +161,11 @@ namespace SvgToolsLib
 		/// </summary>
 		ScrollPanel,
 		/// <summary>
+		/// General purpose area separator, mainly found in menus and toolbars,
+		/// but also useful as a filler.
+		/// </summary>
+		Separator,
+		/// <summary>
 		/// A layout container that divides its space into resizable sections,
 		/// either horizontally or vertically aligned, and typically with a
 		/// draggable splitter, allowing users to adjust the relative size of
