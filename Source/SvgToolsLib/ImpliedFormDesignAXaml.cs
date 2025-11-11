@@ -1849,6 +1849,113 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RenderTextWithHelper																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a TextWithHelper control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the TextWithHelper control.
+		/// </returns>
+		private HtmlNodeItem RenderTextWithHelper(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			ControlAreaItem buttonArea = null;
+			HtmlNodeItem childNode = null;
+			HtmlNodeItem result = null;
+			HtmlNodeItem node = null;
+			string text = null;
+			ControlAreaItem textArea = null;
+			ControlAreaItem textBoxArea = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "Grid",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, result);
+				node = new HtmlNodeItem()
+				{
+					NodeType = "Grid.ColumnDefinitions",
+					SelfClosing = false
+				};
+				childNode = new HtmlNodeItem()
+				{
+					NodeType = "ColumnDefinition",
+					SelfClosing = true
+				};
+				childNode.Attributes.SetAttribute("Width", "*");
+				node.Nodes.Add(childNode);
+				childNode = new HtmlNodeItem()
+				{
+					NodeType = "ColumnDefinition",
+					SelfClosing = true
+				};
+				childNode.Attributes.SetAttribute("Width", "Auto");
+				node.Nodes.Add(childNode);
+				result.Nodes.Add(node);
+				textBoxArea = area.FrontAreas.FindMatch(x =>
+					x.Intent == ImpliedDesignIntentEnum.TextBox);
+				buttonArea = area.FrontAreas.FindMatch(x => x.Intent ==
+					ImpliedDesignIntentEnum.Button);
+				node = new HtmlNodeItem()
+				{
+					NodeType = "TextBox",
+					SelfClosing = true
+				};
+				node.Attributes.SetAttribute("Grid.Column", "0");
+				if(textBoxArea != null)
+				{
+					textArea = textBoxArea.FrontAreas.FirstOrDefault(x =>
+						x.Intent == ImpliedDesignIntentEnum.Text);
+					if(textArea != null)
+					{
+						text = GetText(textArea);
+						if(text.Length == 0)
+						{
+							text = null;
+						}
+					}
+					TransferAttribute(textArea.Node, "Text", node, "Text", text);
+				}
+				TransferAttribute(area.Node, "Prompt", node, "Watermark");
+				result.Nodes.Add(node);
+				node = new HtmlNodeItem()
+				{
+					NodeType = "Button",
+					SelfClosing = true
+				};
+				node.Attributes.SetAttribute("Grid.Column", "1");
+				if(buttonArea != null)
+				{
+					textArea = buttonArea.FrontAreas.FirstOrDefault(x =>
+						x.Intent == ImpliedDesignIntentEnum.Text);
+					if(textArea != null)
+					{
+						text = GetText(textArea);
+						if(text.Length == 0)
+						{
+							text = null;
+						}
+					}
+					TransferAttribute(textArea.Node, "Content", node, "Content", text);
+				}
+				result.Nodes.Add(node);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* RenderVerticalGrid																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2093,6 +2200,8 @@ namespace SvgToolsLib
 					if(!attribute.Value.ToLower().StartsWith(
 						sourceNode.NodeType.ToLower()))
 					{
+						//	If this control wasn't named with the default ID then
+						//	apply the user-supplied name.
 						targetNode.Attributes.SetAttribute("x:Name", attribute.Value);
 					}
 				}
@@ -2290,6 +2399,7 @@ namespace SvgToolsLib
 						result = RenderTextBox(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.TextWithHelper:
+						result = RenderTextWithHelper(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.ToolBar:
 						break;
