@@ -623,6 +623,7 @@ namespace SvgToolsLib
 						case ImpliedDesignIntentEnum.ProgressBar:
 						case ImpliedDesignIntentEnum.RadioButton:
 						case ImpliedDesignIntentEnum.ScrollPanel:
+						case ImpliedDesignIntentEnum.Slider:
 						case ImpliedDesignIntentEnum.SplitPanel:
 						case ImpliedDesignIntentEnum.StaticPanel:
 						case ImpliedDesignIntentEnum.StatusBar:
@@ -631,7 +632,6 @@ namespace SvgToolsLib
 						case ImpliedDesignIntentEnum.TextBox:
 						case ImpliedDesignIntentEnum.TextWithHelper:
 						case ImpliedDesignIntentEnum.ToolBar:
-						case ImpliedDesignIntentEnum.TrackBar:
 						case ImpliedDesignIntentEnum.TreeView:
 						case ImpliedDesignIntentEnum.UpDown:
 						case ImpliedDesignIntentEnum.VerticalGrid:
@@ -981,8 +981,7 @@ namespace SvgToolsLib
 									Intent = ImpliedDesignIntentEnum.Definitions
 								};
 								//	Assignments are in inkscape:label
-								attribute = layerItem.Attributes.FirstOrDefault(x =>
-									x.Name.ToLower() == "inkscape:label");
+								attribute = layerItem.Attributes["inkscape:label"];
 								if(attribute != null)
 								{
 									assignments = Regex.Matches(attribute.Value,
@@ -1279,8 +1278,7 @@ namespace SvgToolsLib
 					x.Name.ToLower() == "inkscape:label" &&
 					x.Value.ToLower().StartsWith("form")))
 			{
-				label = node.Attributes.FirstOrDefault(x =>
-					x.Name.ToLower() == "inkscape:label").Value;
+				label = node.Attributes["inkscape:label"].Value;
 				if(label.ToLower().StartsWith("form-") &&
 					label.Length > 5)
 				{
@@ -1289,8 +1287,7 @@ namespace SvgToolsLib
 				}
 				else
 				{
-					attribute = node.Attributes.FirstOrDefault(x =>
-						x.Name.ToLower() == "caption");
+					attribute = node.Attributes["caption"];
 					if(attribute != null)
 					{
 						caption = attribute.Value;
@@ -1324,8 +1321,7 @@ namespace SvgToolsLib
 				node = doc.Nodes.FindMatch(x => x.NodeType.ToLower() == "svg");
 				if(node != null)
 				{
-					attribute = node.Attributes.FirstOrDefault(x =>
-						x.Name.ToLower() == "height");
+					attribute = node.Attributes["height"];
 					if(attribute != null && attribute.Value?.Length > 0)
 					{
 						result = (float)ToInt(attribute.Value);
@@ -1359,8 +1355,7 @@ namespace SvgToolsLib
 				node = doc.Nodes.FindMatch(x => x.NodeType.ToLower() == "svg");
 				if(node != null)
 				{
-					attribute = node.Attributes.FirstOrDefault(x =>
-						x.Name.ToLower() == "width");
+					attribute = node.Attributes["width"];
 					if(attribute != null && attribute.Value?.Length > 0)
 					{
 						result = (float)ToInt(attribute.Value);
@@ -1486,16 +1481,14 @@ namespace SvgToolsLib
 
 			if(node != null)
 			{
-				attribute = node.Attributes.FirstOrDefault(x =>
-					x.Name.ToLower() == "xlink:href");
+				attribute = node.Attributes["xlink:href"];
 				if(attribute != null && attribute.Value?.Length > 0)
 				{
 					if(attribute.Value.StartsWith("data:"))
 					{
 						extension = Between(attribute.Value, "/", ";");
 					}
-					attribute = node.Attributes.FirstOrDefault(x =>
-						x.Name.ToLower() == "id");
+					attribute = node.Attributes["id"];
 					if(attribute?.Value?.Length > 0)
 					{
 						if(extension.Length == 0)
@@ -1508,8 +1501,7 @@ namespace SvgToolsLib
 				}
 				else
 				{
-					attribute = node.Attributes.FirstOrDefault(x =>
-						x.Name.ToLower() == "id");
+					attribute = node.Attributes["id"];
 					if(attribute?.Value?.Length > 0)
 					{
 						result = $"{attribute.Value}.png";
@@ -1561,8 +1553,7 @@ namespace SvgToolsLib
 					text = GetLabel(node);
 					if(text.Length == 0)
 					{
-						attribute = node.Attributes.FirstOrDefault(x =>
-							x.Name.ToLower() == "intent");
+						attribute = node.Attributes["intent"];
 						if(attribute != null && attribute.Value?.Length > 0)
 						{
 							text = attribute.Value;
@@ -1573,7 +1564,7 @@ namespace SvgToolsLib
 						match = Regex.Match(text, ResourceMain.rxIntentWithLabel);
 						if(match.Success)
 						{
-							label = GetValue(match, "label");
+							label = GetValue(match, "intent");
 							if(Enum.TryParse<ImpliedDesignIntentEnum>(
 								label, true, out intent))
 							{
@@ -1620,8 +1611,7 @@ namespace SvgToolsLib
 
 			if(node != null)
 			{
-				attribute = node.Attributes.FirstOrDefault(x =>
-					x.Name.ToLower() == "inkscape:label");
+				attribute = node.Attributes["inkscape:label"];
 				if(attribute != null && attribute.Value?.Length > 0)
 				{
 					result = attribute.Value;
@@ -1741,8 +1731,7 @@ namespace SvgToolsLib
 					text = GetLabel(node);
 					if(text.Length == 0)
 					{
-						attribute = node.Attributes.FirstOrDefault(x =>
-							x.Name.ToLower() == "intent");
+						attribute = node.Attributes["intent"];
 						if(attribute != null && attribute.Value?.Length > 0)
 						{
 							text = attribute.Value;
@@ -2089,14 +2078,11 @@ namespace SvgToolsLib
 			string propertyName)
 		{
 			HtmlAttributeItem attribute = null;
-			string lowerName = "";
 			string result = "";
 
 			if(area?.Node != null && propertyName?.Length > 0)
 			{
-				lowerName = propertyName.ToLower();
-				attribute = area.Node.Attributes.FirstOrDefault(x =>
-					x.Name.ToLower() == lowerName);
+				attribute = area.Node.Attributes[propertyName];
 				if(attribute != null)
 				{
 					result = attribute.Value;
@@ -2177,8 +2163,7 @@ namespace SvgToolsLib
 						if(spans.Count > 0)
 						{
 							span = spans[0];
-							attribute =
-								span.Attributes.FirstOrDefault(x => x.Name.ToLower() == "x");
+							attribute = span.Attributes["x"];
 							if(attribute != null)
 							{
 								//	Raw.
@@ -2204,8 +2189,7 @@ namespace SvgToolsLib
 						break;
 					case "tspan":
 						span = node;
-						attribute =
-							span.Attributes.FirstOrDefault(x => x.Name.ToLower() == "x");
+						attribute = span.Attributes["x"];
 						if(attribute != null)
 						{
 							//	Raw.
@@ -2229,8 +2213,7 @@ namespace SvgToolsLib
 						}
 						break;
 					default:
-						attribute =
-							node.Attributes.FirstOrDefault(x => x.Name.ToLower() == "x");
+						attribute = node.Attributes["x"];
 						if(attribute != null)
 						{
 							result = (float)ToInt(attribute.Value);
@@ -2284,8 +2267,7 @@ namespace SvgToolsLib
 						if(spans.Count > 0)
 						{
 							span = spans[0];
-							attribute =
-								span.Attributes.FirstOrDefault(x => x.Name.ToLower() == "y");
+							attribute = span.Attributes["y"];
 							if(attribute != null)
 							{
 								//	Raw.
@@ -2313,8 +2295,7 @@ namespace SvgToolsLib
 						break;
 					case "tspan":
 						span = node;
-						attribute =
-							span.Attributes.FirstOrDefault(x => x.Name.ToLower() == "y");
+						attribute = span.Attributes["y"];
 						if(attribute != null)
 						{
 							//	Raw.
@@ -2340,8 +2321,7 @@ namespace SvgToolsLib
 						}
 						break;
 					default:
-						attribute =
-							node.Attributes.FirstOrDefault(x => x.Name.ToLower() == "y");
+						attribute = node.Attributes["y"];
 						if(attribute != null)
 						{
 							result = (float)ToInt(attribute.Value);
@@ -2752,14 +2732,11 @@ namespace SvgToolsLib
 			string defaultValue = null)
 		{
 			HtmlAttributeItem attribute = null;
-			string name = "";
 
 			if(source != null && target != null &&
 				sourceAttributeName?.Length > 0 && targetAttributeName?.Length > 0)
 			{
-				name = sourceAttributeName.ToLower();
-				attribute = source.Attributes.FirstOrDefault(x =>
-					x.Name.ToLower() == name);
+				attribute = source.Attributes[sourceAttributeName];
 				if(attribute != null)
 				{
 					if(attribute.Value?.Length > 0)
@@ -2806,16 +2783,13 @@ namespace SvgToolsLib
 			HtmlAttributeItem attribute = null;
 			Match match = null;
 			string measure = "";
-			string name = "";
 			string number = "";
 			string targetValue = "0";
 
 			if(source != null && target != null &&
 				sourceAttributeName?.Length > 0 && targetAttributeName?.Length > 0)
 			{
-				name = sourceAttributeName.ToLower();
-				attribute = source.Attributes.FirstOrDefault(x =>
-					x.Name.ToLower() == name);
+				attribute = source.Attributes[sourceAttributeName];
 				if(attribute != null && attribute.Value?.Length > 0)
 				{
 					match = Regex.Match(attribute.Value,

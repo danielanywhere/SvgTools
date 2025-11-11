@@ -166,6 +166,11 @@ namespace SvgToolsLib
 		/// </summary>
 		Separator,
 		/// <summary>
+		/// A slider control that lets users select a value from a continuous or
+		/// discrete range by dragging a thumb along a track.
+		/// </summary>
+		Slider,
+		/// <summary>
 		/// A layout container that divides its space into resizable sections,
 		/// either horizontally or vertically aligned, and typically with a
 		/// draggable splitter, allowing users to adjust the relative size of
@@ -207,11 +212,6 @@ namespace SvgToolsLib
 		/// within an application.
 		/// </summary>
 		ToolBar,
-		/// <summary>
-		/// A slider control that lets users select a value from a continuous or
-		/// discrete range by dragging a thumb along a track.
-		/// </summary>
-		TrackBar,
 		/// <summary>
 		/// A hierarchical control that displays nested items in a collapsible
 		/// tree structure.

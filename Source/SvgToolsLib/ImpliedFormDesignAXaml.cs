@@ -271,6 +271,47 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* FillTreeViewItems																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Fill a set of TreeView items from the provided collection of area
+		/// references.
+		/// </summary>
+		/// <param name="references">
+		/// Reference to a collection of control area references to follow.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the current rendering token for this level.
+		/// </param>
+		/// <param name="nodes">
+		/// Reference to a collection of HTML nodes prepared to receive the new
+		/// collection of nodes.
+		/// </param>
+		private void FillTreeViewItems(
+			ControlReferenceCollection references, RenderTokenItem renderToken,
+			HtmlNodeCollection nodes)
+		{
+			ControlAreaItem area = null;
+			HtmlNodeItem node = null;
+
+			if(references?.Count > 0 && nodes != null)
+			{
+				foreach(ControlReferenceItem referenceItem in references)
+				{
+					area = referenceItem.Area;
+					node = RenderTreeViewItem(area, renderToken);
+					if(node != null)
+					{
+						nodes.Add(node);
+						FillTreeViewItems(referenceItem.References,
+							renderToken, node.Nodes);
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* RenderButton																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -286,11 +327,15 @@ namespace SvgToolsLib
 		/// <param name="buttonType">
 		/// The type of button to render. Default = "Button".
 		/// </param>
+		/// <param name="captionProperty">
+		/// The name of the property used for the caption.
+		/// </param>
 		/// <returns>
 		/// XAML node representing the Button control.
 		/// </returns>
 		private HtmlNodeItem RenderButton(ControlAreaItem area,
-			RenderTokenItem renderToken, string buttonType = "Button")
+			RenderTokenItem renderToken, string buttonType = "Button",
+			string captionProperty = "Content")
 		{
 			HtmlNodeItem childNode = null;
 			RenderTokenItem childToken = null;
@@ -322,7 +367,7 @@ namespace SvgToolsLib
 							NodeType = buttonType,
 							SelfClosing = true
 						};
-						result.Attributes.SetAttribute("Content", text);
+						result.Attributes.SetAttribute(captionProperty, text);
 						SetRenderedControlName(area.Node, result);
 						break;
 					case 2:
@@ -377,7 +422,7 @@ namespace SvgToolsLib
 								childNode = RenderOutputNode(firstArea, childToken);
 								if(childNode != null)
 								{
-									result.Nodes.Add(childNode);
+									containerNode.Nodes.Add(childNode);
 								}
 								secondArea =
 									(imageArea == firstArea ? textArea : imageArea);
@@ -386,7 +431,7 @@ namespace SvgToolsLib
 									childNode = RenderOutputNode(secondArea, childToken);
 									if(childNode != null)
 									{
-										result.Nodes.Add(childNode);
+										containerNode.Nodes.Add(childNode);
 									}
 								}
 							}
@@ -983,6 +1028,7 @@ namespace SvgToolsLib
 			string imageName = "";
 			HtmlNodeItem result = null;
 
+			//	TODO: Handle inline vector-drawing from SVG assets.
 			if(area != null)
 			{
 				imageArea = GetImageArea(area);
@@ -1521,6 +1567,46 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RenderSlider																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a Slider control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the Slider control.
+		/// </returns>
+		private HtmlNodeItem RenderSlider(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "Slider",
+					SelfClosing = true
+				};
+				SetRenderedControlName(area.Node, result);
+				TransferAttribute(area.Node, "Maximum", result, "Maximum", "100");
+				TransferAttribute(area.Node, "Minimum", result, "Minimum", "0");
+				TransferAttribute(area.Node, "Value", result, "Value", "0");
+				TransferAttribute(area.Node, "Frequency", result, "TickFrequency");
+				TransferAttribute(area.Node, "Orientation", result, "Orientation");
+				TransferAttribute(area.Node, "Snap", result, "IsSnapToTickEnabled");
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* RenderSplitPanel																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1953,6 +2039,237 @@ namespace SvgToolsLib
 					TransferAttribute(textArea.Node, "Content", node, "Content", text);
 				}
 				result.Nodes.Add(node);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderTreeView																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a TreeView control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the TreeView control.
+		/// </returns>
+		private HtmlNodeItem RenderTreeView(ControlAreaItem area,
+			RenderTokenItem renderToken, RenderTokenItem childToken)
+		{
+			ControlAreaCollection definitions = null;
+			List<ControlAreaItem> nodeList = null;
+			HtmlNodeItem result = null;
+			ControlReferenceCollection tree = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "TreeView",
+					SelfClosing = true
+				};
+				SetRenderedControlName(area.Node, result);
+				definitions = GetDefinitionAreas(area.FrontAreas);
+				nodeList = definitions.SelectMany(x => x.FrontAreas).ToList();
+				tree = ControlReferenceCollection.CreateTree(nodeList);
+				FillTreeViewItems(tree, childToken, result.Nodes);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderTreeViewItem																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render the output of an individual TreeViewItem.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the Button control.
+		/// </returns>
+		private HtmlNodeItem RenderTreeViewItem(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			HtmlNodeItem childNode = null;
+			RenderTokenItem childToken = null;
+			HtmlNodeItem containerNode = null;
+			ControlAreaItem firstArea = null;
+			ControlAreaItem imageArea = null;
+			HtmlNodeItem node = null;
+			RectilinearOrientationEnum orientation = RectilinearOrientationEnum.None;
+			HtmlNodeItem result = null;
+			ControlAreaItem secondArea = null;
+			int state = 0;
+			string text = "";
+			ControlAreaItem textArea = null;
+
+			if(area != null)
+			{
+				state =
+					(HasImages(area.FrontAreas) ? 0x2 : 0x0) |
+					(HasText(area.FrontAreas) ? 0x1 : 0x0);
+				switch(state)
+				{
+					case 0:
+						//	No text, no images.
+						break;
+					case 1:
+						//	Text only, no images.
+						text = GetText(area);
+						result = new HtmlNodeItem()
+						{
+							NodeType = "TreeViewItem",
+							SelfClosing = true
+						};
+						result.Attributes.SetAttribute("Header", text);
+						SetRenderedControlName(area.Node, result);
+						break;
+					case 2:
+						//	Images only, no text.
+						imageArea = GetImageArea(area);
+						result = new HtmlNodeItem()
+						{
+							NodeType = "TreeViewItem",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						node = new HtmlNodeItem()
+						{
+							NodeType = "TreeViewItem.Header",
+							SelfClosing = false
+						};
+						childNode = RenderOutputNode(imageArea, childToken);
+						if(childNode != null)
+						{
+							node.Nodes.Add(childNode);
+						}
+						result.Nodes.Add(node);
+						break;
+					case 3:
+						//	Text and images.
+						imageArea = GetImageArea(area);
+						textArea = GetTextArea(area);
+						if(imageArea != null && textArea != null)
+						{
+							result = new HtmlNodeItem()
+							{
+								NodeType = "TreeViewItem",
+								SelfClosing = false
+							};
+							SetRenderedControlName(area.Node, result);
+							node = new HtmlNodeItem()
+							{
+								NodeType = "TreeViewItem.Header",
+								SelfClosing = false
+							};
+							containerNode = new HtmlNodeItem()
+							{
+								NodeType = "StackPanel"
+							};
+							containerNode.Attributes.SetAttribute("Spacing", "5");
+							node.Nodes.Add(containerNode);
+							result.Nodes.Add(node);
+							orientation = GetOrientation(imageArea, textArea);
+							switch(orientation)
+							{
+								case RectilinearOrientationEnum.Horizontal:
+								case RectilinearOrientationEnum.None:
+									containerNode.Attributes.SetAttribute(
+										"Orientation", "Horizontal");
+									break;
+								case RectilinearOrientationEnum.Vertical:
+									containerNode.Attributes.SetAttribute(
+										"Orientation", "Vertical");
+									break;
+							}
+							firstArea = GetFirstArea(imageArea, textArea, orientation);
+							if(firstArea != null)
+							{
+								childNode = RenderOutputNode(firstArea, childToken);
+								if(childNode != null)
+								{
+									containerNode.Nodes.Add(childNode);
+								}
+								secondArea =
+									(imageArea == firstArea ? textArea : imageArea);
+								if(secondArea != null)
+								{
+									childNode = RenderOutputNode(secondArea, childToken);
+									if(childNode != null)
+									{
+										containerNode.Nodes.Add(childNode);
+									}
+								}
+							}
+						}
+						break;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RenderUpDown																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of an UpDown control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the UpDown control.
+		/// </returns>
+		private HtmlNodeItem RenderUpDown(ControlAreaItem area,
+			RenderTokenItem renderToken)
+		{
+			int number = 0;
+			HtmlNodeItem result = null;
+			string text = null;
+			ControlAreaItem textArea = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "NumericUpDown",
+					SelfClosing = true
+				};
+				SetRenderedControlName(area.Node, result);
+				textArea = area.FrontAreas.FirstOrDefault(x =>
+					x.Intent == ImpliedDesignIntentEnum.Text);
+				if(textArea != null)
+				{
+					text = GetText(textArea);
+					if(text.Length == 0)
+					{
+						text = null;
+					}
+					number = ToInt(text);
+				}
+				TransferAttribute(area.Node, "Minimum", result, "Minimum", "0");
+				TransferAttribute(area.Node, "Maximum", result, "Maximum", "100");
+				TransferAttribute(area.Node, "Value", result, "Value",
+					number.ToString());
 			}
 			return result;
 		}
@@ -2441,6 +2758,9 @@ namespace SvgToolsLib
 					case ImpliedDesignIntentEnum.ScrollPanel:
 						result = RenderScrollPanel(area, renderToken, childToken);
 						break;
+					case ImpliedDesignIntentEnum.Slider:
+						result = RenderSlider(area, renderToken);
+						break;
 					case ImpliedDesignIntentEnum.SplitPanel:
 						result = RenderSplitPanel(area, renderToken, childToken);
 						break;
@@ -2468,11 +2788,11 @@ namespace SvgToolsLib
 					case ImpliedDesignIntentEnum.ToolBar:
 						result = RenderToolBar(area, renderToken, childToken);
 						break;
-					case ImpliedDesignIntentEnum.TrackBar:
-						break;
 					case ImpliedDesignIntentEnum.TreeView:
+						result = RenderTreeView(area, renderToken, childToken);
 						break;
 					case ImpliedDesignIntentEnum.UpDown:
+						result = RenderUpDown(area, renderToken);
 						break;
 					case ImpliedDesignIntentEnum.VerticalGrid:
 						result = RenderVerticalGrid(area, renderToken, childToken);

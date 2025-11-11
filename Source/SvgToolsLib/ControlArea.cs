@@ -364,11 +364,45 @@ namespace SvgToolsLib
 		/// </param>
 		public static void SortPosition(ControlAreaCollection areas)
 		{
+			//List<ControlAreaItem> band = null;
+			//List<List<ControlAreaItem>> bands = null;
+			//float centerY = 0f;
 			List<ControlAreaItem> sortedAreas = null;
+			//float verticalTolerance = 0f;
 
 			if(areas?.Count > 0)
 			{
-				sortedAreas = areas.OrderBy(x => x.X).ThenBy(y => y.Y).ToList();
+				//verticalTolerance = areas.Average(y => y.Height) / 2f;
+				//bands = new List<List<ControlAreaItem>>();
+
+				////	Step 1. Divide the areas into vertical bands.
+				//foreach(ControlAreaItem areaItem in areas)
+				//{
+				//	centerY = FArea.GetCenter(areaItem).Y;
+				//	band = bands.FirstOrDefault(b => b.Count > 0 &&
+				//		Math.Abs(FArea.GetCenter(b[0]).Y - centerY) < verticalTolerance);
+				//	if(band == null)
+				//	{
+				//		bands.Add(new List<ControlAreaItem>() { areaItem });
+				//	}
+				//}
+
+				////	Step 2. Sort within each band left to right.
+				//foreach(List<ControlAreaItem> bandItem in bands)
+				//{
+				//	bandItem.Sort((a, b) =>
+				//		FArea.GetCenter(a).X.CompareTo(FArea.GetCenter(b).X));
+				//}
+
+				////	Step 3. Sort the bands top to bottom.
+				//bands.Sort((a, b) =>
+				//	FArea.GetCenter(a[0]).Y.CompareTo(FArea.GetCenter(b[0]).Y));
+
+				////	Step 4. Re-flatten the list.
+				//sortedAreas = bands.SelectMany(b => b).ToList();
+
+				//sortedAreas = areas.OrderBy(x => x.X).ThenBy(y => y.Y).ToList();
+				sortedAreas = areas.OrderBy(y => y.Y).ThenBy(x => x.X).ToList();
 				areas.Clear();
 				areas.AddRange(sortedAreas);
 				foreach(ControlAreaItem areaItem in areas)
