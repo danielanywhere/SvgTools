@@ -4024,6 +4024,41 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* ToStringFromHtml																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the user-readable text representation of the caller's
+		/// HTML-formatted text.
+		/// </summary>
+		/// <param name="htmlText">
+		/// Text that might contain one or more HTML entities.
+		/// </param>
+		/// <returns>
+		/// User-readable text fit for display.
+		/// </returns>
+		public static string ToStringFromHtml(string htmlText)
+		{
+			string result = "";
+
+			if(htmlText?.Length > 0)
+			{
+				//	Reformat text.
+				result = htmlText;
+				result = result.Replace("&amp;", "&");
+				//	Arrows
+				result = result.Replace("&lt;", "<").Replace("&gt;", ">");
+				//	[CR]LF
+				result = Regex.Replace(result, @"\<br\s*/\>", "\r\n");
+				//	Remove special characters such as curly quotes, etc.
+				result = result.Replace("&quot;", "\"");
+				result = result.Replace("&apos;", "'");
+				result = result.Replace("&copy;", "©");
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* TransformBounds																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

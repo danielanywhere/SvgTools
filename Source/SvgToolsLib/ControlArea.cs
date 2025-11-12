@@ -427,6 +427,47 @@ namespace SvgToolsLib
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		//*-----------------------------------------------------------------------*
+		//* FillInnerText																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Fill the supplied string builder with inner text from the specified
+		/// area and its front areas.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the area containing the text to extract.
+		/// </param>
+		/// <param name="builder">
+		/// Reference to the builder to which the text will be written.
+		/// </param>
+		private static void FillInnerText(ControlAreaItem area,
+			StringBuilder builder)
+		{
+			string text = "";
+
+			if(area != null && builder != null)
+			{
+				text = "";
+				if(area?.mNode?.InnerText.Length > 0)
+				{
+					text = area.mNode.InnerText;
+				}
+				if(text.Length > 0)
+				{
+					if(builder.Length > 0)
+					{
+						builder.Append(' ');
+					}
+					builder.Append(text);
+				}
+				foreach(ControlAreaItem areaItem in area.mFrontAreas)
+				{
+					FillInnerText(areaItem, builder);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
@@ -468,6 +509,36 @@ namespace SvgToolsLib
 		public ControlAreaCollection FrontAreas
 		{
 			get { return mFrontAreas; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetInnerText																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the inner text from the nodes assigned to this area and all of
+		/// its front areas.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the area whose inner text will be retrieved.
+		/// </param>
+		/// <returns>
+		/// The entire combination of text associated with the specified area and
+		/// all of its inner areas.
+		/// </returns>
+		public static string GetInnerText(ControlAreaItem area)
+		{
+			StringBuilder builder = new StringBuilder();
+
+			if(area?.mNode != null)
+			{
+				builder.Append(area.mNode.InnerText);
+			}
+			foreach(ControlAreaItem areaItem in area.mFrontAreas)
+			{
+				FillInnerText(areaItem, builder);
+			}
+			return builder.ToString();
 		}
 		//*-----------------------------------------------------------------------*
 

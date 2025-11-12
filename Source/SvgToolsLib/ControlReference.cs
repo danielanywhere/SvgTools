@@ -64,6 +64,7 @@ namespace SvgToolsLib
 
 			if(areas?.Count > 0 && parents?.Count > 0)
 			{
+				remaining = new List<ControlAreaItem>();
 				ySort = parents.OrderByDescending(y => y.Area.Y).ToList();
 				references = new List<ControlReferenceItem>();
 				foreach(ControlAreaItem areaItem in areas)
@@ -128,6 +129,7 @@ namespace SvgToolsLib
 
 			if(areas?.Count > 0)
 			{
+				remaining = new List<ControlAreaItem>();
 				foreach(ControlAreaItem areaItem in areas)
 				{
 					minX = Math.Min(areaItem.X, minX);

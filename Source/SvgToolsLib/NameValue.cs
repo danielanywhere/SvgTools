@@ -225,6 +225,24 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* ToString																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the string representation of this item.
+		/// </summary>
+		/// <returns>
+		/// The string representation of this item.
+		/// </returns>
+		public override string ToString()
+		{
+			string name = (mName?.Length > 0 ? mName : "(empty)");
+			string value = (mValue?.Length > 0 ? mValue : "(empty)");
+
+			return $"{name}:{value}";
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Value																																	*
 		//*-----------------------------------------------------------------------*
 		private string mValue = "";

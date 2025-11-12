@@ -2220,6 +2220,7 @@ namespace SvgToolsLib
 					//	Load the document if the filename was specified.
 					content = File.ReadAllText(item.InputFiles[0].FullName);
 					doc = new SvgDocumentItem(content);
+					HtmlDocument.RecalculateAbsoluteIndex(doc.Document);
 					SvgToolsUtil.ApplyTransforms(doc.Document);
 					SvgToolsUtil.RoundAllValues(doc.Document, 0);
 					item.WorkingSvg = doc;

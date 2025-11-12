@@ -2,6 +2,10 @@
 
 Following are some example command lines.
 
+<p>&nbsp;</p>
+
+## General Purpose Commands
+
 Apply Transforms to File
 
 ```
@@ -36,5 +40,21 @@ Test precision setting values
 
 ```
 /wait /testprecision:107.65932%,0 /testprecision:107.65932px,3 /testprecision:93451.65932rem,-2
+```
+
+<p>&nbsp;</p>
+
+## Implicit Form Design
+
+Enumerate the elements in an Implicit Form Design file
+
+```
+svgtools /wait /action:ImpliedDesignEnumerateControls /infile:ProjectTaskImpliedDesign.svg /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+```
+
+Render Avalonia XAML file (.axaml) from an Implicit Form Design file
+
+```
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ProjectTaskImpliedDesign.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/ProjectTask.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
 ```
 

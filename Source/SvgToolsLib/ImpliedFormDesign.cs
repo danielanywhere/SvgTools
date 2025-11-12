@@ -234,6 +234,9 @@ namespace SvgToolsLib
 									outputNode.Attributes.SetAttribute(
 										"Title", attributeItem.Value);
 									break;
+								case "projectname":
+									mProjectName = attributeItem.Value;
+									break;
 								case "usebackgroundcolor":
 									//	Value indicating whether to use background colors on
 									//	dropped objects by default on this form.
@@ -258,21 +261,21 @@ namespace SvgToolsLib
 						}
 					}
 				}
-				//	Finalize the caption.
-				if(!outputNode.Attributes.Exists(x =>
-					x.Name.ToLower() == "title" && x.Value.Length > 0))
-				{
-					text = GetFormCaption(mSvg.Document);
-					if(text.Length > 0)
-					{
-						outputNode.Attributes.SetAttribute("Title", text);
-					}
-				}
 				//	Re-index to the base form.
 				formArea =
 					areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
 				if(formArea != null)
 				{
+					//	Finalize the caption.
+					if(!outputNode.Attributes.Exists(x =>
+						x.Name.ToLower() == "title" && x.Value.Length > 0))
+					{
+						text = GetFormCaption(formArea.Node);
+						if(text.Length > 0)
+						{
+							outputNode.Attributes.SetAttribute("Title", text);
+						}
+					}
 					//	Determine the initial layout.
 					childAreas = formArea.FrontAreas;
 					if(HasOrganizer(childAreas))
@@ -319,49 +322,34 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* FillText																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Fill the provided builder with the text found in the specified control
-		/// area.
-		/// </summary>
-		/// <param name="area">
-		/// Reference to the area to inspect.
-		/// </param>
-		/// <param name="builder">
-		/// Reference to the text builder to fill.
-		/// </param>
-		/// <param name="recursive">
-		/// Value indicating whether to append text from all descendants
-		/// </param>
-		private static void FillText(ControlAreaItem area, StringBuilder builder,
-			bool recursive = true)
-		{
-			if(area != null && builder != null)
-			{
-				if((area.Intent == ImpliedDesignIntentEnum.Text ||
-					area.Intent == ImpliedDesignIntentEnum.Label) &&
-					area.Node.Text.Length > 0)
-				{
-					if(builder.Length > 0 &&
-						!WhitespaceCharacters.Contains(builder[builder.Length - 1]) &&
-						!WhitespaceCharacters.Contains(area.Node.Text[0]))
-					{
-						builder.Append(' ');
-					}
-					builder.Append(area.Node.Text);
-				}
-				if(recursive)
-				{
-					foreach(ControlAreaItem areaItem in area.FrontAreas)
-					{
-						FillText(areaItem, builder);
-					}
-				}
-			}
-		}
-		//*-----------------------------------------------------------------------*
+		////*-----------------------------------------------------------------------*
+		////* FillText																															*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Fill the provided builder with the text found in the specified control
+		///// area.
+		///// </summary>
+		///// <param name="area">
+		///// Reference to the area to inspect.
+		///// </param>
+		///// <param name="builder">
+		///// Reference to the text builder to fill.
+		///// </param>
+		///// <param name="recursive">
+		///// Value indicating whether to append text from all descendants
+		///// </param>
+		//private static void FillText(ControlAreaItem area, StringBuilder builder,
+		//	bool recursive = true)
+		//{
+		//	if(area != null && builder != null)
+		//	{
+		//		if(area.Node?.InnerText.Length > 0)
+		//		{
+		//			builder.Append(ToStringFromHtml(area.Node.InnerText));
+		//		}
+		//	}
+		//}
+		////*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
 		//* mConverter_ResolveBaseToValue																					*
@@ -1906,13 +1894,10 @@ namespace SvgToolsLib
 		/// </returns>
 		public static string GetText(ControlAreaItem area)
 		{
-			StringBuilder builder = new StringBuilder();
+			string result = "";
 
-			if(area != null && area.Node != null)
-			{
-				FillText(area, builder, true);
-			}
-			return builder.ToString();
+			result = ToStringFromHtml(ControlAreaItem.GetInnerText(area));
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1996,29 +1981,29 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* GetTextLocal																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return all of the text found directly in the provided control area.
-		/// </summary>
-		/// <param name="area">
-		/// Reference to the area to inspect.
-		/// </param>
-		/// <returns>
-		/// The text found in the provided area.
-		/// </returns>
-		public static string GetTextLocal(ControlAreaItem area)
-		{
-			StringBuilder builder = new StringBuilder();
+		////*-----------------------------------------------------------------------*
+		////* GetTextLocal																													*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return all of the text found directly in the provided control area.
+		///// </summary>
+		///// <param name="area">
+		///// Reference to the area to inspect.
+		///// </param>
+		///// <returns>
+		///// The text found in the provided area.
+		///// </returns>
+		//public static string GetTextLocal(ControlAreaItem area)
+		//{
+		//	StringBuilder builder = new StringBuilder();
 
-			if(area != null && area.Node != null)
-			{
-				FillText(area, builder, false);
-			}
-			return builder.ToString();
-		}
-		//*-----------------------------------------------------------------------*
+		//	if(area != null && area.Node != null)
+		//	{
+		//		FillText(area, builder, false);
+		//	}
+		//	return builder.ToString();
+		//}
+		////*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
 		//* GetUserControlStyles																									*
@@ -2360,6 +2345,34 @@ namespace SvgToolsLib
 			}
 			return result;
 		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Return a value indicating whether the specified item or its decendants
+		/// have images.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area to inspect.
+		/// </param>
+		/// <returns>
+		/// True if one or more images are found in within the supplied tree.
+		/// Otherwise, false.
+		/// </returns>
+		public static bool HasImages(ControlAreaItem area)
+		{
+			bool result = false;
+
+			if(area != null)
+			{
+				result =
+					(area.Intent == ImpliedDesignIntentEnum.Image ||
+					area.Intent == ImpliedDesignIntentEnum.PictureBox);
+				if(!result && area.FrontAreas.Count > 0)
+				{
+					result = HasImages(area.FrontAreas);
+				}
+			}
+			return result;
+		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
@@ -2458,6 +2471,33 @@ namespace SvgToolsLib
 					areas.FindMatches(x =>
 						x.Intent == ImpliedDesignIntentEnum.Text ||
 						x.Intent == ImpliedDesignIntentEnum.Label).Count > 0;
+			}
+			return result;
+		}
+		/// <summary>
+		/// Return a value indicating whether the specified area or its
+		/// decendants have text.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area to inspect.
+		/// </param>
+		/// <returns>
+		/// True if one or more text instances are found in within the supplied
+		/// tree. Otherwise, false.
+		/// </returns>
+		public static bool HasText(ControlAreaItem area)
+		{
+			bool result = false;
+
+			if(area != null)
+			{
+				result =
+					(area.Intent == ImpliedDesignIntentEnum.Text ||
+					area.Intent == ImpliedDesignIntentEnum.Label);
+				if(!result && area.FrontAreas.Count > 0)
+				{
+					result = HasText(area.FrontAreas);
+				}
 			}
 			return result;
 		}
@@ -2609,14 +2649,13 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		//	TODO: Resolve project name while running the application.
 		//*-----------------------------------------------------------------------*
 		//*	ProjectName																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
 		/// Private member for <see cref="ProjectName">ProjectName</see>.
 		/// </summary>
-		protected string mProjectName = "";
+		protected string mProjectName = "ImpliedFormDesignProject";
 		/// <summary>
 		/// Get/Set the name of the project of which this form is a member.
 		/// </summary>
@@ -2812,6 +2851,7 @@ namespace SvgToolsLib
 								targetValue = ToFloat(number).ToString("0.###");
 							}
 						}
+						target.Attributes.SetAttribute(targetAttributeName, targetValue);
 					}
 				}
 			}

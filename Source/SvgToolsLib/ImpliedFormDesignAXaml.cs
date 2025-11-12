@@ -88,7 +88,7 @@ namespace SvgToolsLib
 							};
 							SetRenderedControlName(menuItem.Node, node);
 							node.Attributes.SetAttribute(
-								"Header", FormatShortcut(GetTextLocal(menuItem)));
+								"Header", FormatShortcut(GetText(menuItem)));
 							targetNodes.Add(node);
 							AddMenuPanels(node.Nodes, menuItem, definitions);
 						}
@@ -1447,7 +1447,7 @@ namespace SvgToolsLib
 						};
 						SetRenderedControlName(menuItem.Node, childNode);
 						childNode.Attributes.SetAttribute(
-							"Header", FormatShortcut(GetTextLocal(menuItem)));
+							"Header", FormatShortcut(GetText(menuItem)));
 						result.Nodes.Add(childNode);
 						AddMenuPanels(childNode.Nodes, menuItem, definitions);
 					}
@@ -1795,10 +1795,10 @@ namespace SvgToolsLib
 					{
 						case RectilinearOrientationEnum.Horizontal:
 						case RectilinearOrientationEnum.None:
-							childToken.Properties.SetValue("Grid.Column", "0");
+							childToken.Properties.SetValue("GridColumnIndex", "0");
 							break;
 						case RectilinearOrientationEnum.Vertical:
-							childToken.Properties.SetValue("Grid.Row", "0");
+							childToken.Properties.SetValue("GridRowIndex", "0");
 							break;
 					}
 					result.Nodes.Add(RenderOutputNode(area.FrontAreas[0], childToken));
@@ -1830,10 +1830,10 @@ namespace SvgToolsLib
 					{
 						case RectilinearOrientationEnum.Horizontal:
 						case RectilinearOrientationEnum.None:
-							childToken.Properties.SetValue("Grid.Column", "2");
+							childToken.Properties.SetValue("GridColumnIndex", "2");
 							break;
 						case RectilinearOrientationEnum.Vertical:
-							childToken.Properties.SetValue("Grid.Row", "2");
+							childToken.Properties.SetValue("GridRowIndex", "2");
 							break;
 					}
 					result.Nodes.Add(RenderOutputNode(area.FrontAreas[^1], childToken));
@@ -2171,8 +2171,8 @@ namespace SvgToolsLib
 			if(area != null)
 			{
 				state =
-					(HasImages(area.FrontAreas) ? 0x2 : 0x0) |
-					(HasText(area.FrontAreas) ? 0x1 : 0x0);
+					(HasImages(area) ? 0x2 : 0x0) |
+					(HasText(area) ? 0x1 : 0x0);
 				switch(state)
 				{
 					case 0:
@@ -2629,6 +2629,7 @@ namespace SvgToolsLib
 					x.Value?.Length > 0);
 				if(attribute != null)
 				{
+					//	TODO: Use (?i:(?<defaultName>{sourceNode.NodeType}\d+)) pattern.
 					if(!attribute.Value.ToLower().StartsWith(
 						sourceNode.NodeType.ToLower()))
 					{
@@ -2712,7 +2713,6 @@ namespace SvgToolsLib
 			RenderTokenItem childToken = null;
 			HtmlNodeItem result = null;
 
-			//	TODO: Implement AXAML version of RenderOutputNode.
 			//	TODO: Allow coordinates to be added if control is placed on panel.
 			if(area != null)
 			{
