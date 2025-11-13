@@ -769,10 +769,11 @@ namespace SvgToolsLib
 
 			if(nodes != null && styleValue?.Length > 0)
 			{
-				values = styleValue.Split(charSemicolon);
+				values = ToStringFromHtml(styleValue).Split(charSemicolon);
 				if(values.Length > 0)
 				{
-					selector = values[0].Replace("&quot;", "\"");
+					//selector = values[0].Replace("&quot;", "\"");
+					selector = values[0];
 					if(values.Length > 1)
 					{
 						setters = values[1].Split(charComma);
@@ -1057,70 +1058,94 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* GetColumnCount																												*
+		//* GetColumn																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Return the count of columns found at the current control layer.
+		/// Return a reference to the column found at the specified location.
 		/// </summary>
 		/// <param name="areas">
-		/// Reference to the collection of areas to inspect.
+		/// Reference to the collection of reference areas to inspect.
+		/// </param>
+		/// <param name="x">
+		/// Location whose column will be identified.
 		/// </param>
 		/// <returns>
-		/// Count of columns found at the current control layer, if any controls
-		/// were present. Otherwise, 1.
+		/// Reference to the column at the specified position, if found.
+		/// Otherwise, null.
 		/// </returns>
-		public static int GetColumnCount(ControlAreaCollection areas)
+		public static ControlReferenceItem GetColumn(
+			ControlReferenceCollection areas, float x)
 		{
-			List<float> columns = new List<float>();
-			ControlAreaCollection definitionAreas = GetDefinitionAreas(areas);
-			List<ControlAreaItem> flatList = GetFlatList(definitionAreas);
+			ControlReferenceItem result = null;
 
-			foreach(ControlAreaItem areaItem in flatList)
+			foreach(ControlReferenceItem areaItem in areas)
 			{
-				if(!columns.Contains(areaItem.X))
+				if(areaItem.Left <= x && areaItem.Right >= x)
 				{
-					columns.Add(areaItem.X);
+					result = areaItem;
+					break;
 				}
 			}
-			return columns.Count;
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* GetColumnIndex																												*
+		//* GetColumns																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Return the index of the column found at the current control layer.
+		/// Return a collection of implied columns found at the current control
+		/// layer.
 		/// </summary>
 		/// <param name="areas">
 		/// Reference to the collection of areas to inspect.
 		/// </param>
-		/// <param name="x">
-		/// Reference to the location whose column will be identified.
-		/// </param>
 		/// <returns>
-		/// Column index of the area found at the current control layer, if any
-		/// controls were present. Otherwise, -1.
+		/// Reference to a collection of columns found at the current control
+		/// layer, if any controls were present. Otherwise, an empty collection.
 		/// </returns>
-		public static int GetColumnIndex(ControlAreaCollection areas,
-			float x)
+		public static ControlReferenceCollection GetColumns(
+			ControlAreaCollection areas)
 		{
-			ControlAreaCollection definitionAreas = GetDefinitionAreas(areas);
-			List<ControlAreaItem> flatList = GetFlatList(definitionAreas);
-			int index = 0;
-			int result = -1;
-			List<float> rows = new List<float>();
+			FArea intersection = null;
+			ControlReferenceItem reference = null;
+			List<ControlReferenceItem> result = new List<ControlReferenceItem>();
 
-			foreach(ControlAreaItem areaItem in flatList)
+			foreach(ControlAreaItem areaItem in areas)
 			{
-				if(areaItem.X <= x && areaItem.X + areaItem.Width >= x)
+				if(areaItem.Intent != ImpliedDesignIntentEnum.Definitions)
 				{
-					result = index;
-					break;
+					intersection = null;
+					foreach(ControlReferenceItem columnItem in result)
+					{
+						intersection = GetIntersectingArea(areaItem, columnItem);
+						if(intersection != null)
+						{
+							columnItem.Left = Math.Min(columnItem.Left, areaItem.Left);
+							columnItem.Right = Math.Max(columnItem.Right, areaItem.Right);
+							columnItem.References.Add(areaItem);
+							break;
+						}
+					}
+					if(intersection == null)
+					{
+						reference = new ControlReferenceItem()
+						{
+							X = areaItem.X,
+							Y = float.MinValue / 2f,
+							Width = areaItem.Width,
+							Height = float.MaxValue
+						};
+						reference.References.Add(areaItem);
+						result.Add(reference);
+					}
 				}
-				index++;
+				else
+				{
+					result.AddRange(GetColumns(areaItem.FrontAreas));
+				}
 			}
-			return result;
+			return new ControlReferenceCollection(result.OrderBy(x => x.X).ToList());
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1740,70 +1765,94 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* GetRowCount																														*
+		//* GetRow																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Return the count of rows found at the current control layer.
+		/// Return a reference to the row found at the specified location.
 		/// </summary>
 		/// <param name="areas">
-		/// Reference to the collection of areas to inspect.
+		/// Reference to the collection of reference areas to inspect.
+		/// </param>
+		/// <param name="y">
+		/// Location whose row will be identified.
 		/// </param>
 		/// <returns>
-		/// Count of rows found at the current control layer, if any controls
-		/// were present. Otherwise, 1.
+		/// Reference to the row at the specified position, if found.
+		/// Otherwise, null.
 		/// </returns>
-		public static int GetRowCount(ControlAreaCollection areas)
+		public static ControlReferenceItem GetRow(
+			ControlReferenceCollection areas, float y)
 		{
-			ControlAreaCollection definitionAreas = GetDefinitionAreas(areas);
-			List<ControlAreaItem> flatList = GetFlatList(definitionAreas);
-			List<float> rows = new List<float>();
+			ControlReferenceItem result = null;
 
-			foreach(ControlAreaItem areaItem in flatList)
+			foreach(ControlReferenceItem areaItem in areas)
 			{
-				if(!rows.Contains(areaItem.Y))
+				if(areaItem.Top <= y && areaItem.Bottom >= y)
 				{
-					rows.Add(areaItem.Y);
+					result = areaItem;
+					break;
 				}
 			}
-			return rows.Count;
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* GetRowIndex																														*
+		//* GetRows																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Return the index of the row found at the current control layer.
+		/// Return a collection of implied rows found at the current control
+		/// layer.
 		/// </summary>
 		/// <param name="areas">
 		/// Reference to the collection of areas to inspect.
 		/// </param>
-		/// <param name="y">
-		/// Reference to the location whose row will be identified.
-		/// </param>
 		/// <returns>
-		/// Row index of the area found at the current control layer, if any
-		/// controls were present. Otherwise, -1.
+		/// Reference to a collection of rows found at the current control
+		/// layer, if any controls were present. Otherwise, an empty collection.
 		/// </returns>
-		public static int GetRowIndex(ControlAreaCollection areas,
-			float y)
+		public static ControlReferenceCollection GetRows(
+			ControlAreaCollection areas)
 		{
-			ControlAreaCollection definitionAreas = GetDefinitionAreas(areas);
-			List<ControlAreaItem> flatList = GetFlatList(definitionAreas);
-			int index = 0;
-			int result = -1;
-			List<float> rows = new List<float>();
+			FArea intersection = null;
+			ControlReferenceItem reference = null;
+			List<ControlReferenceItem> result = new List<ControlReferenceItem>();
 
-			foreach(ControlAreaItem areaItem in flatList)
+			foreach(ControlAreaItem areaItem in areas)
 			{
-				if(areaItem.Y <= y && areaItem.Y + areaItem.Height >= y)
+				if(areaItem.Intent != ImpliedDesignIntentEnum.Definitions)
 				{
-					result = index;
-					break;
+					intersection = null;
+					foreach(ControlReferenceItem rowItem in result)
+					{
+						intersection = GetIntersectingArea(areaItem, rowItem);
+						if(intersection != null)
+						{
+							rowItem.Top = Math.Min(rowItem.Top, areaItem.Top);
+							rowItem.Bottom = Math.Max(rowItem.Bottom, areaItem.Bottom);
+							rowItem.References.Add(areaItem);
+							break;
+						}
+					}
+					if(intersection == null)
+					{
+						reference = new ControlReferenceItem()
+						{
+							X = float.MinValue / 2f,
+							Y = areaItem.Y,
+							Width = float.MaxValue,
+							Height = areaItem.Y
+						};
+						reference.References.Add(areaItem);
+						result.Add(reference);
+					}
 				}
-				index++;
+				else
+				{
+					result.AddRange(GetRows(areaItem.FrontAreas));
+				}
 			}
-			return result;
+			return new ControlReferenceCollection(result.OrderBy(y => y.Y).ToList());
 		}
 		//*-----------------------------------------------------------------------*
 

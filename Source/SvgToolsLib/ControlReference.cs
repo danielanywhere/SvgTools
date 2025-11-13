@@ -152,6 +152,7 @@ namespace SvgToolsLib
 			if(item != null)
 			{
 				result.Area = item;
+				this.Add(result);
 			}
 			return result;
 		}

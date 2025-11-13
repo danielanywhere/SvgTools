@@ -690,24 +690,29 @@ namespace SvgToolsLib
 			RenderTokenItem renderToken, RenderTokenItem childToken)
 		{
 			string attributeValue = "";
+			ControlAreaItem cellArea = null;
 			int colIndex = 0;
 			int gridColCount = 0;
 			string[] gridColDims = null;
+			ControlReferenceCollection gridCols = null;
 			int gridRowCount = 0;
 			string[] gridRowDims = null;
+			ControlReferenceCollection gridRows = null;
 			HtmlNodeItem node = null;
 			HtmlNodeItem result = null;
 			int rowIndex = 0;
 
 			if(area != null)
 			{
-				gridRowCount = GetRowCount(area.FrontAreas);
+				gridRows = GetRows(area.FrontAreas);
+				gridRowCount = gridRows.Count;
 				gridRowDims = new string[gridRowCount];
 				for(rowIndex = 0; rowIndex < gridRowCount; rowIndex++)
 				{
 					gridRowDims[rowIndex] = "*";
 				}
-				gridColCount = GetColumnCount(area.FrontAreas);
+				gridCols = GetColumns(area.FrontAreas);
+				gridColCount = gridCols.Count;
 				gridColDims = new string[gridColCount];
 				for(colIndex = 0; colIndex < gridColCount; colIndex++)
 				{
@@ -719,41 +724,50 @@ namespace SvgToolsLib
 					SelfClosing = false
 				};
 				SetRenderedControlName(area.Node, result);
-				foreach(ControlAreaItem areaItem in area.FrontAreas)
+				rowIndex = 0;
+				foreach(ControlReferenceItem gridRowItem in gridRows)
 				{
-					colIndex = GetColumnIndex(area.FrontAreas, areaItem.X);
-					rowIndex = GetRowIndex(area.FrontAreas, areaItem.Y);
-					if(colIndex > -1)
+					colIndex = 0;
+					foreach(ControlReferenceItem gridColItem in gridCols)
 					{
 						childToken.Properties.SetValue(
 							"GridColumnIndex", colIndex.ToString());
-					}
-					if(rowIndex > -1)
-					{
 						childToken.Properties.SetValue(
 							"GridRowIndex", rowIndex.ToString());
-					}
-					node = RenderOutputNode(areaItem, childToken);
-					if(node != null)
-					{
-						//	Assign the child-specified grid and column dimensions.
-						if(colIndex > -1 && rowIndex > -1)
+						foreach(ControlReferenceItem referenceItem in
+							gridColItem.References)
 						{
-							attributeValue =
-								areaItem.Node.Attributes.GetValue("ColumnWidth");
-							if(attributeValue?.Length > 0)
+							cellArea = referenceItem.Area;
+							if(gridRowItem.References.Exists(item =>
+								item.Area == cellArea))
 							{
-								gridColDims[colIndex] = attributeValue;
-							}
-							attributeValue =
-								areaItem.Node.Attributes.GetValue("RowHeight");
-							if(attributeValue?.Length > 0)
-							{
-								gridRowDims[rowIndex] = attributeValue;
+								//	The item appears in this row.
+								node = RenderOutputNode(cellArea, childToken);
+								if(node != null)
+								{
+									//	Assign the child-specified grid and column dimensions.
+									if(colIndex > -1 && rowIndex > -1)
+									{
+										attributeValue =
+											cellArea.Node.Attributes.GetValue("ColumnWidth");
+										if(attributeValue?.Length > 0)
+										{
+											gridColDims[colIndex] = attributeValue;
+										}
+										attributeValue =
+											cellArea.Node.Attributes.GetValue("RowHeight");
+										if(attributeValue?.Length > 0)
+										{
+											gridRowDims[rowIndex] = attributeValue;
+										}
+									}
+									result.Nodes.Add(node);
+								}
 							}
 						}
-						result.Nodes.Add(node);
+						colIndex++;
 					}
+					rowIndex++;
 				}
 				result.Attributes.SetAttribute(
 					"RowDefinitions", string.Join(',', gridRowDims));
@@ -786,13 +800,15 @@ namespace SvgToolsLib
 			HtmlNodeItem childNode = null;
 			int colIndex = 0;
 			int gridColCount = 0;
+			ControlReferenceCollection gridCols = null;
 			string[] gridColDims = null;
 			HtmlNodeItem node = null;
 			HtmlNodeItem result = null;
 
 			if(area != null)
 			{
-				gridColCount = GetColumnCount(area.FrontAreas);
+				gridCols = GetColumns(area.FrontAreas);
+				gridColCount = gridCols.Count;
 				gridColDims = new string[gridColCount];
 				for(colIndex = 0; colIndex < gridColCount; colIndex++)
 				{
@@ -907,15 +923,18 @@ namespace SvgToolsLib
 			//	The direct front area items will be the only participants
 			//	in a grid layout.
 			string attributeValue = "";
+			ControlAreaItem cellArea = null;
 			int colIndex = 0;
 			int gridColCount = 0;
 			string[] gridColDims = null;
+			ControlReferenceCollection gridCols = null;
 			HtmlNodeItem node = null;
 			HtmlNodeItem result = null;
 
 			if(area != null)
 			{
-				gridColCount = GetColumnCount(area.FrontAreas);
+				gridCols = GetColumns(area.FrontAreas);
+				gridColCount = gridCols.Count;
 				gridColDims = new string[gridColCount];
 				for(colIndex = 0; colIndex < gridColCount; colIndex++)
 				{
@@ -927,29 +946,29 @@ namespace SvgToolsLib
 					SelfClosing = false
 				};
 				SetRenderedControlName(area.Node, result);
-				foreach(ControlAreaItem areaItem in area.FrontAreas)
+				colIndex = 0;
+				foreach(ControlReferenceItem gridColItem in gridCols)
 				{
-					colIndex = GetColumnIndex(area.FrontAreas, areaItem.X);
-					if(colIndex > -1)
+					childToken.Properties.SetValue(
+						"GridColumnIndex", colIndex.ToString());
+					foreach(ControlReferenceItem referenceItem in
+						gridColItem.References)
 					{
-						childToken.Properties.SetValue(
-							"GridColumnIndex", colIndex.ToString());
-					}
-					node = RenderOutputNode(areaItem, childToken);
-					if(node != null)
-					{
-						//	Assign the child-specified column dimensions.
-						if(colIndex > -1)
+						cellArea = referenceItem.Area;
+						node = RenderOutputNode(cellArea, childToken);
+						if(node != null)
 						{
+							//	Assign the child-specified column dimensions.
 							attributeValue =
-								areaItem.Node.Attributes.GetValue("ColumnWidth");
+								cellArea.Node.Attributes.GetValue("ColumnWidth");
 							if(attributeValue?.Length > 0)
 							{
 								gridColDims[colIndex] = attributeValue;
 							}
+							result.Nodes.Add(node);
 						}
-						result.Nodes.Add(node);
 					}
+					colIndex++;
 				}
 				result.Attributes.SetAttribute(
 					"ColumnDefinitions", string.Join(',', gridColDims));
@@ -1159,6 +1178,7 @@ namespace SvgToolsLib
 		private HtmlNodeItem RenderListBox(ControlAreaItem area,
 			RenderTokenItem renderToken)
 		{
+			string attributeValue = "";
 			HtmlNodeItem childNode = null;
 			HtmlNodeItem childNode2 = null;
 			HtmlNodeItem childNode3 = null;
@@ -1262,7 +1282,7 @@ namespace SvgToolsLib
 						{
 							//	One or more image entries.
 							//	TODO: Add support for Image filename in Source property.
-							//	Filename syntax '/Assets/Images/{filename}'
+							//	Filename syntax '/Assets/Images/{SourceFilename}'
 							childNode2 = new HtmlNodeItem()
 							{
 								NodeType = "Grid",
@@ -1280,11 +1300,22 @@ namespace SvgToolsLib
 									SelfClosing = true,
 								};
 								childNode3.Attributes.SetAttribute(
-									"x:Name", area.Node.Id);
+									"x:Name", imageAreaItem.Node.Id);
 								childNode3.Attributes.SetAttribute(
 									"Stretch", "None");
 								childNode3.Attributes.SetAttribute(
 									"IsHitTestVisible", "False");
+								attributeValue =
+									imageAreaItem.Node.Attributes.GetValue("ImageFilename");
+								if(attributeValue.Length == 0)
+								{
+									attributeValue = $"{imageAreaItem.Node.Id}.png";
+								}
+								if(attributeValue.Length > 0)
+								{
+									childNode3.Attributes.SetAttribute(
+										"Source", $"/Assets/Images/{attributeValue}");
+								}
 								foreach(NameValueItem nameValueItem in
 									imageAreaItem.Properties)
 								{
@@ -1323,16 +1354,20 @@ namespace SvgToolsLib
 			RenderTokenItem renderToken)
 		{
 			string attributeValue = "";
+			ControlAreaItem cellArea = null;
 			HtmlNodeItem childNode = null;
 			int colIndex = 0;
+			//ControlReferenceItem gridCol = null;
 			int gridColCount = 0;
 			string[] gridColDims = null;
+			ControlReferenceCollection gridCols = null;
 			HtmlNodeItem node = null;
 			HtmlNodeItem result = null;
 
 			if(area != null)
 			{
-				gridColCount = GetColumnCount(area.FrontAreas);
+				gridCols = GetColumns(area.FrontAreas);
+				gridColCount = gridCols.Count;
 				gridColDims = new string[gridColCount];
 				for(colIndex = 0; colIndex < gridColCount; colIndex++)
 				{
@@ -1366,30 +1401,33 @@ namespace SvgToolsLib
 						SelfClosing = false
 					};
 					childNode.Nodes.Add(node);
-					foreach(ControlAreaItem areaItem in area.FrontAreas)
+					colIndex = 0;
+					foreach(ControlReferenceItem gridColItem in gridCols)
 					{
-						if(areaItem.Intent == ImpliedDesignIntentEnum.Text)
+						foreach(ControlReferenceItem referenceItem in
+							gridColItem.References)
 						{
-							childNode = new HtmlNodeItem()
+							cellArea = referenceItem.Area;
+							if(cellArea.Intent == ImpliedDesignIntentEnum.Text)
 							{
-								NodeType = "TextBlock",
-								SelfClosing = true
-							};
-							childNode.Attributes.SetAttribute("Text", GetText(areaItem));
-							colIndex = GetColumnIndex(area.FrontAreas, areaItem.X);
-							if(colIndex > -1)
-							{
+								childNode = new HtmlNodeItem()
+								{
+									NodeType = "TextBlock",
+									SelfClosing = true
+								};
+								childNode.Attributes.SetAttribute("Text", GetText(cellArea));
 								childNode.Attributes.SetAttribute(
 									"Grid.Column", colIndex.ToString());
 								attributeValue =
-									areaItem.Node.Attributes.GetValue("ColumnWidth");
+									cellArea.Node.Attributes.GetValue("ColumnWidth");
 								if(attributeValue?.Length > 0)
 								{
 									gridColDims[colIndex] = attributeValue;
 								}
+								node.Nodes.Add(childNode);
 							}
-							node.Nodes.Add(childNode);
 						}
+						colIndex++;
 					}
 					node.Attributes.SetAttribute(
 						"ColumnDefinitions", string.Join(',', gridColDims));
@@ -2350,8 +2388,11 @@ namespace SvgToolsLib
 			RenderTokenItem renderToken, RenderTokenItem childToken)
 		{
 			string attributeValue = "";
+			ControlAreaItem cellArea = null;
+			//ControlReferenceItem gridRow = null;
 			int gridRowCount = 0;
 			string[] gridRowDims = null;
+			ControlReferenceCollection gridRows = null;
 			HtmlNodeItem node = null;
 			HtmlNodeItem result = null;
 			int rowIndex = 0;
@@ -2362,7 +2403,8 @@ namespace SvgToolsLib
 				//	However, their normal grid supports rows-only operation.
 				//	The direct front area items will be the only participants
 				//	in a grid layout.
-				gridRowCount = GetRowCount(area.FrontAreas);
+				gridRows = GetRows(area.FrontAreas);
+				gridRowCount = gridRows.Count;
 				gridRowDims = new string[gridRowCount];
 				for(rowIndex = 0; rowIndex < gridRowCount; rowIndex++)
 				{
@@ -2374,29 +2416,28 @@ namespace SvgToolsLib
 					SelfClosing = false
 				};
 				SetRenderedControlName(area.Node, result);
-				foreach(ControlAreaItem areaItem in area.FrontAreas)
+				rowIndex = 0;
+				foreach(ControlReferenceItem gridRowItem in gridRows)
 				{
-					rowIndex = GetRowIndex(area.FrontAreas, areaItem.Y);
-					if(rowIndex > -1)
+					foreach(ControlReferenceItem referenceItem in gridRowItem.References)
 					{
+						cellArea = referenceItem.Area;
 						childToken.Properties.SetValue(
 							"GridRowIndex", rowIndex.ToString());
-					}
-					node = RenderOutputNode(areaItem, childToken);
-					if(node != null)
-					{
-						//	Assign the child-specified row dimensions.
-						if(rowIndex > -1)
+						node = RenderOutputNode(cellArea, childToken);
+						if(node != null)
 						{
+							//	Assign the child-specified row dimensions.
 							attributeValue =
-								areaItem.Node.Attributes.GetValue("RowHeight");
+								cellArea.Node.Attributes.GetValue("RowHeight");
 							if(attributeValue?.Length > 0)
 							{
 								gridRowDims[rowIndex] = attributeValue;
 							}
+							result.Nodes.Add(node);
 						}
-						result.Nodes.Add(node);
 					}
+					rowIndex++;
 				}
 				result.Attributes.SetAttribute(
 					"RowDefinitions", string.Join(',', gridRowDims));
