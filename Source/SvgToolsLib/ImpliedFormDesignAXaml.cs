@@ -1520,6 +1520,12 @@ namespace SvgToolsLib
 			List<HtmlNodeItem> nodes = null;
 			HtmlNodeItem result = null;
 
+			//	TODO: !1 - Stopped here...
+			//	TODO: In this version, Panel is going to auto-deduce implementation
+			//	between VerticalStackPanel, HorizontalStackPanel, and Grid.
+			//	TODO: Update GetColumns and GetRows to allow every non-equal space
+			//	to be returned as separate columns and rows so a grid can be built
+			//	where Grid.ColumnSpan and Grid.RowSpan properties are implemented.
 			if(area != null)
 			{
 				result = new HtmlNodeItem()
