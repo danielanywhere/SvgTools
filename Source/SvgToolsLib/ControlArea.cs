@@ -399,10 +399,7 @@ namespace SvgToolsLib
 				//	FArea.GetCenter(a[0]).Y.CompareTo(FArea.GetCenter(b[0]).Y));
 
 				////	Step 4. Re-flatten the list.
-				//sortedAreas = bands.SelectMany(b => b).ToList();
-
-				//sortedAreas = areas.OrderBy(x => x.X).ThenBy(y => y.Y).ToList();
-				sortedAreas = areas.OrderBy(y => y.Y).ThenBy(x => x.X).ToList();
+				sortedAreas = areas.OrderBy(item => (item.Y, item.X)).ToList();
 				areas.Clear();
 				areas.AddRange(sortedAreas);
 				foreach(ControlAreaItem areaItem in areas)

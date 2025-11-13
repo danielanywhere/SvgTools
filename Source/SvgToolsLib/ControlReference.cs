@@ -16,6 +16,7 @@
  * 
  */
 
+using Geometry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -106,6 +107,55 @@ namespace SvgToolsLib
 		//*************************************************************************
 		//*	Public																																*
 		//*************************************************************************
+		//*-----------------------------------------------------------------------*
+		//*	_Constructor																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Create a new instance of the ControlReferenceCollection item.
+		/// </summary>
+		public ControlReferenceCollection()
+		{
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the ControlReferenceCollection item.
+		/// </summary>
+		/// <param name="items">
+		/// Reference to a collection of items with which to populate this
+		/// collection.
+		/// </param>
+		public ControlReferenceCollection(List<ControlReferenceItem> items)
+		{
+			if(items?.Count > 0)
+			{
+				this.AddRange(items);
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Add																																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Add a new item to the collection by member values.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the control area to be referenced.
+		/// </param>
+		/// <returns>
+		/// Reference to the newly created and added reference item.
+		/// </returns>
+		public ControlReferenceItem Add(ControlAreaItem item)
+		{
+			ControlReferenceItem result = new ControlReferenceItem();
+
+			if(item != null)
+			{
+				result.Area = item;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
 		//*	CreateTree																														*
@@ -166,7 +216,7 @@ namespace SvgToolsLib
 	/// <summary>
 	/// Information about a reference to a single control area.
 	/// </summary>
-	public class ControlReferenceItem
+	public class ControlReferenceItem : FArea
 	{
 		//*************************************************************************
 		//*	Private																																*
