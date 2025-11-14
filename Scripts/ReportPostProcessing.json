@@ -1,0 +1,50 @@
+[
+	{
+		"Remarks": "Remove all unnecessary properties.",
+		"FindPattern": "(align|border|cellspacing|data-sheets-value|height)=\\\"[^\\\"]*\\\"\\s*",
+		"ReplacePattern": "",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Remove extra space in td element.",
+		"FindPattern": "\\<td\\s*\\>",
+		"ReplacePattern": "<td>",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Remove colgroup specification.",
+		"FindPattern": "\\</{0,1}colgroup[^\\>]*\\>",
+		"ReplacePattern": "",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Remove font specification.",
+		"FindPattern": "\\</{0,1}font[^\\>]*\\>",
+		"ReplacePattern": "",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Get the Name/Value cells.",
+		"FindPattern": "(?s:(?<row>\\<tr\\>\\s*(?<cell1>\\<td\\>.*?\\</td\\>)\\s*(?<cell2>\\<td\\>.*?\\</td\\>).*?\\</tr\\>))",
+		"ReplacePattern": "<tr>${cell1}${cell2}</tr>\r\n",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Remove spreadsheet header.",
+		"FindPattern": "\\<tr\\>\\<td\\>Name\\</td\\>\\<td\\>Test Status\\</td\\>\\</tr\\>",
+		"ReplacePattern": "",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Remove blank lines and indents.",
+		"FindPattern": "\\r{0,1}\\n\\s+",
+		"ReplacePattern": "\r\n",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Get table.",
+		"FindPattern": "(?s:.*?\\<em\\>ImpliedFormDesignAXamlRenderTests.*?\\<table[^\\>]*\\>(?<tableContent>.*?)\\</table\\>.*)",
+		"ReplacePattern": "<table><thead><tr><th>Name</th><th>Test Status</th></tr><thead>${tableContent}</table>",
+		"UseRegEx": 1
+	}
+]
