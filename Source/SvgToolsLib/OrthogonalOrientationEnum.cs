@@ -23,25 +23,30 @@ using System.Text;
 namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	RectilinearOrientationEnum																							*
+	//*	OrthogonalOrientationEnum																								*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Enumeration of available rectilinear orientations.
+	/// Enumeration of available orthogonal orientations.
 	/// </summary>
-	public enum RectilinearOrientationEnum
+	[Flags]
+	public enum OrthogonalOrientationEnum
 	{
 		/// <summary>
 		/// No orientation defined or unknown.
 		/// </summary>
-		None = 0,
+		None =				0x00,
 		/// <summary>
 		/// Horizontal orientation.
 		/// </summary>
-		Horizontal,
+		Horizontal =	0x01,
 		/// <summary>
 		/// Vertical orientation.
 		/// </summary>
-		Vertical
+		Vertical =		0x02,
+		/// <summary>
+		/// Orientation consists of horizontal and vertical elements.
+		/// </summary>
+		Grid =				0x03
 	}
 	//*-------------------------------------------------------------------------*
 

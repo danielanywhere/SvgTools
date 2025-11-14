@@ -342,7 +342,7 @@ namespace SvgToolsLib
 			HtmlNodeItem containerNode = null;
 			ControlAreaItem firstArea = null;
 			ControlAreaItem imageArea = null;
-			RectilinearOrientationEnum orientation = RectilinearOrientationEnum.None;
+			OrthogonalOrientationEnum orientation = OrthogonalOrientationEnum.None;
 			HtmlNodeItem result = null;
 			ControlAreaItem secondArea = null;
 			int state = 0;
@@ -406,12 +406,12 @@ namespace SvgToolsLib
 							orientation = GetOrientation(imageArea, textArea);
 							switch(orientation)
 							{
-								case RectilinearOrientationEnum.Horizontal:
-								case RectilinearOrientationEnum.None:
+								case OrthogonalOrientationEnum.Horizontal:
+								case OrthogonalOrientationEnum.None:
 									containerNode.Attributes.SetAttribute(
 										"Orientation", "Horizontal");
 									break;
-								case RectilinearOrientationEnum.Vertical:
+								case OrthogonalOrientationEnum.Vertical:
 									containerNode.Attributes.SetAttribute(
 										"Orientation", "Vertical");
 									break;
@@ -702,6 +702,9 @@ namespace SvgToolsLib
 			HtmlNodeItem result = null;
 			int rowIndex = 0;
 
+			//	TODO: Update GetColumns and GetRows to allow every non-equal space
+			//	to be returned as separate columns and rows so a grid can be built
+			//	where Grid.ColumnSpan and Grid.RowSpan properties are implemented.
 			if(area != null)
 			{
 				gridRows = GetRows(area.FrontAreas);
@@ -1518,26 +1521,38 @@ namespace SvgToolsLib
 			RenderTokenItem renderToken, RenderTokenItem childToken)
 		{
 			List<HtmlNodeItem> nodes = null;
+			OrthogonalOrientationEnum orientation = OrthogonalOrientationEnum.None;
 			HtmlNodeItem result = null;
 
-			//	TODO: !1 - Stopped here...
-			//	TODO: In this version, Panel is going to auto-deduce implementation
+			//	In this version, Panel is going to auto-deduce implementation
 			//	between VerticalStackPanel, HorizontalStackPanel, and Grid.
-			//	TODO: Update GetColumns and GetRows to allow every non-equal space
-			//	to be returned as separate columns and rows so a grid can be built
-			//	where Grid.ColumnSpan and Grid.RowSpan properties are implemented.
 			if(area != null)
 			{
-				result = new HtmlNodeItem()
+				orientation = GetOrientation(area.FrontAreas);
+				switch(orientation)
 				{
-					NodeType = "Panel",
-					SelfClosing = false
-				};
-				SetRenderedControlName(area.Node, result);
-				nodes = RenderOutputNodes(area.FrontAreas, childToken);
-				foreach(HtmlNodeItem nodeItem in nodes)
-				{
-					result.Nodes.Add(nodeItem);
+					case OrthogonalOrientationEnum.Grid:
+						result = RenderGrid(area, renderToken, childToken);
+						break;
+					case OrthogonalOrientationEnum.Horizontal:
+						result = RenderHorizontalStackPanel(area, renderToken, childToken);
+						break;
+					case OrthogonalOrientationEnum.Vertical:
+						result = RenderVerticalStackPanel(area, renderToken, childToken);
+						break;
+					default:
+						result = new HtmlNodeItem()
+						{
+							NodeType = "Panel",
+							SelfClosing = false
+						};
+						SetRenderedControlName(area.Node, result);
+						nodes = RenderOutputNodes(area.FrontAreas, childToken);
+						foreach(HtmlNodeItem nodeItem in nodes)
+						{
+							result.Nodes.Add(nodeItem);
+						}
+						break;
 				}
 			}
 			return result;
@@ -1727,7 +1742,7 @@ namespace SvgToolsLib
 			string attributeValue = "";
 			HtmlNodeItem childNode = null;
 			HtmlNodeItem node = null;
-			RectilinearOrientationEnum orientation = RectilinearOrientationEnum.None;
+			OrthogonalOrientationEnum orientation = OrthogonalOrientationEnum.None;
 			HtmlNodeItem result = null;
 
 			if(area != null)
@@ -1744,8 +1759,8 @@ namespace SvgToolsLib
 				}
 				switch(orientation)
 				{
-					case RectilinearOrientationEnum.Horizontal:
-					case RectilinearOrientationEnum.None:
+					case OrthogonalOrientationEnum.Horizontal:
+					case OrthogonalOrientationEnum.None:
 						node = new HtmlNodeItem()
 						{
 							NodeType = "Grid.ColumnDefinitions",
@@ -1788,7 +1803,7 @@ namespace SvgToolsLib
 						childNode.Attributes.SetAttribute("Width", attributeValue);
 						node.Nodes.Add(childNode);
 						break;
-					case RectilinearOrientationEnum.Vertical:
+					case OrthogonalOrientationEnum.Vertical:
 						node = new HtmlNodeItem()
 						{
 							NodeType = "Grid.RowDefinitions",
@@ -1837,11 +1852,11 @@ namespace SvgToolsLib
 				{
 					switch(orientation)
 					{
-						case RectilinearOrientationEnum.Horizontal:
-						case RectilinearOrientationEnum.None:
+						case OrthogonalOrientationEnum.Horizontal:
+						case OrthogonalOrientationEnum.None:
 							childToken.Properties.SetValue("GridColumnIndex", "0");
 							break;
-						case RectilinearOrientationEnum.Vertical:
+						case OrthogonalOrientationEnum.Vertical:
 							childToken.Properties.SetValue("GridRowIndex", "0");
 							break;
 					}
@@ -1854,12 +1869,12 @@ namespace SvgToolsLib
 				};
 				switch(orientation)
 				{
-					case RectilinearOrientationEnum.Horizontal:
-					case RectilinearOrientationEnum.None:
+					case OrthogonalOrientationEnum.Horizontal:
+					case OrthogonalOrientationEnum.None:
 						node.Attributes.SetAttribute("Grid.Column", "1");
 						node.Attributes.SetAttribute("ResizeDirection", "Columns");
 						break;
-					case RectilinearOrientationEnum.Vertical:
+					case OrthogonalOrientationEnum.Vertical:
 						node.Attributes.SetAttribute("Grid.Row", "1");
 						node.Attributes.SetAttribute("ResizeDirection", "Rows");
 						break;
@@ -1872,11 +1887,11 @@ namespace SvgToolsLib
 				{
 					switch(orientation)
 					{
-						case RectilinearOrientationEnum.Horizontal:
-						case RectilinearOrientationEnum.None:
+						case OrthogonalOrientationEnum.Horizontal:
+						case OrthogonalOrientationEnum.None:
 							childToken.Properties.SetValue("GridColumnIndex", "2");
 							break;
-						case RectilinearOrientationEnum.Vertical:
+						case OrthogonalOrientationEnum.Vertical:
 							childToken.Properties.SetValue("GridRowIndex", "2");
 							break;
 					}
@@ -2205,7 +2220,7 @@ namespace SvgToolsLib
 			ControlAreaItem firstArea = null;
 			ControlAreaItem imageArea = null;
 			HtmlNodeItem node = null;
-			RectilinearOrientationEnum orientation = RectilinearOrientationEnum.None;
+			OrthogonalOrientationEnum orientation = OrthogonalOrientationEnum.None;
 			HtmlNodeItem result = null;
 			ControlAreaItem secondArea = null;
 			int state = 0;
@@ -2281,12 +2296,12 @@ namespace SvgToolsLib
 							orientation = GetOrientation(imageArea, textArea);
 							switch(orientation)
 							{
-								case RectilinearOrientationEnum.Horizontal:
-								case RectilinearOrientationEnum.None:
+								case OrthogonalOrientationEnum.Horizontal:
+								case OrthogonalOrientationEnum.None:
 									containerNode.Attributes.SetAttribute(
 										"Orientation", "Horizontal");
 									break;
-								case RectilinearOrientationEnum.Vertical:
+								case OrthogonalOrientationEnum.Vertical:
 									containerNode.Attributes.SetAttribute(
 										"Orientation", "Vertical");
 									break;

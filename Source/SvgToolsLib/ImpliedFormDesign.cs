@@ -42,6 +42,11 @@ namespace SvgToolsLib
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		/// <summary>
+		/// The minimum dimension of a cell, width or height.
+		/// </summary>
+		private const int mMinimumCellDimension = 32;
+
 		//*-----------------------------------------------------------------------*
 		//* FindLayersExtendingNodeId																							*
 		//*-----------------------------------------------------------------------*
@@ -1167,7 +1172,7 @@ namespace SvgToolsLib
 		/// layer, if any controls were present. Otherwise, an empty collection.
 		/// </returns>
 		public static ControlReferenceCollection GetColumns(
-			ControlAreaCollection areas)
+			List<ControlAreaItem> areas)
 		{
 			FArea intersection = null;
 			ControlReferenceItem reference = null;
@@ -1266,7 +1271,7 @@ namespace SvgToolsLib
 		/// found. Otherwise, a reference to the first provided item.
 		/// </returns>
 		public static ControlAreaItem GetFirstArea(ControlAreaItem area1,
-			ControlAreaItem area2, RectilinearOrientationEnum orientation)
+			ControlAreaItem area2, OrthogonalOrientationEnum orientation)
 		{
 			float center1 = 0f;
 			float center2 = 0f;
@@ -1276,11 +1281,11 @@ namespace SvgToolsLib
 			{
 				switch(orientation)
 				{
-					case RectilinearOrientationEnum.Horizontal:
+					case OrthogonalOrientationEnum.Horizontal:
 						center1 = area1.X + (area1.Width / 2f);
 						center2 = area2.X + (area2.Width / 2f);
 						break;
-					case RectilinearOrientationEnum.Vertical:
+					case OrthogonalOrientationEnum.Vertical:
 						center1 = area1.Y + (area1.Height / 2f);
 						center2 = area2.Y + (area2.Height / 2f);
 						break;
@@ -1726,7 +1731,7 @@ namespace SvgToolsLib
 		//* GetOrientation																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Return the rectilinear orientation of the relationship between two
+		/// Return the orthogonal orientation of the relationship between two
 		/// areas.
 		/// </summary>
 		/// <param name="area1">
@@ -1743,15 +1748,15 @@ namespace SvgToolsLib
 		/// <returns>
 		/// The orientation between the two objects, if found. Otherwise, None.
 		/// </returns>
-		public static RectilinearOrientationEnum GetOrientation(
+		public static OrthogonalOrientationEnum GetOrientation(
 			ControlAreaItem area1, ControlAreaItem area2,
-			RectilinearOrientationEnum defaultOrientation =
-				RectilinearOrientationEnum.None)
+			OrthogonalOrientationEnum defaultOrientation =
+				OrthogonalOrientationEnum.None)
 		{
 			float angle = 0f;
 			FVector2 center1 = null;
 			FVector2 center2 = null;
-			RectilinearOrientationEnum result = defaultOrientation;
+			OrthogonalOrientationEnum result = defaultOrientation;
 
 			if(area1 != null && area2 != null)
 			{
@@ -1766,11 +1771,54 @@ namespace SvgToolsLib
 					(angle >= 135 && angle <= 225) ||
 					angle >= 315)
 				{
-					result = RectilinearOrientationEnum.Horizontal;
+					result = OrthogonalOrientationEnum.Horizontal;
 				}
 				else
 				{
-					result = RectilinearOrientationEnum.Vertical;
+					result = OrthogonalOrientationEnum.Vertical;
+				}
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Return the orthogonal orientation of the relationships between the
+		/// collection of areas.
+		/// </summary>
+		/// <param name="areas">
+		/// Reference to the collection of areas to inspect.
+		/// </param>
+		/// <returns>
+		/// The orthogonal relation of the areas, if found. Otherwise, None.
+		/// </returns>
+		public static OrthogonalOrientationEnum GetOrientation(
+			List<ControlAreaItem> areas)
+		{
+			ControlReferenceCollection columns = null;
+			OrthogonalOrientationEnum result = OrthogonalOrientationEnum.None;
+			ControlReferenceCollection rows = null;
+
+			if(areas?.Count > 0)
+			{
+				columns = GetColumns(areas);
+				rows = GetRows(areas);
+				if(columns.Count > 0 && rows.Count > 0)
+				{
+					if(columns.Count > 1 && rows.Count == 1)
+					{
+						//	Horizontal.
+						result = OrthogonalOrientationEnum.Horizontal;
+					}
+					else if(columns.Count == 1 && rows.Count >= 1)
+					{
+						//	Vertical.
+						result = OrthogonalOrientationEnum.Vertical;
+					}
+					else
+					{
+						//	Grid.
+						result = OrthogonalOrientationEnum.Grid;
+					}
 				}
 			}
 			return result;
@@ -1874,7 +1922,7 @@ namespace SvgToolsLib
 		/// layer, if any controls were present. Otherwise, an empty collection.
 		/// </returns>
 		public static ControlReferenceCollection GetRows(
-			ControlAreaCollection areas)
+			List<ControlAreaItem> areas)
 		{
 			FArea intersection = null;
 			ControlReferenceItem reference = null;
