@@ -431,13 +431,14 @@ namespace SvgToolsLib
 							//	The inner tspan has x and y values.
 							//	The width and height of the text are estimated.
 							nodes = sourceNode.Nodes.FindMatches(x =>
-								x.NodeType.ToLower() == "tspan");
+								x.NodeType.ToLower() == "tspan" &&
+								x.Text.Length > 0);
 							if(nodes.Count > 0)
 							{
 								//	TODO: Expand text bounds for multiple tspans.
 								node = nodes[0];
-								xx = ToFloat(GetAttributeValue(node, "x"));
-								yx = ToFloat(GetAttributeValue(node, "y"));
+								xx = ToFloat(GetAttributeValueInherited(node, "x"));
+								yx = ToFloat(GetAttributeValueInherited(node, "y"));
 								fontSize = GetActiveStyle(node, "font-size", "10pt");
 								wx = EstimateTextWidth(node.Text.Trim(), fontSize);
 								hx = EstimateTextHeight(node.Text.Trim(), fontSize);
@@ -453,8 +454,8 @@ namespace SvgToolsLib
 							}
 							break;
 						case "tspan":
-							xx = ToFloat(GetAttributeValue(sourceNode, "x"));
-							yx = ToFloat(GetAttributeValue(sourceNode, "y"));
+							xx = ToFloat(GetAttributeValueInherited(sourceNode, "x"));
+							yx = ToFloat(GetAttributeValueInherited(sourceNode, "y"));
 							fontSize = GetActiveStyle(sourceNode, "font-size", "10pt");
 							wx = EstimateTextWidth(sourceNode.Text.Trim(), fontSize);
 							hx = EstimateTextHeight(sourceNode.Text.Trim(), fontSize);
@@ -2175,16 +2176,56 @@ namespace SvgToolsLib
 		public static string GetAttributeValue(HtmlNodeItem node,
 			string attributeName)
 		{
-			HtmlAttributeItem attrib = null;
+			HtmlAttributeItem attribute = null;
 			string result = "";
 
 			if(node != null && attributeName?.Length > 0)
 			{
-				attrib = node.Attributes.FirstOrDefault(x =>
+				attribute = node.Attributes.FirstOrDefault(x =>
 					x.Name.ToLower() == attributeName.ToLower());
-				if(attrib != null)
+				if(attribute != null)
 				{
-					result = attrib.Value;
+					result = attribute.Value;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetAttributeValueInherited																						*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the value of the specified attribute within the node, if it
+		/// exists, using a failsafe strategy.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node whose attributes will be inspected.
+		/// </param>
+		/// <param name="attributeName">
+		/// Name of the attribute to find.
+		/// </param>
+		/// <returns>
+		/// Value of the specified attribute, if found. Otherwise, the value of
+		/// an ancestor, if found. Otherwise, an empty string.
+		/// </returns>
+		public static string GetAttributeValueInherited(HtmlNodeItem node,
+			string attributeName)
+		{
+			HtmlAttributeItem attribute = null;
+			string result = "";
+
+			if(node != null && attributeName?.Length > 0)
+			{
+				attribute = node.Attributes.FirstOrDefault(x =>
+					x.Name.ToLower() == attributeName.ToLower());
+				if(attribute != null)
+				{
+					result = attribute.Value;
+				}
+				else if(node.ParentNode != null)
+				{
+					result = GetAttributeValueInherited(node.ParentNode, attributeName);
 				}
 			}
 			return result;

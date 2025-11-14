@@ -1201,7 +1201,7 @@ namespace SvgToolsLib
 							X = areaItem.X,
 							Y = float.MinValue / 2f,
 							Width = areaItem.Width,
-							Height = float.MaxValue
+							Height = float.MaxValue - 1f
 						};
 						reference.References.Add(areaItem);
 						result.Add(reference);
@@ -1950,7 +1950,7 @@ namespace SvgToolsLib
 						{
 							X = float.MinValue / 2f,
 							Y = areaItem.Y,
-							Width = float.MaxValue,
+							Width = float.MaxValue - 1f,
 							Height = areaItem.Y
 						};
 						reference.References.Add(areaItem);
