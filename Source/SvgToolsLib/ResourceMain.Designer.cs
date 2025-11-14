@@ -115,11 +115,11 @@ namespace SvgToolsLib {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to (?i:(?&lt;intent&gt;[a-z]+)(-(?&lt;reference&gt;[a-z]+[0-9a-z_]*)){0,1}).
+        ///   Looks up a localized string similar to (?i:(?&lt;intent&gt;[a-z]+)(-(?&lt;reference&gt;[a-z]+[0-9a-z_ ]*)){0,1}).
         /// </summary>
-        internal static string rxIntentWithLabel {
+        internal static string rxIntentWithReference {
             get {
-                return ResourceManager.GetString("rxIntentWithLabel", resourceCulture);
+                return ResourceManager.GetString("rxIntentWithReference", resourceCulture);
             }
         }
         

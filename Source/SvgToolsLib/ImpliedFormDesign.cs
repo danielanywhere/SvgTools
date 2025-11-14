@@ -195,6 +195,7 @@ namespace SvgToolsLib
 			List<HtmlAttributeItem> attributes = null;
 			ControlAreaCollection childAreas = null;
 			ControlAreaItem formArea = null;
+			string formName = "";
 			ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
 			List<ControlAreaItem> members = null;
 			string name = "";
@@ -210,15 +211,56 @@ namespace SvgToolsLib
 				outputNode.Attributes.SetAttribute(
 					"xmlns", "https://github.com/avaloniaui");
 				outputNode.Attributes.SetAttribute(
+					"xmlns:d", "http://schemas.microsoft.com/expression/blend/2008");
+				outputNode.Attributes.SetAttribute(
+					"xmlns:mc",
+					"http://schemas.openxmlformats.org/markup-compatibility/2006");
+				outputNode.Attributes.SetAttribute(
+					"mc:Ignorable", "d");
+				outputNode.Attributes.SetAttribute(
 					"xmlns:x", "http://schemas.microsoft.com/winfx/2006/xaml");
-				mFormWidth = Round(GetFormWidth(mSvg.Document), 0);
-				mFormHeight = Round(GetFormHeight(mSvg.Document), 0);
-				outputNode.Attributes.SetAttribute("Width",
-					mFormWidth.ToString("0"));
-				outputNode.Attributes.SetAttribute("Height",
-					mFormHeight.ToString("0"));
+
 				members = areas.FindMatches(x =>
 					x.Intent == ImpliedDesignIntentEnum.FormInformation);
+				area = members.FirstOrDefault(x =>
+					x.Node?.Attributes.HasAttribute("ProjectName") == true);
+				if(area != null)
+				{
+					node = area.Node;
+					mProjectName = node.Attributes.GetValue("ProjectName");
+				}
+				else
+				{
+					mProjectName = "UnnamedProject";
+				}
+				outputNode.Attributes.SetAttribute(
+					"xmlns:app", $"clr-namespace:{mProjectName}");
+				outputNode.Attributes.SetAttribute(
+					"xmlns:vm", $"clr-namespace:{mProjectName}.ViewModels");
+
+				formArea =
+					areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
+				if(formArea?.Node != null)
+				{
+					formName = formArea.Node.Id;
+				}
+				else
+				{
+					formName = "UnnamedForm";
+				}
+
+				outputNode.Attributes.SetAttribute(
+					"x:Class", $"{mProjectName}.{formName}");
+				outputNode.Attributes.SetAttribute(
+					"x:DataType", $"app:{formName}");
+
+				if(formArea != null)
+				{
+					outputNode.Attributes.SetAttribute(
+						"Title", formArea.Reference);
+				}
+
+				//	Assign additional values.
 				foreach(ControlAreaItem memberItem in members)
 				{
 					if(memberItem.Node != null)
@@ -227,15 +269,29 @@ namespace SvgToolsLib
 						foreach(HtmlAttributeItem attributeItem in attributes)
 						{
 							name = attributeItem.Name.ToLower();
+							//	Caption and ProjectName are already handled at this point.
 							switch(name)
 							{
-								case "caption":
-									//	Caption.
-									outputNode.Attributes.SetAttribute(
-										"Title", attributeItem.Value);
-									break;
-								case "projectname":
-									mProjectName = attributeItem.Value;
+								//case "caption":
+								//	//	Caption.
+								//	outputNode.Attributes.SetAttribute(
+								//		"Title", attributeItem.Value);
+								//	break;
+								//case "projectname":
+								//	mProjectName = attributeItem.Value;
+								//	break;
+								case "themename":
+									switch(attributeItem.Value.ToLower())
+									{
+										case "material":
+											outputNode.Attributes.SetAttribute(
+												"xmlns:assist",
+												"clr-namespace:Material.Styles.Assists;" +
+												"assembly=Material.Styles");
+											outputNode.Attributes.SetAttribute(
+												"Background", "{DynamicResource MaterialPaperBrush}");
+											break;
+									}
 									break;
 								case "usebackgroundcolor":
 									//	Value indicating whether to use background colors on
@@ -261,7 +317,21 @@ namespace SvgToolsLib
 						}
 					}
 				}
+
+				mFormWidth = Round(GetFormWidth(mSvg.Document), 0);
+				mFormHeight = Round(GetFormHeight(mSvg.Document), 0);
+				outputNode.Attributes.SetAttribute(
+					"d:DesignWidth", mFormWidth.ToString("0"));
+				outputNode.Attributes.SetAttribute(
+					"d:DesignHeight", mFormHeight.ToString("0"));
+				outputNode.Attributes.SetAttribute(
+					"Width", mFormWidth.ToString("0"));
+				outputNode.Attributes.SetAttribute(
+					"Height", mFormHeight.ToString("0"));
+
 				//	Re-index to the base form.
+				area = null;
+				node = null;
 				formArea =
 					areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
 				if(formArea != null)
@@ -321,35 +391,6 @@ namespace SvgToolsLib
 			}
 		}
 		//*-----------------------------------------------------------------------*
-
-		////*-----------------------------------------------------------------------*
-		////* FillText																															*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Fill the provided builder with the text found in the specified control
-		///// area.
-		///// </summary>
-		///// <param name="area">
-		///// Reference to the area to inspect.
-		///// </param>
-		///// <param name="builder">
-		///// Reference to the text builder to fill.
-		///// </param>
-		///// <param name="recursive">
-		///// Value indicating whether to append text from all descendants
-		///// </param>
-		//private static void FillText(ControlAreaItem area, StringBuilder builder,
-		//	bool recursive = true)
-		//{
-		//	if(area != null && builder != null)
-		//	{
-		//		if(area.Node?.InnerText.Length > 0)
-		//		{
-		//			builder.Append(ToStringFromHtml(area.Node.InnerText));
-		//		}
-		//	}
-		//}
-		////*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
 		//* mConverter_ResolveBaseToValue																					*
@@ -918,13 +959,16 @@ namespace SvgToolsLib
 		public static ControlAreaCollection EnumerateControls(SvgDocumentItem doc)
 		{
 			ControlAreaItem area = null;
+			ControlAreaItem areaForm = null;
 			ControlAreaCollection areas = null;
 			MatchCollection assignments = null;
 			HtmlAttributeItem attribute = null;
 			List<ControlAreaItem> flatAreas = null;
+			string formTitle = "";
 			int indent = 1;
 			List<HtmlNodeItem> layers = null;
 			HtmlNodeItem nodeForm = null;
+			string text = "";
 
 			if(doc != null)
 			{
@@ -943,7 +987,7 @@ namespace SvgToolsLib
 						$"({ImpliedFormDesign.GetFormCaption(nodeForm)})");
 					indent++;
 					areas = new ControlAreaCollection();
-					area = new ControlAreaItem()
+					areaForm = new ControlAreaItem()
 					{
 						X = 0f,
 						Y = 0f,
@@ -952,7 +996,7 @@ namespace SvgToolsLib
 						Node = nodeForm,
 						Intent = ImpliedDesignIntentEnum.Form
 					};
-					areas.Add(area);
+					areas.Add(areaForm);
 					ProcessNodeZOrder(nodeForm, areas);
 					flatAreas = ControlAreaCollection.GetFlatList(areas);
 					foreach(ControlAreaItem areaItem in flatAreas)
@@ -987,6 +1031,24 @@ namespace SvgToolsLib
 							}
 						}
 					}
+					//	Set the title.
+					area = areas.FindMatch(x => x.Intent ==
+						ImpliedDesignIntentEnum.FormInformation);
+					if(area?.Node != null)
+					{
+						formTitle = area.Node.Attributes.GetValue("Caption");
+					}
+					if(formTitle.Length == 0)
+					{
+						text = nodeForm.Attributes.GetValue("inkscape:label");
+						if(text.Length > 0)
+						{
+							formTitle =
+								GetValue(text,
+									ResourceMain.rxIntentWithReference, "reference");
+						}
+					}
+					areaForm.Reference = formTitle;
 				}
 			}
 			if(areas?.Count > 0)
@@ -1574,7 +1636,7 @@ namespace SvgToolsLib
 					}
 					if(text.Length > 0)
 					{
-						match = Regex.Match(text, ResourceMain.rxIntentWithLabel);
+						match = Regex.Match(text, ResourceMain.rxIntentWithReference);
 						if(match.Success)
 						{
 							label = GetValue(match, "intent");
@@ -1752,7 +1814,7 @@ namespace SvgToolsLib
 					}
 					if(text.Length > 0)
 					{
-						match = Regex.Match(text, ResourceMain.rxIntentWithLabel);
+						match = Regex.Match(text, ResourceMain.rxIntentWithReference);
 						if(match.Success)
 						{
 							result = GetValue(match, "reference");
