@@ -166,6 +166,95 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* AdjustTextHorizontal																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Adjust the horizontal position of the text node according to its
+		/// current text-anchor style.
+		/// </summary>
+		/// <param name="bounds">
+		/// Reference to the bounding object to be adjusted.
+		/// </param>
+		/// <param name="sourceNode">
+		/// Reference to the source node to inspect.
+		/// </param>
+		public static void AdjustTextHorizontal(BoundingObjectItem bounds,
+			HtmlNodeItem sourceNode)
+		{
+			float diff = 0f;
+			string textAnchor = "start";
+			float width = 0f;
+
+			if(bounds != null && sourceNode != null)
+			{
+				width = bounds.MaxX - bounds.MinX;
+				textAnchor = GetActiveStyle(sourceNode, "text-anchor", textAnchor);
+				switch(textAnchor)
+				{
+					case "end":
+						diff = 0f - width;
+						break;
+					case "middle":
+						diff = 0f - (width / 2f);
+						break;
+					case "start":
+					default:
+						diff = 0f;
+						break;
+				}
+				bounds.MinX += diff;
+				bounds.MaxX += diff;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* AdjustTextVertical																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Adjust the vertical position of the text node according to its
+		/// current dominant-baseline style.
+		/// </summary>
+		/// <param name="bounds">
+		/// Reference to the bounding object to be adjusted.
+		/// </param>
+		/// <param name="sourceNode">
+		/// Reference to the source node to inspect.
+		/// </param>
+		public static void AdjustTextVertical(BoundingObjectItem bounds,
+			HtmlNodeItem sourceNode)
+		{
+			float diff = 0f;
+			string dominantBaseline = "alphabetic";
+			float height = 0f;
+
+			if(bounds != null && sourceNode != null)
+			{
+				height = bounds.MaxY - bounds.MinY;
+				dominantBaseline =
+					GetActiveStyle(sourceNode, "dominant-baseline", dominantBaseline);
+				switch(dominantBaseline)
+				{
+					case "central":
+					case "middle":
+						diff = 0f - (height / 2f);
+						break;
+					case "hanging":
+					case "text-before-edge":
+						diff = 0f;
+						break;
+					case "alphabetic":
+					default:
+						diff = 0f - height;
+						break;
+				}
+				bounds.MinY += diff;
+				bounds.MaxY += diff;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ApplyTransforms																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -451,14 +540,16 @@ namespace SvgToolsLib
 									MaxX = Math.Max(xx, ax),
 									MaxY = Math.Max(yx, bx)
 								};
+								AdjustTextHorizontal(result, sourceNode);
+								AdjustTextVertical(result, sourceNode);
 							}
 							break;
 						case "tspan":
 							xx = ToFloat(GetAttributeValueInherited(sourceNode, "x"));
 							yx = ToFloat(GetAttributeValueInherited(sourceNode, "y"));
 							fontSize = GetActiveStyle(sourceNode, "font-size", "10pt");
-							wx = EstimateTextWidth(sourceNode.Text.Trim(), fontSize);
-							hx = EstimateTextHeight(sourceNode.Text.Trim(), fontSize);
+							wx = EstimateTextWidth(sourceNode.InnerText.Trim(), fontSize);
+							hx = EstimateTextHeight(sourceNode.InnerText.Trim(), fontSize);
 							ax = xx + wx;
 							bx = yx + hx;
 							result = new BoundingObjectItem()
@@ -468,6 +559,8 @@ namespace SvgToolsLib
 								MaxX = Math.Max(xx, ax),
 								MaxY = Math.Max(yx, bx)
 							};
+							AdjustTextHorizontal(result, sourceNode);
+							AdjustTextVertical(result, sourceNode);
 							break;
 						case "use":
 							break;
@@ -1903,7 +1996,7 @@ namespace SvgToolsLib
 			{
 				height = EstimateFontHeight(fontSize);
 				lines = text.Split('\n');
-				height *= (lines.Length * 1.2f);
+				height += ((lines.Length - 1) * 1.2f);
 			}
 			return height;
 		}

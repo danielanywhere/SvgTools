@@ -1465,6 +1465,10 @@ namespace SvgToolsLib
 
 			if(node != null)
 			{
+				//if(node.Id == "text58")
+				//{
+				//	Trace.WriteLine("ImpliedFormDesign.GetHeight: Break here...");
+				//}
 				bounds = CalcBounds(node);
 				if(bounds != null)
 				{
@@ -1951,7 +1955,7 @@ namespace SvgToolsLib
 							X = float.MinValue / 2f,
 							Y = areaItem.Y,
 							Width = float.MaxValue - 1f,
-							Height = areaItem.Y
+							Height = areaItem.Height
 						};
 						reference.References.Add(areaItem);
 						result.Add(reference);
@@ -2285,9 +2289,6 @@ namespace SvgToolsLib
 			float result = 0f;
 			HtmlNodeItem span = null;
 			List<HtmlNodeItem> spans = null;
-			string textAnchor = "start";
-			float width = 0f;
-			float x = 0f;
 
 			if(node != null)
 			{
@@ -2302,59 +2303,20 @@ namespace SvgToolsLib
 						}
 						break;
 					case "text":
-						spans = node.Nodes.FindAll(x => x.NodeType.ToLower() == "tspan" &&
+						spans = node.Nodes.FindMatches(x =>
+							x.NodeType.ToLower() == "tspan" &&
 							x.Attributes.Exists(y => y.Name.ToLower() == "x"));
 						if(spans.Count > 0)
 						{
 							span = spans[0];
-							attribute = span.Attributes["x"];
-							if(attribute != null)
-							{
-								//	Raw.
-								x = (float)ToInt(attribute.Value);
-								textAnchor =
-									GetActiveStyle(span, "text-anchor", textAnchor);
-								width = GetWidth(span);
-								switch(textAnchor)
-								{
-									case "end":
-										result = x - width;
-										break;
-									case "middle":
-										result = x - (width / 2f);
-										break;
-									case "start":
-									default:
-										result = x;
-										break;
-								}
-							}
+							bounds = CalcBounds(span);
+							result = bounds.MinX;
 						}
 						break;
 					case "tspan":
 						span = node;
-						attribute = span.Attributes["x"];
-						if(attribute != null)
-						{
-							//	Raw.
-							x = (float)ToInt(attribute.Value);
-							textAnchor =
-								GetActiveStyle(span, "text-anchor", textAnchor);
-							width = GetWidth(span);
-							switch(textAnchor)
-							{
-								case "end":
-									result = x - width;
-									break;
-								case "middle":
-									result = x - (width / 2f);
-									break;
-								case "start":
-								default:
-									result = x;
-									break;
-							}
-						}
+						bounds = CalcBounds(span);
+						result = bounds.MinX;
 						break;
 					default:
 						attribute = node.Attributes["x"];
@@ -2385,16 +2347,17 @@ namespace SvgToolsLib
 		{
 			HtmlAttributeItem attribute = null;
 			BoundingObjectItem bounds = null;
-			string dominantBaseline = "alphabetic";
-			float height = 0f;
 			string nodeType = "";
 			float result = 0f;
 			HtmlNodeItem span = null;
 			List<HtmlNodeItem> spans = null;
-			float y = 0f;
 
 			if(node != null)
 			{
+				//if(node.Id == "text58")
+				//{
+				//	Trace.WriteLine("ImpliedFormDesign.GetY: Break here...");
+				//}
 				nodeType = node.NodeType.ToLower();
 				switch(nodeType)
 				{
@@ -2406,63 +2369,20 @@ namespace SvgToolsLib
 						}
 						break;
 					case "text":
-						spans = node.Nodes.FindAll(x => x.NodeType.ToLower() == "tspan" &&
+						spans = node.Nodes.FindMatches(x =>
+							x.NodeType.ToLower() == "tspan" &&
 							x.Attributes.Exists(y => y.Name.ToLower() == "y"));
 						if(spans.Count > 0)
 						{
 							span = spans[0];
-							attribute = span.Attributes["y"];
-							if(attribute != null)
-							{
-								//	Raw.
-								y = (float)ToInt(attribute.Value);
-								dominantBaseline =
-									GetActiveStyle(span, "dominant-baseline", dominantBaseline);
-								height = GetHeight(span);
-								switch(dominantBaseline)
-								{
-									case "central":
-									case "middle":
-										result = y - (height / 2f);
-										break;
-									case "hanging":
-									case "text-before-edge":
-										result = y;
-										break;
-									case "alphabetic":
-									default:
-										result = y - height;
-										break;
-								}
-							}
+							bounds = CalcBounds(span);
+							result = bounds.MinY;
 						}
 						break;
 					case "tspan":
 						span = node;
-						attribute = span.Attributes["y"];
-						if(attribute != null)
-						{
-							//	Raw.
-							y = (float)ToInt(attribute.Value);
-							dominantBaseline =
-								GetActiveStyle(span, "dominant-baseline", dominantBaseline);
-							height = GetHeight(span);
-							switch(dominantBaseline)
-							{
-								case "central":
-								case "middle":
-									result = y - (height / 2f);
-									break;
-								case "hanging":
-								case "text-before-edge":
-									result = y;
-									break;
-								case "alphabetic":
-								default:
-									result = y - height;
-									break;
-							}
-						}
+						bounds = CalcBounds(span);
+						result = bounds.MinY;
 						break;
 					default:
 						attribute = node.Attributes["y"];
@@ -2552,6 +2472,10 @@ namespace SvgToolsLib
 
 			if(node != null)
 			{
+				if(node.Id == "g97")
+				{
+					Trace.WriteLine("ImpliedFormDesign.HasIntent: Break here...");
+				}
 				if((node.Attributes.Exists(x => x.Name.ToLower() == "intent" &&
 					mControlTypes.Contains(LeftOf(x.Value.ToLower(), "-")))) ||
 					(!IsLayer(node) &&
