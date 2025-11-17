@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Geometry;
@@ -1528,6 +1529,10 @@ namespace SvgToolsLib
 			//	between VerticalStackPanel, HorizontalStackPanel, and Grid.
 			if(area != null)
 			{
+				//if(area.Node.Id == "rect97")
+				//{
+				//	Trace.WriteLine("ImpliedFormDesignAXaml.RenderPanel: Break here...");
+				//}
 				orientation = GetOrientation(area.FrontAreas);
 				switch(orientation)
 				{
@@ -2027,6 +2032,7 @@ namespace SvgToolsLib
 					SelfClosing = true
 				};
 				SetRenderedControlName(area.Node, result);
+				text = null;
 				textArea = area.FrontAreas.FirstOrDefault(x =>
 					x.Intent == ImpliedDesignIntentEnum.Text);
 				if(textArea != null)
@@ -2042,6 +2048,19 @@ namespace SvgToolsLib
 				TransferAttribute(area.Node, "Prompt", result, "Watermark");
 				TransferAttribute(area.Node, "Text", result, "Text", text);
 				TransferAttribute(area.Node, "TextWrapping", result, "TextWrapping");
+				text = null;
+				textArea = area.FrontAreas.FirstOrDefault(x =>
+					x.Intent == ImpliedDesignIntentEnum.Label);
+				if(textArea != null)
+				{
+					text = GetText(textArea);
+					if(text.Length == 0)
+					{
+						text = null;
+					}
+				}
+				TransferAttribute(textArea.Node, "Text",
+					result, "assist:TextFieldAssist.Label", text);
 			}
 			return result;
 		}
@@ -2114,6 +2133,7 @@ namespace SvgToolsLib
 				node.Attributes.SetAttribute("Grid.Column", "0");
 				if(textBoxArea != null)
 				{
+					text = null;
 					textArea = textBoxArea.FrontAreas.FirstOrDefault(x =>
 						x.Intent == ImpliedDesignIntentEnum.Text);
 					if(textArea != null)
@@ -2125,8 +2145,21 @@ namespace SvgToolsLib
 						}
 					}
 					TransferAttribute(textArea.Node, "Text", node, "Text", text);
+					TransferAttribute(area.Node, "Prompt", node, "Watermark");
+					text = null;
+					textArea = textBoxArea.FrontAreas.FirstOrDefault(x =>
+						x.Intent == ImpliedDesignIntentEnum.Label);
+					if(textArea != null)
+					{
+						text = GetText(textArea);
+						if(text.Length == 0)
+						{
+							text = null;
+						}
+					}
+					TransferAttribute(textArea.Node, "Text",
+						node, "assist:TextFieldAssist.Label", text);
 				}
-				TransferAttribute(area.Node, "Prompt", node, "Watermark");
 				result.Nodes.Add(node);
 				node = new HtmlNodeItem()
 				{
@@ -2707,25 +2740,25 @@ namespace SvgToolsLib
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
-		//*-----------------------------------------------------------------------*
-		//* FillForm																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Fill the form starting at the provided collection of areas.
-		/// </summary>
-		/// <param name="areas">
-		/// Reference to the collection of control areas from which the form will
-		/// be filled.
-		/// </param>
-		/// <param name="node">
-		/// Reference to the output node.
-		/// </param>
-		protected override void FillForm(ControlAreaCollection areas,
-			HtmlNodeItem node)
-		{
-			base.FillForm(areas, node);
-		}
-		//*-----------------------------------------------------------------------*
+		////*-----------------------------------------------------------------------*
+		////* FillForm																															*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Fill the form starting at the provided collection of areas.
+		///// </summary>
+		///// <param name="areas">
+		///// Reference to the collection of control areas from which the form will
+		///// be filled.
+		///// </param>
+		///// <param name="node">
+		///// Reference to the output node.
+		///// </param>
+		//protected override void FillForm(ControlAreaCollection areas,
+		//	HtmlNodeItem node)
+		//{
+		//	base.FillForm(areas, node);
+		//}
+		////*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
 		//* PerformLayout																													*

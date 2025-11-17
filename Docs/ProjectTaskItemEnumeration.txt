@@ -56,133 +56,134 @@ Info:  Working document: ProjectTaskImpliedDesign.svg
 ---- VerticalScrollPanel #171 id:pnlMain; label:VerticalScrollPanel     {360,80,419,312}
 ----- Definitions       {0,0,0,0}
 ------ Panel #192 id:g97; label:Panel   {377,87,391,248}
-------- Label #193 id:text58; label:Label       {381,87,129.6,24}
+------- Label #193 id:text58; label:Label; Information        {381,87,129.6,24}
 ------- Panel #197 id:rect58; label:Panel       {377,124,391,211}
--------- TextBox #199 id:txtDisplayName; label:TextBox  {394,134,358,35}
---------- Label #202 id:text62; label:Label     {399,133.65887,75.110565,13.3411255}
+-------- TextBox #199 id:txtDisplayName; label:TextBox  {394,134,356,35}
+--------- Label #202 id:text62; label:Label; Display Name        {399,133.65887,75.110565,13.3411255}
 --------- Text #200 id:text60   {414,147.9906,83.72916,16.0094}
--------- TextBox #206 id:txtDescription; label:TextBox  {394,174,358,79}
---------- Label #209 id:text64; label:Label     {399,173.65887,69.3739,13.3411255}
+-------- TextBox #206 id:txtDescription; label:TextBox  {394,174,357,79}
+--------- Label #209 id:text64; label:Label; Description        {399,173.65887,69.3739,13.3411255}
 --------- Text #207 id:text63   {414,187.9906,83.72916,16.0094}
--------- HorizontalGrid #213 id:rect66; label:HorizontalGrid    {394,262,358,64}
---------- VerticalStackPanel #215 id:rect68; label:VerticalStackPanel   {394,265,166,58}
----------- Label #216 id:text68; label:Label    {399,265,33.600006,16}
+-------- Panel #213 id:rect66; label:Panel      {394,262,358,64}
+--------- Panel #215 id:rect68; label:Panel     {394,265,166,58}
+---------- Label #216 id:text68; label:Label; Type        {399,265,33.600006,16}
 ---------- ComboBox #219 id:cmboItemType; label:ComboBox        {399,290,156,25}
---------- VerticalStackPanel #224 id:rect72; label:VerticalStackPanel   {585,265,166,58}
----------- Label #225 id:text72; label:Label    {590,265,49.599976,16}
+--------- Panel #224 id:rect72; label:Panel     {585,265,166,58}
+---------- Label #225 id:text72; label:Label; Status        {590,265,49.599976,16}
 ---------- ComboBox #228 id:cmboItemStatus; label:ComboBox      {590,290,156,25}
 ------ Panel #232 id:g111; label:Panel  {377,348,391,248}
-------- Label #233 id:text97; label:Label       {381,348,98.399994,24}
+------- Label #233 id:text97; label:Label; Contacts        {381,348,98.399994,24}
 ------- Panel #237 id:rect97; label:Panel       {377,385,391,211}
 -------- TextWithHelper #238 id:txtOwnerContact; label:TextWithHelper   {394,394.65103,359,35.34897}
 --------- TextBox #240 id:rect98; label:TextBox {394,395,326,35}
----------- Label #243 id:text99; label:Label    {399,394.65103,87.16873,13.3489685}
+---------- Label #243 id:text99; label:Label; Owner Contact Name        {399,394.65103,87.16873,13.3489685}
 ---------- Text #241 id:text98  {414,408.9812,83.77832,16.018799}
 --------- Button #249 id:rect118; label:Button  {721,395,32,35}
 ---------- Text #250 id:text118 {731,400.9906,14.408447,16.0094}
 -------- TextWithHelper #252 id:txtReviewerContact; label:TextWithHelper        {394,442.65103,359,35.34897}
 --------- TextBox #254 id:rect120; label:TextBox        {394,443,326,35}
----------- Label #257 id:text121; label:Label   {399,442.65103,104.5224,13.3489685}
+---------- Label #257 id:text121; label:Label; Reviewer Contact Name        {399,442.65103,104.5224,13.3489685}
 ---------- Text #255 id:text120 {414,455.9812,83.77832,16.018799}
 --------- Button #263 id:rect121; label:Button  {721,443,32,35}
 ---------- Text #264 id:text122 {731,448.9906,14.408447,16.0094}
--------- Label #266 id:text124; label:Label     {393,487,104.47998,16}
+-------- Label #266 id:text124; label:Label; Team Contacts        {393,487,104.47998,16}
 -------- GridView #269 id:grdTeamContacts; label:GridView       {394,511,359,75}
 --------- Text #274 id:text128  {400,512,8,16}
 --------- Text #270 id:text126  {443,512,90.08002,16}
 --------- Text #272 id:text127  {660,512,69.28003,16}
 ------ Panel #276 id:g140; label:Panel  {377,616,391,533}
-------- Label #277 id:text129; label:Label      {381,616,147.83997,24}
-------- Panel #281 id:rect129; label:Panel      {377,654,391,495}
--------- HorizontalGrid #285 id:rect151; label:HorizontalGrid   {377,654,376,43}
---------- TextBox #287 id:txtEstimatedHours; label:TextBox      {379,658,144,35}
----------- Label #290 id:text62-4; label:Label  {385,657.6589,97.7905,13.3411255}
----------- Text #288 id:text60-2        {400,670.9906,83.72916,16.0094}
---------- TextBox #294 id:rect152; label:TextBox        {610,658,144,35}
----------- Label #297 id:text154; label:Label   {615,657.6589,84.44934,13.3411255}
----------- Text #295 id:text152 {630,670.9906,83.72919,16.0094}
--------- Label #345 id:text186; label:Label     {393,712,93.28,16}
--------- HorizontalGrid #300 id:rect156; label:HorizontalGrid   {377,738,376,43}
---------- TextWithHelper #301 id:txtCreateDate; label:TextWithHelper    {379,741.65106,148,35.348938}
----------- TextBox #302 id:rect120-1; label:TextBox     {379,742,114,35}
------------ Label #305 id:text121-7; label:Label        {385,741.65106,73.81976,13.348938}
------------ Text #303 id:text120-5      {390,755.9812,80.093994,16.018799}
----------- Button #308 id:rect121-4; label:Button       {495,742,32,35}
------------ Text #309 id:text122-2      {505,747.9906,14.408447,16.0094}
---------- TextWithHelper #311 id:txtStartDate; label:TextWithHelper     {605,741.65106,148,35.348938}
----------- TextBox #312 id:rect170; label:TextBox       {605,742,114,35}
------------ Label #315 id:text171; label:Label  {611,741.65106,67.14526,13.348938}
------------ Text #313 id:text170        {616,755.9812,80.093994,16.018799}
----------- Button #318 id:rect171; label:Button {721,742,32,35}
------------ Text #319 id:text172        {731,747.9906,14.408447,16.0094}
--------- HorizontalGrid #321 id:rect180; label:HorizontalGrid   {377,792,376,43}
---------- TextWithHelper #322 id:g177; label:TextWithHelper     {379,795.65106,148,35.348938}
----------- TextBox #323 id:rect175; label:TextBox       {379,796,114,35}
------------ Label #326 id:text176; label:Label  {385,795.65106,73.81976,13.348938}
------------ Text #324 id:text175        {390,808.9812,80.093994,16.018799}
----------- Button #329 id:rect176; label:Button {495,796,32,35}
------------ Text #330 id:text177        {505,801.9906,14.408447,16.0094}
---------- TextWithHelper #332 id:txtCompletionDate; label:TextWithHelper        {605,795.65106,148,35.348938}
----------- TextBox #333 id:rect181; label:TextBox       {605,796,114,35}
------------ Label #336 id:text182; label:Label  {611,795.65106,95.1781,13.348938}
------------ Text #334 id:text181        {616,808.9812,80.093994,16.018799}
----------- Button #339 id:rect182; label:Button {721,796,32,35}
------------ Text #340 id:text183        {731,801.9906,14.408447,16.0094}
--------- Label #342 id:text185; label:Label     {393,855,122.08002,16}
--------- HorizontalGrid #348 id:rect188; label:HorizontalGrid   {377,880,376,43}
---------- TextWithHelper #349 id:g191; label:TextWithHelper     {379,883.65106,148,35.348938}
----------- TextBox #350 id:rect189; label:TextBox       {379,884,114,35}
------------ Label #353 id:text190; label:Label  {385,883.65106,96.91348,13.348938}
------------ Text #351 id:text189        {390,896.9812,80.093994,16.018799}
----------- Button #356 id:rect190; label:Button {495,884,32,35}
------------ Text #357 id:text191        {505,889.9906,14.408447,16.0094}
---------- TextWithHelper #359 id:g194; label:TextWithHelper     {605,883.65106,148,35.348938}
----------- TextBox #360 id:rect191; label:TextBox       {605,884,114,35}
------------ Label #363 id:text193; label:Label  {611,883.65106,83.564514,13.348938}
------------ Text #361 id:text192        {616,896.9812,80.093994,16.018799}
----------- Button #366 id:rect193; label:Button {721,884,32,35}
------------ Text #367 id:text194        {731,889.9906,14.408447,16.0094}
--------- HorizontalGrid #379 id:rect31; label:HorizontalGrid    {377,923,376,43}
---------- TextBox #381 id:rect200; label:TextBox        {377,927,144,35}
----------- Label #384 id:text202; label:Label   {383,926.6589,127.5412,13.3411255}
----------- Text #382 id:text200 {398,939.9906,83.72916,16.0094}
--------- Label #282 id:text136; label:Label     {393,986,46.399994,16}
--------- GridView #370 id:rect136; label:GridView       {394,1010,359,128}
---------- Text #371 id:text203  {427,1009,49.600006,16}
---------- Text #373 id:text205  {502,1009,57.599976,16}
---------- Text #375 id:text206  {583,1009,57.599976,16}
---------- Text #377 id:text207  {667,1009,33.599976,16}
+------- Label #277 id:text129; label:Label; Date and Time        {381,616,147.83997,24}
+------- Panel #280 id:g139; label:Panel {377,654,391,495}
+-------- Panel #281 id:rect129; label:Panel     {377,654,391,495}
+--------- HorizontalGrid #285 id:rect151; label:HorizontalGrid  {377,654,376,43}
+---------- TextBox #287 id:txtEstimatedHours; label:TextBox     {379,658,144,35}
+----------- Label #290 id:text62-4; label:Label; Estimated Hours        {385,657.6589,97.7905,13.3411255}
+----------- Text #288 id:text60-2       {400,670.9906,83.72916,16.0094}
+---------- TextBox #294 id:rect152; label:TextBox       {610,658,144,35}
+----------- Label #297 id:text154; label:Label; Elapsed Hours        {615,657.6589,84.44934,13.3411255}
+----------- Text #295 id:text152        {630,670.9906,83.72919,16.0094}
+--------- Label #345 id:text186; label:Label; Actual Dates        {393,712,93.28,16}
+--------- HorizontalGrid #300 id:rect156; label:HorizontalGrid  {377,738,376,43}
+---------- TextWithHelper #301 id:txtCreateDate; label:TextWithHelper   {379,741.65106,148,35.348938}
+----------- TextBox #302 id:rect120-1; label:TextBox    {379,742,114,35}
+------------ Label #305 id:text121-7; label:Label; Create Date        {385,741.65106,73.81976,13.348938}
+------------ Text #303 id:text120-5     {390,755.9812,80.093994,16.018799}
+----------- Button #308 id:rect121-4; label:Button      {495,742,32,35}
+------------ Text #309 id:text122-2     {505,747.9906,14.408447,16.0094}
+---------- TextWithHelper #311 id:txtStartDate; label:TextWithHelper    {605,741.65106,148,35.348938}
+----------- TextBox #312 id:rect170; label:TextBox      {605,742,114,35}
+------------ Label #315 id:text171; label:Label; Start Date        {611,741.65106,67.14526,13.348938}
+------------ Text #313 id:text170       {616,755.9812,80.093994,16.018799}
+----------- Button #318 id:rect171; label:Button        {721,742,32,35}
+------------ Text #319 id:text172       {731,747.9906,14.408447,16.0094}
+--------- HorizontalGrid #321 id:rect180; label:HorizontalGrid  {377,792,376,43}
+---------- TextWithHelper #322 id:g177; label:TextWithHelper    {379,795.65106,148,35.348938}
+----------- TextBox #323 id:rect175; label:TextBox      {379,796,114,35}
+------------ Label #326 id:text176; label:Label; Target Date        {385,795.65106,73.81976,13.348938}
+------------ Text #324 id:text175       {390,808.9812,80.093994,16.018799}
+----------- Button #329 id:rect176; label:Button        {495,796,32,35}
+------------ Text #330 id:text177       {505,801.9906,14.408447,16.0094}
+---------- TextWithHelper #332 id:txtCompletionDate; label:TextWithHelper       {605,795.65106,148,35.348938}
+----------- TextBox #333 id:rect181; label:TextBox      {605,796,114,35}
+------------ Label #336 id:text182; label:Label; Completion Date        {611,795.65106,95.1781,13.348938}
+------------ Text #334 id:text181       {616,808.9812,80.093994,16.018799}
+----------- Button #339 id:rect182; label:Button        {721,796,32,35}
+------------ Text #340 id:text183       {731,801.9906,14.408447,16.0094}
+--------- Label #342 id:text185; label:Label; Calculated Dates        {393,855,122.08002,16}
+--------- HorizontalGrid #348 id:rect188; label:HorizontalGrid  {377,880,376,43}
+---------- TextWithHelper #349 id:g191; label:TextWithHelper    {379,883.65106,148,35.348938}
+----------- TextBox #350 id:rect189; label:TextBox      {379,884,114,35}
+------------ Label #353 id:text190; label:Label; Calc Start Date        {385,883.65106,96.91348,13.348938}
+------------ Text #351 id:text189       {390,896.9812,80.093994,16.018799}
+----------- Button #356 id:rect190; label:Button        {495,884,32,35}
+------------ Text #357 id:text191       {505,889.9906,14.408447,16.0094}
+---------- TextWithHelper #359 id:g194; label:TextWithHelper    {605,883.65106,148,35.348938}
+----------- TextBox #360 id:rect191; label:TextBox      {605,884,114,35}
+------------ Label #363 id:text193; label:Label; Calc End Date        {611,883.65106,83.564514,13.348938}
+------------ Text #361 id:text192       {616,896.9812,80.093994,16.018799}
+----------- Button #366 id:rect193; label:Button        {721,884,32,35}
+------------ Text #367 id:text194       {731,889.9906,14.408447,16.0094}
+--------- HorizontalGrid #379 id:rect31; label:HorizontalGrid   {377,923,376,43}
+---------- TextBox #381 id:rect200; label:TextBox       {377,927,144,35}
+----------- Label #384 id:text202; label:Label; Calc Estimated Hours        {383,926.6589,127.5412,13.3411255}
+----------- Text #382 id:text200        {398,939.9906,83.72916,16.0094}
+--------- Label #282 id:text136; label:Label; Timers        {393,986,46.399994,16}
+--------- GridView #370 id:rect136; label:GridView      {394,1010,359,128}
+---------- Text #371 id:text203 {427,1009,49.600006,16}
+---------- Text #373 id:text205 {502,1009,57.599976,16}
+---------- Text #375 id:text206 {583,1009,57.599976,16}
+---------- Text #377 id:text207 {667,1009,33.599976,16}
 ------ Panel #387 id:g219; label:Panel  {377,1175,391,417}
-------- Label #388 id:text208; label:Label      {381,1175,141.59998,24}
+------- Label #388 id:text208; label:Label; Dependencies        {381,1175,141.59998,24}
 ------- Panel #392 id:rect208; label:Panel      {377,1213,391,379}
 -------- TextWithHelper #393 id:txtParentTask; label:TextWithHelper     {394,1222.651,359,35.349}
 --------- TextBox #395 id:rect209; label:TextBox        {394,1223,326,35}
----------- Label #398 id:text210; label:Label   {399,1222.651,73.81976,13.348999}
+---------- Label #398 id:text210; label:Label; Parent Task        {399,1222.651,73.81976,13.348999}
 ---------- Text #396 id:text209 {414,1235.9812,83.77832,16.018799}
 --------- Button #402 id:rect210; label:Button  {721,1223,32,35}
 ---------- Text #403 id:text211 {731,1228.9906,14.408447,16.0094}
--------- Label #405 id:text215; label:Label     {393,1272,82.08002,16}
+-------- Label #405 id:text215; label:Label; Child Tasks        {393,1272,82.08002,16}
 -------- GridView #409 id:rect215; label:GridView       {394,1295,359,114}
 --------- Text #410 id:text216  {408,1296,90.08002,16}
 --------- Text #412 id:text217  {542,1296,72.47998,16}
 --------- Text #414 id:text229  {636,1296,88.47998,16}
--------- Label #416 id:text230; label:Label     {393,1438,94.399994,16}
+-------- Label #416 id:text230; label:Label; Dependencies        {393,1438,94.399994,16}
 -------- GridView #420 id:rect231; label:GridView       {394,1461,359,114}
 --------- Text #421 id:text231  {408,1462,90.08002,16}
 --------- Text #423 id:text232  {542,1462,72.47998,16}
 --------- Text #425 id:text233  {636,1462,88.47998,16}
 ------ Panel #427 id:g251; label:Panel  {377,1621,391,180}
-------- Label #428 id:text236; label:Label      {381,1621,105.600006,24}
+------- Label #428 id:text236; label:Label; Budgeting        {381,1621,105.600006,24}
 ------- Panel #432 id:rect237; label:Panel      {377,1658,391,143}
 -------- TextBox #434 id:txtBudgetAmount; label:TextBox {394,1668,359,35}
---------- Label #437 id:text239; label:Label    {399,1667.6588,87.117584,13.341187}
+--------- Label #437 id:text239; label:Label; Budget Amount        {399,1667.6588,87.117584,13.341187}
 --------- Text #435 id:text238  {414,1681.9906,83.72916,16.0094}
 -------- HorizontalGrid #441 id:rect241; label:HorizontalGrid   {394,1722,359,64}
 --------- VerticalStackPanel #443 id:rect242; label:VerticalStackPanel  {394,1725,166,58}
----------- Label #444 id:text242; label:Label   {399,1725,33.600006,16}
+---------- Label #444 id:text242; label:Label; Type        {399,1725,33.600006,16}
 ---------- ComboBox #447 id:cmboBudgetType; label:ComboBox      {399,1750,156,25}
 --------- VerticalStackPanel #452 id:rect245; label:VerticalStackPanel  {587,1725,166,58}
----------- Label #453 id:text245; label:Label   {592,1725,49.599976,16}
+---------- Label #453 id:text245; label:Label; Status        {592,1725,49.599976,16}
 ---------- ComboBox #456 id:cmboBudgetStatus; label:ComboBox    {592,1750,156,25}
 ---- ListBox #172 id:lstNavigation; label:ListBox       {200,81,160,311}
 ----- Definitions       {0,0,0,0}

@@ -1,7 +1,7 @@
 :: GenerateBetaReport.cmd
 :: Generate the component-level status report of the curren beta test.
 SET SOURCE=..\Docs\SvgToolsWorksheet.ods
-SET TARGET=C:\Temp\RenderTestsReport.html
+SET TARGET=C:\Temp\Report-RenderTests.html
 SET PATTERN=ReportPostProcessing.json
 
 SET FAR=C:\Files\Dropbox\Develop\Active\FindAndReplace\FindAndReplace\bin\Debug\net6.0\FindAndReplace.exe

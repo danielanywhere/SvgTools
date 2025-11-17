@@ -46,5 +46,11 @@
 		"FindPattern": "(?s:.*?\\<em\\>ImpliedFormDesignAXamlRenderTests.*?\\<table[^\\>]*\\>(?<tableContent>.*?)\\</table\\>.*)",
 		"ReplacePattern": "<table><thead><tr><th>Name</th><th>Test Status</th></tr><thead>${tableContent}</table>",
 		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Format In-Progress status.",
+		"FindPattern": "\\<tr\\>\\<td\\>(?<cell1>[^\\>]*)\\</td\\>\\<td\\>(?<cell2>In Progress)\\</td\\>\\</tr\\>",
+		"ReplacePattern": "<tr><td><b>${cell1}</b></td><td><b>${cell2}</b></td></tr>",
+		"UseRegEx": 1
 	}
 ]

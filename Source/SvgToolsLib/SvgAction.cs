@@ -2229,6 +2229,15 @@ namespace SvgToolsLib
 						$"{MessageImportanceEnum.Info}");
 					formDesign = new ImpliedFormDesignAXaml(doc);
 					content = formDesign.ToXaml();
+					try
+					{
+						File.WriteAllText(item.OutputFile.FullName, content);
+						Trace.WriteLine($" File written: {item.OutputFile.Name}");
+					}
+					catch(Exception ex)
+					{
+						Trace.WriteLine($"Error writing file: {ex.Message}");
+					}
 				}
 			}
 		}

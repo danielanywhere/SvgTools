@@ -168,6 +168,10 @@ namespace SvgToolsLib
 						if(text.Length > 0)
 						{
 							Trace.Write($"; label:{text}");
+							if(text == "Label")
+							{
+								Trace.WriteLine($"; {areaItem.Node.InnerText}");
+							}
 						}
 					}
 					Trace.Write("\t{");

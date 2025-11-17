@@ -390,6 +390,10 @@ namespace SvgToolsLib
 						formArea.FrontAreas.Add(area);
 						node = RenderOutputNode(area, renderToken);
 					}
+					if(node != null)
+					{
+						outputNode.Nodes.Add(node);
+					}
 					//	This item is a form and has an organizer.
 					PerformLayout(area, node);
 				}
@@ -1465,10 +1469,6 @@ namespace SvgToolsLib
 
 			if(node != null)
 			{
-				//if(node.Id == "text58")
-				//{
-				//	Trace.WriteLine("ImpliedFormDesign.GetHeight: Break here...");
-				//}
 				bounds = CalcBounds(node);
 				if(bounds != null)
 				{
@@ -1628,7 +1628,7 @@ namespace SvgToolsLib
 			{
 				//if(node.NodeType.ToLower() == "image")
 				//{
-				//	Debug.WriteLine("GetIntent: Break here...");
+				//	Trace.WriteLine("GetIntent: Break here...");
 				//}
 				if(!IsLayer(node))
 				{
@@ -2472,10 +2472,6 @@ namespace SvgToolsLib
 
 			if(node != null)
 			{
-				if(node.Id == "g97")
-				{
-					Trace.WriteLine("ImpliedFormDesign.HasIntent: Break here...");
-				}
 				if((node.Attributes.Exists(x => x.Name.ToLower() == "intent" &&
 					mControlTypes.Contains(LeftOf(x.Value.ToLower(), "-")))) ||
 					(!IsLayer(node) &&
@@ -2858,17 +2854,20 @@ namespace SvgToolsLib
 			if(source != null && target != null &&
 				sourceAttributeName?.Length > 0 && targetAttributeName?.Length > 0)
 			{
-				attribute = source.Attributes[sourceAttributeName];
-				if(attribute != null)
+				if(source.Attributes.HasAttribute(sourceAttributeName))
 				{
-					if(attribute.Value?.Length > 0)
+					attribute = source.Attributes[sourceAttributeName];
+					if(attribute != null)
 					{
-						target.Attributes.SetAttribute(targetAttributeName,
-							attribute.Value);
-					}
-					else
-					{
-						target.Attributes.SetAttribute(targetAttributeName, "");
+						if(attribute.Value?.Length > 0)
+						{
+							target.Attributes.SetAttribute(targetAttributeName,
+								attribute.Value);
+						}
+						else
+						{
+							target.Attributes.SetAttribute(targetAttributeName, "");
+						}
 					}
 				}
 				else if(defaultValue != null)
