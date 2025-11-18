@@ -7,6 +7,7 @@ SvgTools.exe /action:{ActionName}
     [/infile:{Filename}] [/outfile:{Filename}]
     [/option:{OptionName[,OptionValue]}]
     [/properties:{NameValueArray}]
+    [/styleworksheet:{Filename}]
     [/workingpath:{FolderName}]
     [/wait]
     [/?]
@@ -64,6 +65,9 @@ All parameters can be prefixed with either '/' or '--'.
                         Options are specific to the action context in which
                         they are specified.
     /outfile    -   Output path and filename only.
+    /styleworksheet -   Specify the name of a style extension worksheet to
+                        include in the process. Currently only used for
+                        ImpliedDesignTo{TargetName} actions.
     /workingpath-   Set the working path and foldername. When this parameter
                         is specified, all of the other parameters can use
                         relative naming.
@@ -71,6 +75,9 @@ All parameters can be prefixed with either '/' or '--'.
 {ActionName}    -   Name of the action to execute.
 {Filename}      -   Fully qualified path and filename.
 {Foldername}    -   Fully qualified path.
+{TargetName}    -   Implied Design conversion target. Following are the
+                        currently recognized values.
+                        AvaloniaXaml
 
 Options:
 Following are the available options.
@@ -99,4 +106,5 @@ this action. |
 | InputFilename | /infile | string | The path and filename of the input file. |
 | OutputFilename | /outfile | string | The output path and filename for the operation. |
 | Properties | List<NameValueItem> | Collection of properties for action. |
+| StyleWorksheets | /styleworksheet | List<string> | Collection of style extension worksheet filenames. |
 | WorkingPath | /workingpath | string | Working path for current operation. |

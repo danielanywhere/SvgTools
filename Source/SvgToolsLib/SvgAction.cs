@@ -423,6 +423,25 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	GetStyleWorksheets																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the nearest instance of style extension worksheets on this
+		/// session.
+		/// </summary>
+		public List<string> GetStyleWorksheets()
+		{
+			List<string> result = null;
+
+			if(mParent != null)
+			{
+				result = mParent.StyleWorksheets;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetText																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2210,7 +2229,12 @@ namespace SvgToolsLib
 		{
 			string content = "";
 			SvgDocumentItem doc = null;
+			FileInfo fileInfo = null;
 			ImpliedFormDesignAXaml formDesign = null;
+			ShapeStyleExtensionListCollection styleCollection = null;
+			List<FileInfo> styleWorksheetFiles = null;
+
+			List<ShapeStyleExtensionListCollection> styleCatalog = null;
 
 			if(item != null)
 			{
@@ -2227,8 +2251,46 @@ namespace SvgToolsLib
 					item.WorkingSvg = doc;
 					Trace.WriteLine($" Working document: {item.InputFiles[0].Name}",
 						$"{MessageImportanceEnum.Info}");
+					styleWorksheetFiles = new List<FileInfo>();
+					foreach(string styleWorksheetFilenameItem in item.StyleWorksheets)
+					{
+						fileInfo =
+							new FileInfo(
+								AbsolutePath(item.WorkingPath, styleWorksheetFilenameItem));
+						if(fileInfo.Exists)
+						{
+							styleWorksheetFiles.Add(fileInfo);
+							Trace.WriteLine($" Style worksheet: {fileInfo.Name}");
+						}
+						else
+						{
+							Trace.WriteLine(
+								" Style extension worksheet not found: " +
+								styleWorksheetFilenameItem);
+						}
+					}
+					if(styleWorksheetFiles.Count > 0)
+					{
+						styleCatalog = new List<ShapeStyleExtensionListCollection>();
+						foreach(FileInfo styleWorksheetFileItem in styleWorksheetFiles)
+						{
+							try
+							{
+								content = File.ReadAllText(styleWorksheetFileItem.FullName);
+								styleCollection =
+									JsonConvert.
+										DeserializeObject<ShapeStyleExtensionListCollection>(
+											content);
+							}
+							catch { }
+							if(styleCollection?.Count > 0)
+							{
+								styleCatalog.Add(styleCollection);
+							}
+						}
+					}
 					formDesign = new ImpliedFormDesignAXaml(doc);
-					content = formDesign.ToXaml();
+					content = formDesign.ToXaml(styleCatalog);
 					try
 					{
 						File.WriteAllText(item.OutputFile.FullName, content);
@@ -4266,6 +4328,38 @@ namespace SvgToolsLib
 					mParent.Parent.Stop = value;
 				}
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	StyleWorksheets																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="StyleWorksheets">StyleWorksheets</see>.
+		/// </summary>
+		private List<string> mStyleWorksheets = null;
+		/// <summary>
+		/// Get/Set a reference to the collection of style extension worksheets
+		/// defined at this level.
+		/// </summary>
+		public List<string> StyleWorksheets
+		{
+			get
+			{
+				List<string> result = mStyleWorksheets;
+
+				if(result == null && mParent != null)
+				{
+					result = mParent.GetStyleWorksheets();
+					if(result == null)
+					{
+						//	Return a safe value.
+						result = new List<string>();
+					}
+				}
+				return result;
+			}
+			set { mStyleWorksheets = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

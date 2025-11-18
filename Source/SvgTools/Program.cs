@@ -182,7 +182,10 @@ namespace SvgToolsApp
 			Trace.Listeners.Add(consoleListener);
 
 			Console.WriteLine("SvgTools.exe");
-			prg.mActionItem = new SvgActionItem();
+			prg.mActionItem = new SvgActionItem()
+			{
+				StyleWorksheets = new System.Collections.Generic.List<string>()
+			};
 
 			foreach(string arg in args)
 			{
@@ -269,6 +272,12 @@ namespace SvgToolsApp
 						bShowHelp = true;
 					}
 					continue;
+				}
+				key = "styleworksheet:";
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
+				{
+					prg.ActionItem.StyleWorksheets.Add(arg.Substring(keyLength));
 				}
 				key = "testprecision:";
 				keyLength = AgnosticArgStart(lowerArg, key);

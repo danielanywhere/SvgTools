@@ -1,0 +1,204 @@
+[
+	{
+		"Remarks": "Avalonia style extensions for main Navigation list.",
+		"ShapeNames": [ "lstNavigation" ],
+		"Extensions":
+		[
+			{
+				"Remarks": "General styles for each listbox item.",
+				"ExtensionType": "Style",
+				"Selector": "ListBoxItem",
+				"Settings":
+				[
+					{
+						"Name": "Margin",
+						"Value": "8,2,-1,0"
+					},
+					{
+						"Name": "Padding",
+						"Value": "0"
+					},
+					{
+						"Name": "HorizontalContentAlignment",
+						"Value": "Stretch"
+					},
+					{
+						"Name": "FocusAdorner",
+						"Value": "{x:Null}"
+					},
+					{
+						"Name": "Template",
+						"Nodes":
+						[
+							{
+								"Name": "ControlTemplate",
+								"Nodes":
+								[
+									{
+										"Name": "Border",
+										"Properties":
+										[
+											{
+												"Name": "Background",
+												"Value": "Transparent"
+											},
+											{
+												"Name": "BorderBrush",
+												"Value": "Transparent"
+											},
+											{
+												"Name": "HorizontalAlignment",
+												"Value": "Stretch"
+											},
+											{
+												"Name": "VerticalAlignment",
+												"Value": "Stretch"
+											}
+										],
+										"Nodes":
+										[
+											{
+												"Name": "ContentPresenter",
+												"Properties":
+												[
+													{
+														"Name": "Content",
+														"Value": "{TemplateBinding Content}"
+													},
+													{
+														"Name": "ContentTemplate",
+														"Value": "{TemplateBinding ContentTemplate}"
+													},
+													{
+														"Name": "HorizontalAlignment",
+														"Value": "{TemplateBinding HorizontalContentAlignment}"
+													},
+													{
+														"Name": "VerticalAlignment",
+														"Value": "{TemplateBinding VerticalContentAlignment}"
+													}
+												]
+											}
+										]
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			{
+				"Remarks": "Hover image state when normal.",
+				"ExtensionType": "Style",
+				"Selector": "ListBoxItem Image[Tag=Hover]",
+				"Settings":
+				[
+					{
+						"Name": "IsVisible",
+						"Value": "False"
+					}
+				]
+			},
+			{
+				"Remarks": "Selected image state when normal.",
+				"ExtensionType": "Style",
+				"Selector": "ListBoxItem Image[Tag=Selected]",
+				"Settings":
+				[
+					{
+						"Name": "IsVisible",
+						"Value": "False"
+					}
+				]
+			},
+			{
+				"Remarks": "Hover image state when hovered.",
+				"ExtensionType": "Style",
+				"Selector": "ListBoxItem:pointerover Image[Tag=Hover]",
+				"Settings":
+				[
+					{
+						"Name": "IsVisible",
+						"Value": "True"
+					}
+				]
+			},
+			{
+				"Remarks": "Normal image state when hovered.",
+				"ExtensionType": "Style",
+				"Selector": "ListBoxItem:pointerover Image[Tag=Normal]",
+				"Settings":
+				[
+					{
+						"Name": "IsVisible",
+						"Value": "False"
+					}
+				]
+			},
+			{
+				"Remarks": "Selected image state when selected.",
+				"ExtensionType": "Style",
+				"Selector": "ListBoxItem:selected Image[Tag=Selected]",
+				"Settings":
+				[
+					{
+						"Name": "IsVisible",
+						"Value": "True"
+					}
+				]
+			},
+			{
+				"Remarks": "Normal image state when selected.",
+				"ExtensionType": "Style",
+				"Selector": "ListBoxItem:selected Image[Tag=Normal]",
+				"Settings":
+				[
+					{
+						"Name": "IsVisible",
+						"Value": "False"
+					}
+				]
+			},
+			{
+				"Remarks": "Hover image state when selected and hovered.",
+				"ExtensionType": "Style",
+				"Selector": "ListBoxItem:selected:pointerover Image[Tag=Hover]",
+				"Settings":
+				[
+					{
+						"Name": "IsVisible",
+						"Value": "False"
+					}
+				]
+			}
+		]
+	},
+	{
+		"Remarks": "Avalonia items panel configuration.",
+		"ShapeNames": [ "lstNavigation" ],
+		"Extensions":
+		[
+			{
+				"Remarks": "Cause the panel to stick to the ListBox width.",
+				"ExtensionType": "ItemsPanel",
+				"Settings":
+				[
+					{
+						"Name": "StackPanel",
+						"Properties":
+						[
+							{
+								"Name": "Orientation",
+								"Value": "Vertical"
+							},
+							{
+								"Name": "HorizontalAlignment",
+								"Value": "Stretch"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+]

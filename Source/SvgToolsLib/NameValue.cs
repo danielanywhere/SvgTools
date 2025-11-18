@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Newtonsoft.Json;
+
 namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
@@ -217,6 +219,7 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Get/Set the name of the item.
 		/// </summary>
+		[JsonProperty(Order = 0)]
 		public string Name
 		{
 			get { return mName; }
@@ -249,6 +252,7 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Get/Set the value of the item.
 		/// </summary>
+		[JsonProperty(Order = 1)]
 		public string Value
 		{
 			get { return mValue; }

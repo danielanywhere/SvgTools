@@ -1565,31 +1565,40 @@ namespace SvgToolsLib
 
 			if(node != null)
 			{
-				attribute = node.Attributes["xlink:href"];
+				attribute = node.Attributes["ImageFilename"];
 				if(attribute != null && attribute.Value?.Length > 0)
 				{
-					if(attribute.Value.StartsWith("data:"))
-					{
-						extension = Between(attribute.Value, "/", ";");
-					}
-					attribute = node.Attributes["id"];
-					if(attribute?.Value?.Length > 0)
-					{
-						if(extension.Length == 0)
-						{
-							extension = "png";
-						}
-						result = $"{attribute.Value}.{extension}";
-						bFilenameFound = true;
-					}
+					result = attribute.Value;
+					bFilenameFound = true;
 				}
-				else
+				if(!bFilenameFound)
 				{
-					attribute = node.Attributes["id"];
-					if(attribute?.Value?.Length > 0)
+					attribute = node.Attributes["xlink:href"];
+					if(attribute != null && attribute.Value?.Length > 0)
 					{
-						result = $"{attribute.Value}.png";
-						bFilenameFound = true;
+						if(attribute.Value.StartsWith("data:"))
+						{
+							extension = Between(attribute.Value, "/", ";");
+						}
+						attribute = node.Attributes["id"];
+						if(attribute?.Value?.Length > 0)
+						{
+							if(extension.Length == 0)
+							{
+								extension = "png";
+							}
+							result = $"{attribute.Value}.{extension}";
+							bFilenameFound = true;
+						}
+					}
+					else
+					{
+						attribute = node.Attributes["id"];
+						if(attribute?.Value?.Length > 0)
+						{
+							result = $"{attribute.Value}.png";
+							bFilenameFound = true;
+						}
 					}
 				}
 				if(!bFilenameFound)

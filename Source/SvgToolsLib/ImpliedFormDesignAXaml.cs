@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Geometry;
@@ -85,13 +86,111 @@ namespace SvgToolsLib
 							node = new HtmlNodeItem()
 							{
 								NodeType = "MenuItem",
-								SelfClosing = false
+								SelfClosing = (menuItem.FrontAreas.Count == 0)
 							};
 							SetRenderedControlName(menuItem.Node, node);
 							node.Attributes.SetAttribute(
 								"Header", FormatShortcut(GetText(menuItem)));
 							targetNodes.Add(node);
 							AddMenuPanels(node.Nodes, menuItem, definitions);
+						}
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* AppendNodes																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Append the style node structure to the target nodes collection.
+		/// </summary>
+		/// <param name="styleNodes">
+		/// Reference to the source style nodes collection to append.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target node collection receiving the new nodes.
+		/// </param>
+		private static void AppendNodes(NameValueNodesCollection styleNodes,
+			HtmlNodeCollection target)
+		{
+			HtmlNodeItem node = null;
+
+			if(styleNodes?.Count > 0 && target != null)
+			{
+				foreach(NameValueNodesItem styleItem in styleNodes)
+				{
+					if(styleItem.Name?.Length > 0)
+					{
+						node = new HtmlNodeItem()
+						{
+							NodeType = styleItem.Name,
+							SelfClosing = (styleItem.Nodes.Count == 0)
+						};
+						foreach(NameValueItem propertyItem in styleItem.Properties)
+						{
+							if(propertyItem.Name?.Length > 0)
+							{
+								node.Attributes.SetAttribute(propertyItem.Name,
+									propertyItem.Value);
+							}
+						}
+						target.Add(node);
+						AppendNodes(styleItem.Nodes, node.Nodes);
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* AppendStyle																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Append the style node structure to the target nodes collection.
+		/// </summary>
+		/// <param name="extension">
+		/// Reference to the source style extension to append.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target node collection receiving the new nodes.
+		/// </param>
+		private static void AppendStyle(ShapeStyleExtensionItem extension,
+			HtmlNodeCollection target)
+		{
+			HtmlNodeItem childNode = null;
+			HtmlNodeItem node = null;
+
+			if(extension != null && target != null)
+			{
+				node = new HtmlNodeItem()
+				{
+					NodeType = "Style"
+				};
+				if(extension.Selector.Length > 0)
+				{
+					node.Attributes.SetAttribute("Selector", extension.Selector);
+				}
+				target.Add(node);
+				foreach(NameValueNodesItem settingItem in extension.Settings)
+				{
+					if(settingItem.Name?.Length > 0)
+					{
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "Setter",
+							SelfClosing = (settingItem.Nodes.Count == 0)
+						};
+						childNode.Attributes.SetAttribute("Property", settingItem.Name);
+						if(settingItem.Value.Length > 0 || settingItem.Nodes.Count == 0)
+						{
+							childNode.Attributes.SetAttribute("Value", settingItem.Value);
+						}
+						node.Nodes.Add(childNode);
+						if(settingItem.Nodes.Count > 0)
+						{
+							AppendNodes(settingItem.Nodes, childNode.Nodes);
 						}
 					}
 				}
@@ -234,6 +333,87 @@ namespace SvgToolsLib
 				}
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ApplyStyleExtensions																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Apply style extension definitions from the supplied worksheets.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the output node to which the extensions will be applied.
+		/// </param>
+		private void ApplyStyleExtensions(HtmlNodeItem node)
+		{
+			HtmlNodeItem childNode = null;
+			HtmlNodeItem containerNode = null;
+			string lowerName = "";
+
+			if(node != null && mStyleCatalog.Count > 0)
+			{
+				foreach(ShapeStyleExtensionListCollection listCollectionItem in
+					mStyleCatalog)
+				{
+					foreach(ShapeStyleExtensionListItem listItem in listCollectionItem)
+					{
+						if(listItem.ShapeNames.Contains(node.Attributes.GetValue("x:Name"),
+							StringComparer.OrdinalIgnoreCase))
+						{
+							foreach(ShapeStyleExtensionItem extensionItem in
+								listItem.Extensions)
+							{
+								switch(extensionItem.ExtensionType)
+								{
+									case ShapeStyleExtensionType.ItemsPanel:
+										lowerName = $"{node.NodeType.ToLower()}.itemspanel";
+										childNode = node.Nodes.FirstOrDefault(x =>
+											x.NodeType.ToLower() == lowerName);
+										if(childNode == null)
+										{
+											childNode = new HtmlNodeItem()
+											{
+												NodeType = $"{node.NodeType}.ItemsPanel",
+												SelfClosing = false
+											};
+											node.Nodes.Insert(0, childNode);
+										}
+										else
+										{
+											childNode.Nodes.Clear();
+										}
+										containerNode = new HtmlNodeItem()
+										{
+											NodeType = "ItemsPanelTemplate",
+											SelfClosing = false
+										};
+										childNode.Nodes.Add(containerNode);
+										AppendNodes(extensionItem.Settings, containerNode.Nodes);
+										break;
+									case ShapeStyleExtensionType.Style:
+										lowerName = $"{node.NodeType.ToLower()}.styles";
+										containerNode = node.Nodes.FirstOrDefault(x =>
+											x.NodeType.ToLower() == lowerName);
+										if(containerNode == null)
+										{
+											containerNode = new HtmlNodeItem()
+											{
+												NodeType = $"{node.NodeType}.Styles",
+												SelfClosing = false
+											};
+											node.Nodes.Insert(0, containerNode);
+										}
+										AppendStyle(extensionItem, containerNode.Nodes);
+										break;
+									case ShapeStyleExtensionType.Template:
+										break;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1471,7 +1651,7 @@ namespace SvgToolsLib
 				result = new HtmlNodeItem()
 				{
 					NodeType = "Menu",
-					SelfClosing = false
+					SelfClosing = (area.FrontAreas.Count == 0)
 				};
 				SetRenderedControlName(area.Node, result);
 				definitions = GetDefinitionAreas(area.FrontAreas);
@@ -1485,7 +1665,7 @@ namespace SvgToolsLib
 						childNode = new HtmlNodeItem()
 						{
 							NodeType = "MenuItem",
-							SelfClosing = false
+							SelfClosing = (menuItem.FrontAreas.Count == 0)
 						};
 						SetRenderedControlName(menuItem.Node, childNode);
 						childNode.Attributes.SetAttribute(
@@ -2950,6 +3130,7 @@ namespace SvgToolsLib
 				{
 					ApplyCommonProperties(area, result);
 					ApplyTokenProperties(renderToken, result);
+					ApplyStyleExtensions(result);
 					result = ApplyPreemptiveProperties(area, result);
 				}
 			}
@@ -2983,20 +3164,55 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	StyleCatalog																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="StyleCatalog">StyleCatalog</see>.
+		/// </summary>
+		private List<ShapeStyleExtensionListCollection> mStyleCatalog =
+			new List<ShapeStyleExtensionListCollection>();
+		/// <summary>
+		/// Get a reference to the catalog shape styles used to render the output
+		/// in this session.
+		/// </summary>
+		public List<ShapeStyleExtensionListCollection> StyleCatalog
+		{
+			get { return mStyleCatalog; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ToXaml																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
 		/// Translate the current control area content to Avalonia XAML and return
 		/// the result to the caller.
 		/// </summary>
+		/// <param name="styleCatalog">
+		/// Reference to an optional collection of style extension worksheets to
+		/// load
+		/// </param>
 		/// <returns>
 		/// The Avalonia XAML content representing the controls presented in
 		/// the local control areas.
 		/// </returns>
-		public string ToXaml()
+		public string ToXaml(
+			List<ShapeStyleExtensionListCollection> styleCatalog = null)
 		{
 			HtmlNodeItem node = new HtmlNodeItem();
 
+			mStyleCatalog.Clear();
+			if(styleCatalog?.Count > 0)
+			{
+				foreach(ShapeStyleExtensionListCollection styleListItem in
+					styleCatalog)
+				{
+					if(styleListItem.Count > 0)
+					{
+						mStyleCatalog.Add(styleListItem);
+					}
+				}
+			}
 			FillForm(mControlAreas, node);
 			return node.Html;
 		}
