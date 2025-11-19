@@ -20,6 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using Newtonsoft.Json;
+
 namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
@@ -73,6 +75,7 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Get a reference to the collection of extensions in this list.
 		/// </summary>
+		[JsonProperty(Order = 3)]
 		public ShapeStyleExtensionCollection Extensions
 		{
 			get { return mExtensions; }
@@ -89,10 +92,29 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Get/Set the remarks for this extension list.
 		/// </summary>
+		[JsonProperty(Order = 0)]
 		public string Remarks
 		{
 			get { return mRemarks; }
 			set { mRemarks = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Selector																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Selector">Selector</see>.
+		/// </summary>
+		private string mSelector = "";
+		/// <summary>
+		/// Get/Set the selector for this item.
+		/// </summary>
+		[JsonProperty(Order = 2)]
+		public string Selector
+		{
+			get { return mSelector; }
+			set { mSelector = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -107,6 +129,7 @@ namespace SvgToolsLib
 		/// Get the list of shape names to which this list of extensions
 		/// applies.
 		/// </summary>
+		[JsonProperty(Order = 1)]
 		public List<string> ShapeNames
 		{
 			get { return mShapeNames; }

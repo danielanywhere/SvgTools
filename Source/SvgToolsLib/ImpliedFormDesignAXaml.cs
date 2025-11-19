@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Geometry;
 using Html;
 
@@ -41,6 +42,82 @@ namespace SvgToolsLib
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		/// <summary>
+		/// Complete list of recognized control classes.
+		/// </summary>
+		private static List<string> mXamlControlNames = new List<string>()
+		{
+			"Border", "Button", "Calendar", "Canvas",
+			"Carosel", "CheckBox", "ComboBox", "ContextMenu",
+			"DatePicker", "DockPanel", "DropDownButton", "Expander",
+			"Grid", "GridSplitter", "HyperlinkButton", "Image",
+			"Label", "ListBox", "MaskedTextBox", "Menu",
+			"NumericUpDown", "Panel", "ProgressBar", "RadioButton",
+			"RelativePanel", "RepeatButton", "ScrollViewer", "Separator",
+			"Slider", "SplitButton", "SplitView", "StackPanel",
+			"TabControl", "TextBlock", "TextBox", "ToggleSplitButton",
+			"ToggleSwitch", "TreeView", "Viewbox", "WrapPanel"
+		};
+
+		/// <summary>
+		/// Complete list of common properties.
+		/// </summary>
+		private static List<string> mXamlPropertyNames = new List<string>()
+		{
+			"Background", "BackgroundSizing", "BorderBrush", "BorderThickness",
+			"BoxShadow", "CornerRadius", "Cursor", "Effect",
+			"FocusAdorner", "Margin", "Opacity", "OpacityMask",
+			"Padding", "StyleKey", "StyleKeyOverride", "Styles",
+			"Theme", "Transitions"
+		};
+
+		/// <summary>
+		/// Supported properties per control, as [control, property].
+		/// </summary>
+		private static int[,] mXamlControlProperties = new int[40, 18]
+		{
+			{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 }
+		};
+
 		//*-----------------------------------------------------------------------*
 		//* AddMenuPanels																													*
 		//*-----------------------------------------------------------------------*
@@ -216,42 +293,50 @@ namespace SvgToolsLib
 			HtmlNodeItem target)
 		{
 			string lowerName = "";
+			string name = "";
 			HtmlNodeItem node = null;
+			string nodeType = "";
 
 			if(source?.Node != null && target != null)
 			{
 				node = source.Node;
+				nodeType = node.NodeType;
 				foreach(HtmlAttributeItem attributeItem in node.Attributes)
 				{
-					lowerName = attributeItem.Name.ToLower();
-					switch(lowerName)
+					if(mXamlPropertyNames.Contains(attributeItem.Name,
+						StringComparer.OrdinalIgnoreCase))
 					{
-						case "background":
-							target.Attributes.SetAttribute(
-								"Background", attributeItem.Value);
-							break;
-						case "borderbrush":
-							target.Attributes.SetAttribute(
-								"BorderBrush", attributeItem.Value);
-							break;
-						case "borderthickness":
-							target.Attributes.SetAttribute(
-								"BorderThickness", attributeItem.Value);
-							break;
-						case "dock":
-							target.Attributes.SetAttribute(
-								"DockPanel.Dock", attributeItem.Value);
-							break;
-						case "margin":
-							target.Attributes.SetAttribute(
-								"Margin",
-								GetCommaDelimitedIntegerNumber(attributeItem.Value));
-							break;
-						case "padding":
-							target.Attributes.SetAttribute(
-								"Padding",
-								GetCommaDelimitedIntegerNumber(attributeItem.Value));
-							break;
+						if(!NeedsBorder(nodeType, attributeItem.Name))
+						{
+							//	TODO: Validate margin, padding and others needing delimited
+							//	values. See outliers below.
+							name = mXamlPropertyNames.Find(s =>
+								string.Equals(s, attributeItem.Name,
+									StringComparison.OrdinalIgnoreCase));
+							target.Attributes.SetAttribute(name, attributeItem.Value);
+						}
+					}
+					else
+					{
+						//	Specific outliers not covered in Xaml properties list.
+						lowerName = attributeItem.Name.ToLower();
+						switch(lowerName)
+						{
+							case "dock":
+								target.Attributes.SetAttribute(
+									"DockPanel.Dock", attributeItem.Value);
+								break;
+							//case "margin":
+							//	target.Attributes.SetAttribute(
+							//		"Margin",
+							//		GetCommaDelimitedIntegerNumber(attributeItem.Value));
+							//	break;
+							//case "padding":
+							//	target.Attributes.SetAttribute(
+							//		"Padding",
+							//		GetCommaDelimitedIntegerNumber(attributeItem.Value));
+							//	break;
+						}
 					}
 				}
 			}
@@ -281,51 +366,37 @@ namespace SvgToolsLib
 		private static HtmlNodeItem ApplyPreemptiveProperties(ControlAreaItem area,
 			HtmlNodeItem node)
 		{
+			bool bNeedsBorder = false;
 			HtmlNodeItem border = null;
-			string lowerName = "";
+			string nodeType = "";
 			HtmlNodeItem result = node;
 			HtmlNodeItem sourceNode = null;
 
 			if(area?.Node != null && node != null)
 			{
 				sourceNode = area.Node;
+				nodeType = sourceNode.NodeType;
 				foreach(HtmlAttributeItem attributeItem in sourceNode.Attributes)
 				{
-					lowerName = attributeItem.Name.ToLower();
-					switch(lowerName)
+					if(NeedsBorder(nodeType, attributeItem.Name))
 					{
-						case "boxshadow":
-						case "cornerradius":
-							if(border == null)
-							{
-								border = new HtmlNodeItem()
-								{
-									NodeType = "Border",
-									SelfClosing = false
-								};
-							}
-							break;
-					}
-					if(border != null)
-					{
+						bNeedsBorder = true;
 						break;
 					}
 				}
-				if(border != null)
+				if(bNeedsBorder)
 				{
+					border = new HtmlNodeItem()
+					{
+						NodeType = "Border",
+						SelfClosing = false
+					};
 					foreach(HtmlAttributeItem attributeItem in sourceNode.Attributes)
 					{
-						lowerName = attributeItem.Name.ToLower();
-						switch(lowerName)
+						if(NeedsBorder(nodeType, attributeItem.Name))
 						{
-							case "boxshadow":
-								border.Attributes.SetAttribute(
-									"BoxShadow", attributeItem.Value);
-								break;
-							case "cornerradius":
-								border.Attributes.SetAttribute(
-									"CornerRadius", attributeItem.Value);
-								break;
+							border.Attributes.SetAttribute(
+								attributeItem.Name, attributeItem.Value);
 						}
 					}
 					result = border;
@@ -351,10 +422,12 @@ namespace SvgToolsLib
 			HtmlNodeItem containerNode = null;
 			string lowerName = "";
 
-			if(node != null && mStyleCatalog.Count > 0)
+			//	TODO: !1 - Stopped here...
+			//	TODO: Drill down. Some children will have specific properties.
+			if(node != null && StyleCatalog.Count > 0)
 			{
 				foreach(ShapeStyleExtensionListCollection listCollectionItem in
-					mStyleCatalog)
+					StyleCatalog)
 				{
 					foreach(ShapeStyleExtensionListItem listItem in listCollectionItem)
 					{
@@ -390,6 +463,17 @@ namespace SvgToolsLib
 										};
 										childNode.Nodes.Add(containerNode);
 										AppendNodes(extensionItem.Settings, containerNode.Nodes);
+										break;
+									case ShapeStyleExtensionType.Properties:
+										foreach(NameValueNodesItem propertyItem in
+											extensionItem.Settings)
+										{
+											if(propertyItem.Name.Length > 0)
+											{
+												node.Attributes.SetAttribute(
+													propertyItem.Name, propertyItem.Value);
+											}
+										}
 										break;
 									case ShapeStyleExtensionType.Style:
 										lowerName = $"{node.NodeType.ToLower()}.styles";
@@ -489,6 +573,66 @@ namespace SvgToolsLib
 					}
 				}
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* NeedsBorder																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified control and property
+		/// combination need a border.
+		/// </summary>
+		/// <param name="controlName">
+		/// Name of the control.
+		/// </param>
+		/// <param name="propertyName">
+		/// Name of the property.
+		/// </param>
+		/// <returns>
+		/// True if the specified control needs a border when using the supplied
+		/// property name. Otherwise, false.
+		/// </returns>
+		private static bool NeedsBorder(string controlName, string propertyName)
+		{
+			int controlIndex = -1;
+			int index = 0;
+			string lowerControlName = "";
+			string lowerPropertyName = "";
+			int propertyIndex = -1;
+			bool result = false;
+
+			if(controlName?.Length > 0 && propertyName?.Length > 0)
+			{
+				lowerControlName = controlName.ToLower();
+				lowerPropertyName = propertyName.ToLower();
+				index = 0;
+				foreach(string controlNameItem in mXamlControlNames)
+				{
+					if(controlNameItem.ToLower() == lowerControlName)
+					{
+						controlIndex = index;
+						break;
+					}
+				}
+				if(controlIndex > -1)
+				{
+					index = 0;
+					foreach(string propertyNameItem in mXamlPropertyNames)
+					{
+						if(propertyNameItem.ToLower() == lowerPropertyName)
+						{
+							propertyIndex = index;
+							break;
+						}
+					}
+				}
+				if(propertyIndex > -1)
+				{
+					result = (mXamlControlProperties[controlIndex, propertyIndex] == 0);
+				}
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -2710,6 +2854,7 @@ namespace SvgToolsLib
 					SelfClosing = false
 				};
 				result.Attributes.SetAttribute("Height", "30");
+				SetRenderedControlName(area.Node, result, suffix: "Border");
 				node = new HtmlNodeItem()
 				{
 					NodeType = "TextBlock",
@@ -2828,6 +2973,7 @@ namespace SvgToolsLib
 					NodeType = "StackPanel",
 					SelfClosing = false
 				};
+				SetRenderedControlName(area.Node, childNode, suffix: "Stack");
 				childNode.Attributes.SetAttribute("Orientation", "Vertical");
 				childNode.Attributes.SetAttribute("Spacing", "10");
 				childNode.Nodes.AddRange(
@@ -2892,25 +3038,33 @@ namespace SvgToolsLib
 		/// <param name="targetNode">
 		/// Reference to the target rendered node.
 		/// </param>
+		/// <param name="suffix">
+		/// Optional suffix to add to the name.
+		/// </param>
 		private static void SetRenderedControlName(HtmlNodeItem sourceNode,
-			HtmlNodeItem targetNode)
+			HtmlNodeItem targetNode, string suffix = "")
 		{
 			HtmlAttributeItem attribute = null;
+			string localSuffix = "";
 
 			if(sourceNode != null && targetNode != null)
 			{
+				if(suffix?.Length > 0)
+				{
+					localSuffix = suffix;
+				}
 				attribute = sourceNode.Attributes.FirstOrDefault(x =>
 					x.Name.ToLower() == "id" &&
 					x.Value?.Length > 0);
 				if(attribute != null)
 				{
-					//	TODO: Use (?i:(?<defaultName>{sourceNode.NodeType}\d+)) pattern.
-					if(!attribute.Value.ToLower().StartsWith(
-						sourceNode.NodeType.ToLower()))
+					if(!Regex.IsMatch(sourceNode.NodeType,
+						$"(?i:(?<defaultName>{sourceNode.NodeType})(?<index>\\d+))"))
 					{
 						//	If this control wasn't named with the default ID then
 						//	apply the user-supplied name.
-						targetNode.Attributes.SetAttribute("x:Name", attribute.Value);
+						targetNode.Attributes.SetAttribute("x:Name",
+							$"{attribute.Value}{localSuffix}");
 					}
 				}
 			}
@@ -2988,9 +3142,16 @@ namespace SvgToolsLib
 			RenderTokenItem childToken = null;
 			HtmlNodeItem result = null;
 
-			//	TODO: Allow coordinates to be added if control is placed on panel.
+			List<string> mXamlProperties = new List<string>()
+			{
+				"This", "that", "something"
+			};
 			if(area != null)
 			{
+				//if(area?.Node.Id == "pnlMain")
+				//{
+				//	Trace.WriteLine("ImpliedFormDesignAXaml.RenderOutputNode: Break here...");
+				//}
 				if(renderToken != null)
 				{
 					childToken = RenderTokenItem.DeepCopyWithRemove(renderToken,
@@ -3129,9 +3290,12 @@ namespace SvgToolsLib
 				if(result != null)
 				{
 					ApplyCommonProperties(area, result);
-					ApplyTokenProperties(renderToken, result);
 					ApplyStyleExtensions(result);
 					result = ApplyPreemptiveProperties(area, result);
+					//	The token-level properties are applied after the pre-emtive
+					//	properties, so parent-level values like Grid.Column can be
+					//	sent to any wrapper that needs to be created.
+					ApplyTokenProperties(renderToken, result);
 				}
 			}
 			return result;
@@ -3161,23 +3325,20 @@ namespace SvgToolsLib
 			base(svgDocument)
 		{
 		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	StyleCatalog																													*
-		//*-----------------------------------------------------------------------*
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
-		/// Private member for <see cref="StyleCatalog">StyleCatalog</see>.
+		/// Create a new instance of the ImpliedFormDesignAXaml item.
 		/// </summary>
-		private List<ShapeStyleExtensionListCollection> mStyleCatalog =
-			new List<ShapeStyleExtensionListCollection>();
-		/// <summary>
-		/// Get a reference to the catalog shape styles used to render the output
-		/// in this session.
-		/// </summary>
-		public List<ShapeStyleExtensionListCollection> StyleCatalog
+		/// <param name="svgDocument">
+		/// Reference to the SVG document to be parsed.
+		/// </param>
+		/// <param name="styleCatalog">
+		/// Reference to an optional catalog of style extensions.
+		/// </param>
+		public ImpliedFormDesignAXaml(SvgDocumentItem svgDocument,
+			List<ShapeStyleExtensionListCollection> styleCatalog) :
+			base(svgDocument, styleCatalog)
 		{
-			get { return mStyleCatalog; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -3196,23 +3357,10 @@ namespace SvgToolsLib
 		/// The Avalonia XAML content representing the controls presented in
 		/// the local control areas.
 		/// </returns>
-		public string ToXaml(
-			List<ShapeStyleExtensionListCollection> styleCatalog = null)
+		public string ToXaml()
 		{
 			HtmlNodeItem node = new HtmlNodeItem();
 
-			mStyleCatalog.Clear();
-			if(styleCatalog?.Count > 0)
-			{
-				foreach(ShapeStyleExtensionListCollection styleListItem in
-					styleCatalog)
-				{
-					if(styleListItem.Count > 0)
-					{
-						mStyleCatalog.Add(styleListItem);
-					}
-				}
-			}
 			FillForm(mControlAreas, node);
 			return node.Html;
 		}

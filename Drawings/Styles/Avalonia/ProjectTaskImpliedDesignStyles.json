@@ -1,11 +1,51 @@
 [
 	{
+		"Remarks": "Window dressing.",
+		"Selector": "Window",
+		"Extensions":
+		[
+			{
+				"ExtensionType": "Properties",
+				"Settings":
+				[
+					{
+						"Name": "Background",
+						"Value": "{DynamicResource MaterialPaperBrush}"
+					}
+				]
+			}
+		]
+	},
+	{
 		"Remarks": "Avalonia style extensions for main Navigation list.",
 		"ShapeNames": [ "lstNavigation" ],
 		"Extensions":
 		[
 			{
-				"Remarks": "General styles for each listbox item.",
+				"Remarks": "ListBox properties.",
+				"ExtensionType": "Properties",
+				"Settings":
+				[
+					{
+						"Name": "SelectionMode",
+						"Value": "Single"
+					},
+					{
+						"Name": "BorderThickness",
+						"Value": "0"
+					},
+					{
+						"Name": "Background",
+						"Value": "Transparent"
+					},
+					{
+						"Name": "Margin",
+						"Value": "0,8,0,0"
+					}
+				]
+			},
+			{
+				"Remarks": "General styles for listbox items.",
 				"ExtensionType": "Style",
 				"Selector": "ListBoxItem",
 				"Settings":
@@ -200,5 +240,85 @@
 				]
 			}
 		]
+	},
+	{
+		"Remarks": "Main panel background.",
+		"ShapeNames": [ "pnlMain" ],
+		"Extensions":
+		[
+			{
+				"ExtensionType": "Properties",
+				"Settings":
+				[
+					{
+						"Name": "Background",
+						"Value": "{DynamicResource LightBackground}"
+					}
+				]
+			}
+		]
+	},
+	{
+		"Remarks": "Main panel margin.",
+		"ShapeNames": [ "pnlMainStack" ],
+		"Extensions": [
+			{
+				"ExtensionType": "Properties",
+				"Settings": [
+					{
+						"Name": "Margin",
+						"Value": "32"
+					}
+				]
+			}
+		]
+	},
+	{
+		"Remarks": "StatusBar foreground.",
+		"ShapeNames": [ "statMain" ],
+		"Extensions": [
+			{
+				"ExtensionType": "Properties",
+				"Settings": [
+					{
+						"Name": "Foreground",
+						"Value": "{DynamicResource MaterialBodyBrush}"
+					}
+				]
+			}
+		]
+	},
+	{
+		"Remarks": "StatusBar background.",
+		"ShapeNames": [ "statMainBorder" ],
+		"Extensions": [
+			{
+				"ExtensionType": "Properties",
+				"Settings": [
+					{
+						"Name": "Background",
+						"Value": "{DynamicResource MaterialToolBarBackgroundBrush}"
+					}
+				]
+			}
+		]
+	},
+	{
+		"Remarks": "TreeView background.",
+		"ShapeNames": [ "trvMain" ],
+		"Extensions":
+		[
+			{
+				"ExtensionType": "Properties",
+				"Settings":
+				[
+					{
+						"Name": "Background",
+						"Value": "{DynamicResource SelectorBackground}"
+					}
+				]
+			}
+		]
 	}
 ]
+

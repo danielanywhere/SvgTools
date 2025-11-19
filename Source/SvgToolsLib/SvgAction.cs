@@ -2289,8 +2289,8 @@ namespace SvgToolsLib
 							}
 						}
 					}
-					formDesign = new ImpliedFormDesignAXaml(doc);
-					content = formDesign.ToXaml(styleCatalog);
+					formDesign = new ImpliedFormDesignAXaml(doc, styleCatalog);
+					content = formDesign.ToXaml();
 					try
 					{
 						File.WriteAllText(item.OutputFile.FullName, content);

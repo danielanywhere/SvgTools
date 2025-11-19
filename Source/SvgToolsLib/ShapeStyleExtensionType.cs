@@ -35,17 +35,22 @@ namespace SvgToolsLib
 		/// </summary>
 		None = 0,
 		/// <summary>
+		/// Items panel customization.
+		/// </summary>
+		ItemsPanel,
+		/// <summary>
+		/// Property name/value pairs to be placed directly upon the target
+		/// node.
+		/// </summary>
+		Properties,
+		/// <summary>
 		/// Style extension type.
 		/// </summary>
 		Style,
 		/// <summary>
 		/// Template extension type.
 		/// </summary>
-		Template,
-		/// <summary>
-		/// Items panel customization.
-		/// </summary>
-		ItemsPanel
+		Template
 	}
 	//*-------------------------------------------------------------------------*
 

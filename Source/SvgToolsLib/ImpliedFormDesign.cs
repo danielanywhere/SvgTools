@@ -206,6 +206,7 @@ namespace SvgToolsLib
 			string name = "";
 			HtmlNodeItem node = null;
 			RenderTokenItem renderToken = new RenderTokenItem();
+			List<ShapeStyleExtensionListItem> styleLists = null;
 			string text = "";
 
 			if(areas?.Count > 0 && outputNode != null)
@@ -396,6 +397,30 @@ namespace SvgToolsLib
 					}
 					//	This item is a form and has an organizer.
 					PerformLayout(area, node);
+				}
+
+				//	Set extended styles directly on the window node.
+				styleLists = mStyleCatalog
+					.SelectMany(listCollection => listCollection)
+					.Where(list => list.Selector.ToLower() == "window").ToList();
+				foreach(ShapeStyleExtensionListItem listItem in styleLists)
+				{
+					foreach(ShapeStyleExtensionItem extensionItem in listItem.Extensions)
+					{
+						if(extensionItem.ExtensionType ==
+							ShapeStyleExtensionType.Properties)
+						{
+							foreach(NameValueNodesItem propertyItem in
+								extensionItem.Settings)
+							{
+								if(propertyItem.Name?.Length > 0)
+								{
+									outputNode.Attributes.SetAttribute(
+										propertyItem.Name, propertyItem.Value);
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -782,12 +807,31 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Create a new instance of the ImpliedFormDesign item.
 		/// </summary>
-		public ImpliedFormDesign(SvgDocumentItem svgDocument) : this()
+		/// <param name="svgDocument">
+		/// Reference to the SVG document to render.
+		/// </param>
+		/// <param name="styleCatalog">
+		/// Reference to an optional catalog of style extensions.
+		/// </param>
+		public ImpliedFormDesign(SvgDocumentItem svgDocument,
+			List<ShapeStyleExtensionListCollection> styleCatalog = null) : this()
 		{
 			if(svgDocument != null)
 			{
 				mSvg = svgDocument;
 				mControlAreas = EnumerateControls(svgDocument);
+			}
+			mStyleCatalog.Clear();
+			if(styleCatalog?.Count > 0)
+			{
+				foreach(ShapeStyleExtensionListCollection styleListItem in
+					styleCatalog)
+				{
+					if(styleListItem.Count > 0)
+					{
+						mStyleCatalog.Add(styleListItem);
+					}
+				}
 			}
 		}
 		//*-----------------------------------------------------------------------*
@@ -2812,6 +2856,24 @@ namespace SvgToolsLib
 					node.Nodes.Add(result);
 				}
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	StyleCatalog																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="StyleCatalog">StyleCatalog</see>.
+		/// </summary>
+		private List<ShapeStyleExtensionListCollection> mStyleCatalog =
+			new List<ShapeStyleExtensionListCollection>();
+		/// <summary>
+		/// Get a reference to the catalog shape styles used to render the output
+		/// in this session.
+		/// </summary>
+		public List<ShapeStyleExtensionListCollection> StyleCatalog
+		{
+			get { return mStyleCatalog; }
 		}
 		//*-----------------------------------------------------------------------*
 
