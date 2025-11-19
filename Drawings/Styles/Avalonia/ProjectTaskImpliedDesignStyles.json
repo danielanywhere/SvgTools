@@ -1,6 +1,12 @@
 [
 	{
-		"Remarks": "Window dressing.",
+		"Remarks":
+		[
+			"If this file has a code-behind, you can add ",
+			"x:Class={ProjectName}.{FormName} and ",
+			"x:DataType=app:{FormName}"
+		],
+		"Comment": "Window dressing.",
 		"Selector": "Window",
 		"Extensions":
 		[
@@ -17,12 +23,12 @@
 		]
 	},
 	{
-		"Remarks": "Avalonia style extensions for main Navigation list.",
+		"Comment": "Avalonia style extensions for main Navigation list.",
 		"ShapeNames": [ "lstNavigation" ],
 		"Extensions":
 		[
 			{
-				"Remarks": "ListBox properties.",
+				"Comment": "ListBox properties.",
 				"ExtensionType": "Properties",
 				"Settings":
 				[
@@ -45,7 +51,7 @@
 				]
 			},
 			{
-				"Remarks": "General styles for listbox items.",
+				"Comment": "General styles for listbox items.",
 				"ExtensionType": "Style",
 				"Selector": "ListBoxItem",
 				"Settings":
@@ -128,7 +134,7 @@
 				]
 			},
 			{
-				"Remarks": "Hover image state when normal.",
+				"Comment": "Hover image state when normal.",
 				"ExtensionType": "Style",
 				"Selector": "ListBoxItem Image[Tag=Hover]",
 				"Settings":
@@ -140,7 +146,7 @@
 				]
 			},
 			{
-				"Remarks": "Selected image state when normal.",
+				"Comment": "Selected image state when normal.",
 				"ExtensionType": "Style",
 				"Selector": "ListBoxItem Image[Tag=Selected]",
 				"Settings":
@@ -152,7 +158,7 @@
 				]
 			},
 			{
-				"Remarks": "Hover image state when hovered.",
+				"Comment": "Hover image state when hovered.",
 				"ExtensionType": "Style",
 				"Selector": "ListBoxItem:pointerover Image[Tag=Hover]",
 				"Settings":
@@ -164,7 +170,7 @@
 				]
 			},
 			{
-				"Remarks": "Normal image state when hovered.",
+				"Comment": "Normal image state when hovered.",
 				"ExtensionType": "Style",
 				"Selector": "ListBoxItem:pointerover Image[Tag=Normal]",
 				"Settings":
@@ -176,7 +182,7 @@
 				]
 			},
 			{
-				"Remarks": "Selected image state when selected.",
+				"Comment": "Selected image state when selected.",
 				"ExtensionType": "Style",
 				"Selector": "ListBoxItem:selected Image[Tag=Selected]",
 				"Settings":
@@ -188,7 +194,7 @@
 				]
 			},
 			{
-				"Remarks": "Normal image state when selected.",
+				"Comment": "Normal image state when selected.",
 				"ExtensionType": "Style",
 				"Selector": "ListBoxItem:selected Image[Tag=Normal]",
 				"Settings":
@@ -200,7 +206,7 @@
 				]
 			},
 			{
-				"Remarks": "Hover image state when selected and hovered.",
+				"Comment": "Hover image state when selected and hovered.",
 				"ExtensionType": "Style",
 				"Selector": "ListBoxItem:selected:pointerover Image[Tag=Hover]",
 				"Settings":
@@ -214,12 +220,12 @@
 		]
 	},
 	{
-		"Remarks": "Avalonia items panel configuration.",
+		"Comment": "Avalonia items panel configuration.",
 		"ShapeNames": [ "lstNavigation" ],
 		"Extensions":
 		[
 			{
-				"Remarks": "Cause the panel to stick to the ListBox width.",
+				"Comment": "Cause the panel to stick to the ListBox width.",
 				"ExtensionType": "ItemsPanel",
 				"Settings":
 				[
@@ -242,7 +248,7 @@
 		]
 	},
 	{
-		"Remarks": "Main panel background.",
+		"Comment": "Main panel background.",
 		"ShapeNames": [ "pnlMain" ],
 		"Extensions":
 		[
@@ -259,7 +265,7 @@
 		]
 	},
 	{
-		"Remarks": "Main panel margin.",
+		"Comment": "Main panel margin.",
 		"ShapeNames": [ "pnlMainStack" ],
 		"Extensions": [
 			{
@@ -274,7 +280,7 @@
 		]
 	},
 	{
-		"Remarks": "StatusBar foreground.",
+		"Comment": "StatusBar foreground.",
 		"ShapeNames": [ "statMain" ],
 		"Extensions": [
 			{
@@ -289,7 +295,7 @@
 		]
 	},
 	{
-		"Remarks": "Toolbar / StatusBar background.",
+		"Comment": "Toolbar / StatusBar background.",
 		"ShapeNames": [ "statMainBorder", "toolMain" ],
 		"Extensions": [
 			{
@@ -304,7 +310,7 @@
 		]
 	},
 	{
-		"Remarks": "TreeView background.",
+		"Comment": "TreeView background.",
 		"ShapeNames": [ "trvMain" ],
 		"Extensions":
 		[

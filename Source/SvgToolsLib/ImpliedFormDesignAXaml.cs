@@ -329,8 +329,11 @@ namespace SvgToolsLib
 						switch(lowerName)
 						{
 							case "dock":
-								target.Attributes.SetAttribute(
-									"DockPanel.Dock", attributeItem.Value);
+								if(attributeItem.Value.ToLower() != "fill")
+								{
+									target.Attributes.SetAttribute(
+										"DockPanel.Dock", attributeItem.Value);
+								}
 								break;
 							//case "margin":
 							//	target.Attributes.SetAttribute(
@@ -1169,7 +1172,7 @@ namespace SvgToolsLib
 				};
 				SetRenderedControlName(area.Node, result);
 				result.Attributes.SetAttribute("AutoGenerateColumns", "False");
-				result.Attributes.SetAttribute("CanUserSortItems", "True");
+				result.Attributes.SetAttribute("CanUserSortColumns", "True");
 				if(area.FrontAreas.Count > 0)
 				{
 					node = new HtmlNodeItem()

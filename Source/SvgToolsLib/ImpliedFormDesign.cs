@@ -255,10 +255,10 @@ namespace SvgToolsLib
 					formName = "UnnamedForm";
 				}
 
-				outputNode.Attributes.SetAttribute(
-					"x:Class", $"{mProjectName}.{formName}");
-				outputNode.Attributes.SetAttribute(
-					"x:DataType", $"app:{formName}");
+				//outputNode.Attributes.SetAttribute(
+				//	"x:Class", $"{mProjectName}.{formName}");
+				//outputNode.Attributes.SetAttribute(
+				//	"x:DataType", $"app:{formName}");
 
 				if(formArea != null)
 				{

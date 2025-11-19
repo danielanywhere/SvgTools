@@ -65,6 +65,24 @@ namespace SvgToolsLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
+		//*	Comment																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Comment">Comment</see>.
+		/// </summary>
+		private string mComment = "";
+		/// <summary>
+		/// Get/Set the comment associated with this item.
+		/// </summary>
+		[JsonProperty(Order = 0)]
+		public string Comment
+		{
+			get { return mComment; }
+			set { mComment = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	ExtensionType																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -81,24 +99,6 @@ namespace SvgToolsLib
 		{
 			get { return mExtensionType; }
 			set { mExtensionType = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	Remarks																																*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="Remarks">Remarks</see>.
-		/// </summary>
-		private string mRemarks = "";
-		/// <summary>
-		/// Get/Set the remarks associated with this item.
-		/// </summary>
-		[JsonProperty(Order = 0)]
-		public string Remarks
-		{
-			get { return mRemarks; }
-			set { mRemarks = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
