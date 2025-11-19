@@ -43,6 +43,12 @@ namespace SvgToolsLib
 		//*	Private																																*
 		//*************************************************************************
 		/// <summary>
+		/// List of nodes visited during ApplyStyle in this session.
+		/// </summary>
+		private List<HtmlNodeItem> mApplyStyleProcessedOutputNodes =
+			new List<HtmlNodeItem>();
+
+		/// <summary>
 		/// Complete list of recognized control classes.
 		/// </summary>
 		private static List<string> mXamlControlNames = new List<string>()
@@ -422,10 +428,14 @@ namespace SvgToolsLib
 			HtmlNodeItem containerNode = null;
 			string lowerName = "";
 
-			//	TODO: !1 - Stopped here...
-			//	TODO: Drill down. Some children will have specific properties.
-			if(node != null && StyleCatalog.Count > 0)
+			if(node != null &&
+				!mApplyStyleProcessedOutputNodes.Contains(node) &&
+				StyleCatalog.Count > 0)
 			{
+				//if(node.Attributes.GetValue("x:Name") == "lstNavigation")
+				//{
+				//	Trace.WriteLine("ImpliedFormDesignAXaml.ApplyStyleExtensions: Break here...");
+				//}
 				foreach(ShapeStyleExtensionListCollection listCollectionItem in
 					StyleCatalog)
 				{
@@ -495,6 +505,16 @@ namespace SvgToolsLib
 								}
 							}
 						}
+					}
+				}
+				mApplyStyleProcessedOutputNodes.Add(node);
+				//	Drill down to apply external properties at the child level.
+				foreach(HtmlNodeItem nodeItem in node.Nodes)
+				{
+					if(!mApplyStyleProcessedOutputNodes.Contains(nodeItem))
+					{
+						ApplyStyleExtensions(nodeItem);
+						mApplyStyleProcessedOutputNodes.Add(nodeItem);
 					}
 				}
 			}
@@ -3360,6 +3380,8 @@ namespace SvgToolsLib
 		public string ToXaml()
 		{
 			HtmlNodeItem node = new HtmlNodeItem();
+
+			mApplyStyleProcessedOutputNodes.Clear();
 
 			FillForm(mControlAreas, node);
 			return node.Html;
