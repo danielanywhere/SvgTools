@@ -2,7 +2,7 @@
   "profiles": {
     "SvgTools": {
       "commandName": "Project",
-      "commandLineArgs": "svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ProjectTaskImpliedDesign.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/ProjectTask.axaml /styleworksheet:Styles/Avalonia/ProjectTaskImpliedDesignStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings"
+      "commandLineArgs": "svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ProjectTaskImpliedDesign.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmMainTest.axaml /styleworksheet:Styles/Avalonia/ProjectTaskImpliedDesignStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings"
     },
     "WSL": {
       "commandName": "WSL",

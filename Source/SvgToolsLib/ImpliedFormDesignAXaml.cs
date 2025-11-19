@@ -1463,7 +1463,7 @@ namespace SvgToolsLib
 					};
 					SetRenderedControlName(imageArea.Node, result);
 					result.Attributes.SetAttribute("Source",
-						$"avares://{mProjectName}/Assets/{imageName}");
+						$"avares://{mProjectName}/Assets/Images/{imageName}");
 					TransferUnitAttribute(imageArea.Node, "width", result, "Width");
 					TransferUnitAttribute(imageArea.Node, "height", result, "Height");
 				}
@@ -2910,32 +2910,37 @@ namespace SvgToolsLib
 		{
 			HtmlNodeItem childNode = null;
 			HtmlNodeItem node = null;
+			OrthogonalOrientationEnum orientation = OrthogonalOrientationEnum.None;
 			HtmlNodeItem result = null;
 
 			if(area != null)
 			{
 				result = new HtmlNodeItem()
 				{
-					NodeType = "ToolBarTray",
+					NodeType = "StackPanel",
 					SelfClosing = false
 				};
-				node = new HtmlNodeItem()
+				SetRenderedControlName(area.Node, result);
+				orientation = GetOrientation(area.FrontAreas);
+				if(orientation == OrthogonalOrientationEnum.Vertical)
 				{
-					NodeType = "ToolBar",
-					SelfClosing = false
-				};
-				SetRenderedControlName(area.Node, node);
+					result.Attributes.SetAttribute("Orientation", "Vertical");
+				}
+				else
+				{
+					result.Attributes.SetAttribute("Orientation", "Horizontal");
+				}
 				foreach(ControlAreaItem areaItem in area.FrontAreas)
 				{
 					switch(areaItem.Intent)
 					{
 						case ImpliedDesignIntentEnum.Button:
 							//	Process the button node.
-							node.Nodes.Add(RenderOutputNode(areaItem, childToken));
+							result.Nodes.Add(RenderOutputNode(areaItem, childToken));
 							break;
 						case ImpliedDesignIntentEnum.Separator:
 							//	Process the separator node.
-							childNode = new HtmlNodeItem()
+							result = new HtmlNodeItem()
 							{
 								NodeType = "Separator",
 								SelfClosing = true
@@ -2944,7 +2949,6 @@ namespace SvgToolsLib
 							break;
 					}
 				}
-				result.Nodes.Add(node);
 			}
 			return result;
 		}

@@ -55,6 +55,6 @@ svgtools /wait /action:ImpliedDesignEnumerateControls /infile:ProjectTaskImplied
 Render Avalonia XAML file (.axaml) from an Implicit Form Design file
 
 ```
-svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ProjectTaskImpliedDesign.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/ProjectTask.axaml /styleworksheet:Styles/Avalonia/ProjectTaskImpliedDesignStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ProjectTaskImpliedDesign.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmMainTest.axaml /styleworksheet:Styles/Avalonia/ProjectTaskImpliedDesignStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
 ```
 

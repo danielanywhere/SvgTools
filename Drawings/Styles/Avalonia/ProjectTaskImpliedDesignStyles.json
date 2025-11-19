@@ -289,8 +289,8 @@
 		]
 	},
 	{
-		"Remarks": "StatusBar background.",
-		"ShapeNames": [ "statMainBorder" ],
+		"Remarks": "Toolbar / StatusBar background.",
+		"ShapeNames": [ "statMainBorder", "toolMain" ],
 		"Extensions": [
 			{
 				"ExtensionType": "Properties",
