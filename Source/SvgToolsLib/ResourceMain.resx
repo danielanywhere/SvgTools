@@ -173,4 +173,8 @@
     <value>(?s:(?i:(?&lt;attribute&gt;(?&lt;name&gt;[^\:]+)\s*(\:\s*(?&lt;value&gt;[^\;]+)\;{0,1}){0,1}\s*)))</value>
     <comment>Regular expression pattern to find all of the individual entries in a style string.</comment>
   </data>
+  <data name="rxUniformGridEntry" xml:space="preserve">
+    <value>(?i:(?&lt;entry&gt;(auto|\d+\*{0,1}|\*)))</value>
+    <comment>Regular expression to find entries in a uniform grid expression string.</comment>
+  </data>
 </root>

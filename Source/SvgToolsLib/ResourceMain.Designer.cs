@@ -185,5 +185,14 @@ namespace SvgToolsLib {
                 return ResourceManager.GetString("rxStyleEntries", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (?i:(?&lt;entry&gt;(auto|\d+\*{0,1}|\*))).
+        /// </summary>
+        internal static string rxUniformGridEntry {
+            get {
+                return ResourceManager.GetString("rxUniformGridEntry", resourceCulture);
+            }
+        }
     }
 }

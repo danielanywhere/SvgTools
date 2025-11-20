@@ -2364,6 +2364,71 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetCommaDelimitedUniformGridValue																			*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a comma-delimited mixed value corresponding to uniform grid
+		/// column and row arrangement.
+		/// </summary>
+		/// <param name="text">
+		/// The text that might contain incorrect formatting.
+		/// </param>
+		/// <returns>
+		/// A comma-delimited uniform grid value.
+		/// </returns>
+		public static string GetCommaDelimitedUniformGridValue(string text)
+		{
+			StringBuilder builder = new StringBuilder();
+			string entry = "";
+			MatchCollection matches = null;
+			string result = "";
+
+			if(text?.Length > 0)
+			{
+				result = text.Replace(" ", "");
+				result = result.Replace("auto", "Auto",
+					StringComparison.OrdinalIgnoreCase);
+				if(result.StartsWith(','))
+				{
+					if(result.Length > 1)
+					{
+						result = result.Substring(1);
+					}
+					else
+					{
+						result = "";
+					}
+				}
+				if(result.EndsWith(','))
+				{
+					if(result.Length > 1)
+					{
+						result = result.Substring(0, result.Length - 1);
+					}
+					else
+					{
+						result = "";
+					}
+				}
+				matches = Regex.Matches(result, ResourceMain.rxUniformGridEntry);
+				foreach(Match matchItem in matches)
+				{
+					entry = GetValue(matchItem, "entry");
+					if(entry.Length > 0)
+					{
+						if(builder.Length > 0)
+						{
+							builder.Append(',');
+						}
+						builder.Append(entry);
+					}
+				}
+			}
+			return builder.ToString();
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetCurvePointCubic																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

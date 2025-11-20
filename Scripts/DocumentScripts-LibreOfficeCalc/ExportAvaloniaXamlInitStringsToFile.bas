@@ -16,6 +16,7 @@ REM * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 Sub ExportAvaloniaXamlInitStringsToFile()
 
+dim char as string
 dim content as string
 dim controlCount as long
 dim controlIndex as long
@@ -25,6 +26,7 @@ dim fileNumber as integer
 dim filePath as string
 dim lastColIndex as long
 dim lastRowIndex as long
+dim lineContent as string
 dim oCell as object
 dim oDoc as object
 dim oSheet as object
@@ -111,37 +113,36 @@ dim tab as string
 	end if
 	
 	content = content & "/// <summary>" & crlf & _
-		"/// Supported properties per control, as [control, property]." & crlf & _
+		"/// Supported properties per control, as " & crlf & _
+		"/// [controlIndex * propertyCount + propertyIndex]." & crlf & _
 		"/// </summary>" & crlf & _
 		"private static " & _
-		"int[,] mXamlControlProperties = new int[" & _
-		controlCount & ", " & propertyCount & "]" & crlf & _
-		"{" & crlf
+		"string mXamlControlProperties = " & crlf
 	if controlCount > 0 and propertyCount > 0 then
 		content = content & tab
 		for controlIndex = 0 To controlCount - 1
-			content = content & "{ "
+			lineContent = ""
 			for propertyIndex = 0 To propertyCount - 1
 				oCell = oSheet.getCellByPosition(propertyIndex + 1, controlIndex + 1)
-				content = content & oCell.Value
-				if propertyIndex < propertyCount - 1 then
-					content = content & ","
-					if propertyIndex mod 20 = 19 then
-						content = content & crlf & tab & tab
-					else
-						content = content & " "
-					end if
+				char = oCell.String
+				if len(char) > 0 then
+					char = left(char, 1)
+				else
+					char = "."
 				end if
+				lineContent = lineContent & char
 			next propertyIndex
-			content = content & " }"
+			content = content & """" & lineContent & """"
 			if controlIndex < controlCount - 1 then
-				content = content & "," & crlf & tab
+				content = content & " +" & crlf & tab
 			else
-				content = content & crlf
+				content = content & ";"
 			end if
 		next controlIndex
+	else
+		content = content & """"""
 	end if
-	content = content & "};" & crlf & crlf
+	content = content & crlf & crlf
 	
 	' --- Write to file ---
 	filePath = "C:\Temp\GeneratedCode-XamlInitStrings.txt"
@@ -152,4 +153,3 @@ dim tab as string
 	
 	msgbox "Initialization strings exported to " & filePath
 End Sub
-

@@ -74,54 +74,71 @@ namespace SvgToolsLib
 			"BoxShadow", "CornerRadius", "Cursor", "Effect",
 			"FocusAdorner", "Margin", "Opacity", "OpacityMask",
 			"Padding", "StyleKey", "StyleKeyOverride", "Styles",
-			"Theme", "Transitions"
+			"Theme", "Transitions", "ColumnDefinitions", "RowDefinitions"
 		};
 
 		/// <summary>
-		/// Supported properties per control, as [control, property].
+		/// Supported properties per control, as 
+		/// [controlIndex * propertyCount + propertyIndex].
 		/// </summary>
-		private static int[,] mXamlControlProperties = new int[40, 18]
+		private static string mXamlControlProperties =
+			"111111111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"100000111111011111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"100000111111011111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"10000011111101111111" +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"000000000000000000.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"100000111111011111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"100000110111011111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"100000111111011111.." +
+			"111101111111111111.." +
+			"100000111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"111101111111111111.." +
+			"000000000000000000.." +
+			"100000111111011111..";
+
+		/// <summary>
+		/// List of common properties using fixed-pixel format.
+		/// </summary>
+		private static List<string> mXamlFixedPixelPropertyNames =
+			new List<string>()
 		{
-			{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-			{ 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1 }
+			"Margin", "Padding"
+		};
+
+		/// <summary>
+		/// List of common properties using mixed length uniform grid format.
+		/// </summary>
+		private static List<string> mXamlUniformGridPropertyNames =
+			new List<string>()
+		{
+			"ColumnDefinitions", "RowDefinitions"
 		};
 
 		//*-----------------------------------------------------------------------*
@@ -312,14 +329,25 @@ namespace SvgToolsLib
 					if(mXamlPropertyNames.Contains(attributeItem.Name,
 						StringComparer.OrdinalIgnoreCase))
 					{
-						if(!NeedsBorder(nodeType, attributeItem.Name))
+						name = GetCommonPropertyName(attributeItem.Name);
+						if(!NeedsBorder(nodeType, name))
 						{
-							//	TODO: Validate margin, padding and others needing delimited
-							//	values. See outliers below.
-							name = mXamlPropertyNames.Find(s =>
-								string.Equals(s, attributeItem.Name,
-									StringComparison.OrdinalIgnoreCase));
-							target.Attributes.SetAttribute(name, attributeItem.Value);
+							if(IsFixedPixelProperty(attributeItem.Name))
+							{
+								target.Attributes.SetAttribute(
+									name,
+									GetCommaDelimitedIntegerNumber(attributeItem.Value));
+							}
+							else if(IsUniformGridProperty(attributeItem.Name))
+							{
+								target.Attributes.SetAttribute(
+									name,
+									GetCommaDelimitedUniformGridValue(attributeItem.Value));
+							}
+							else
+							{
+								target.Attributes.SetAttribute(name, attributeItem.Value);
+							}
 						}
 					}
 					else
@@ -335,16 +363,22 @@ namespace SvgToolsLib
 										"DockPanel.Dock", attributeItem.Value);
 								}
 								break;
-							//case "margin":
-							//	target.Attributes.SetAttribute(
-							//		"Margin",
-							//		GetCommaDelimitedIntegerNumber(attributeItem.Value));
-							//	break;
-							//case "padding":
-							//	target.Attributes.SetAttribute(
-							//		"Padding",
-							//		GetCommaDelimitedIntegerNumber(attributeItem.Value));
-							//	break;
+							case "ifdheightrequired":
+								//	The visual control's height is required.
+								if(attributeItem.Value.ToLower() == "true")
+								{
+									target.Attributes.SetAttribute("Height",
+										node.Attributes.GetValue("Height"));
+								}
+								break;
+							case "ifdwidthrequired":
+								//	The visual control's width is required.
+								if(attributeItem.Value.ToLower() == "true")
+								{
+									target.Attributes.SetAttribute("Width",
+										node.Attributes.GetValue("Width"));
+								}
+								break;
 						}
 					}
 				}
@@ -600,6 +634,92 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetCommonPropertyName																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the well-known form of the specified common property name.
+		/// </summary>
+		/// <param name="propertyName">
+		/// Case-insensitive version of the property name to find.
+		/// </param>
+		/// <returns>
+		/// The predefined common property name corresponding to the caller's
+		/// name, if found. Otherwise, the caller's original value, if not null.
+		/// Otherwise, an empty string.
+		/// </returns>
+		private static string GetCommonPropertyName(string propertyName)
+		{
+			string lowerName = "";
+			string result = "";
+
+			if(propertyName?.Length > 0)
+			{
+				result = mXamlPropertyNames.FirstOrDefault(x =>
+					x.ToLower() == lowerName);
+				if(result == null)
+				{
+					result = propertyName;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* IsFixedPixelProperty																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified property uses a fixed
+		/// pixel width list.
+		/// </summary>
+		/// <param name="propertyName">
+		/// Name of the property to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the specified property uses a fixed pixel width list.
+		/// Otherwise, false.
+		/// </returns>
+		private static bool IsFixedPixelProperty(string propertyName)
+		{
+			bool result = false;
+
+			if(propertyName?.Length > 0)
+			{
+				result = mXamlFixedPixelPropertyNames.Contains(propertyName,
+					StringComparer.OrdinalIgnoreCase);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* IsUniformGridProperty																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified property uses a uniform
+		/// grid entry list (Auto, 10, *, etc.).
+		/// </summary>
+		/// <param name="propertyName">
+		/// The name of the property to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the specified property uses a uniform grid entry list.
+		/// Otherwise, false.
+		/// </returns>
+		private static bool IsUniformGridProperty(string propertyName)
+		{
+			bool result = false;
+
+			if(propertyName?.Length > 0)
+			{
+				result = mXamlUniformGridPropertyNames.Contains(propertyName,
+					StringComparer.OrdinalIgnoreCase);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* NeedsBorder																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -652,7 +772,8 @@ namespace SvgToolsLib
 				}
 				if(propertyIndex > -1)
 				{
-					result = (mXamlControlProperties[controlIndex, propertyIndex] == 0);
+					result = (mXamlControlProperties[
+						controlIndex * mXamlPropertyNames.Count + propertyIndex] == '0');
 				}
 			}
 			return result;
@@ -1093,25 +1214,39 @@ namespace SvgToolsLib
 								item.Area == cellArea))
 							{
 								//	The item appears in this row.
+								//	Assign the child-specified grid and column dimensions.
+								if(colIndex > -1 && rowIndex > -1)
+								{
+									attributeValue =
+										cellArea.Node.Attributes.GetValue("ColumnWidth");
+									if(attributeValue?.Length > 0)
+									{
+										gridColDims[colIndex] = attributeValue;
+										if(attributeValue.ToLower() == "auto")
+										{
+											//	The specified width of this column is auto.
+											//	That child needs to provide its width.
+											cellArea.Node.Attributes.SetAttribute(
+												"ifdWidthRequired", "True");
+										}
+									}
+									attributeValue =
+										cellArea.Node.Attributes.GetValue("RowHeight");
+									if(attributeValue?.Length > 0)
+									{
+										gridRowDims[rowIndex] = attributeValue;
+										if(attributeValue.ToLower() == "auto")
+										{
+											//	The specified height of this column is auto.
+											//	That child needs to provide its height.
+											cellArea.Node.Attributes.SetAttribute(
+												"ifdHeightRequired", "True");
+										}
+									}
+								}
 								node = RenderOutputNode(cellArea, childToken);
 								if(node != null)
 								{
-									//	Assign the child-specified grid and column dimensions.
-									if(colIndex > -1 && rowIndex > -1)
-									{
-										attributeValue =
-											cellArea.Node.Attributes.GetValue("ColumnWidth");
-										if(attributeValue?.Length > 0)
-										{
-											gridColDims[colIndex] = attributeValue;
-										}
-										attributeValue =
-											cellArea.Node.Attributes.GetValue("RowHeight");
-										if(attributeValue?.Length > 0)
-										{
-											gridRowDims[rowIndex] = attributeValue;
-										}
-									}
 									result.Nodes.Add(node);
 								}
 							}
@@ -1306,16 +1441,23 @@ namespace SvgToolsLib
 						gridColItem.References)
 					{
 						cellArea = referenceItem.Area;
+						//	Assign the child-specified column dimensions.
+						attributeValue =
+							cellArea.Node.Attributes.GetValue("ColumnWidth");
+						if(attributeValue?.Length > 0)
+						{
+							gridColDims[colIndex] = attributeValue;
+							if(attributeValue.ToLower() == "auto")
+							{
+								//	The specified width of this column is auto.
+								//	That child needs to provide its width.
+								cellArea.Node.Attributes.SetAttribute(
+									"ifdWidthRequired", "True");
+							}
+						}
 						node = RenderOutputNode(cellArea, childToken);
 						if(node != null)
 						{
-							//	Assign the child-specified column dimensions.
-							attributeValue =
-								cellArea.Node.Attributes.GetValue("ColumnWidth");
-							if(attributeValue?.Length > 0)
-							{
-								gridColDims[colIndex] = attributeValue;
-							}
 							result.Nodes.Add(node);
 						}
 					}
@@ -2092,7 +2234,7 @@ namespace SvgToolsLib
 			RenderTokenItem renderToken, RenderTokenItem childToken)
 		{
 			string attributeValue = "";
-			HtmlNodeItem childNode = null;
+			string[] cellDefs = new string[3];
 			HtmlNodeItem node = null;
 			OrthogonalOrientationEnum orientation = OrthogonalOrientationEnum.None;
 			HtmlNodeItem result = null;
@@ -2108,98 +2250,85 @@ namespace SvgToolsLib
 				if(area.FrontAreas.Count > 1)
 				{
 					orientation = GetOrientation(area.FrontAreas[0], area.FrontAreas[1]);
+					//	Splitter size.
+					cellDefs[1] = "5";
 				}
 				switch(orientation)
 				{
 					case OrthogonalOrientationEnum.Horizontal:
 					case OrthogonalOrientationEnum.None:
-						node = new HtmlNodeItem()
-						{
-							NodeType = "Grid.ColumnDefinitions",
-							SelfClosing = false
-						};
 						attributeValue = area.Node.Attributes.GetValue("PanelASize");
 						if(attributeValue.Length == 0)
 						{
 							attributeValue = "Auto";
+							//	Post the width of the left control.
+							if(area.FrontAreas.Count > 0 && area.FrontAreas[0].Node != null)
+							{
+								area.FrontAreas[0].Node.Attributes.SetAttribute(
+									"ifdWidthRequired", "True");
+							}
 						}
-						childNode = new HtmlNodeItem()
-						{
-							NodeType = "ColumnDefinition",
-							SelfClosing = true
-						};
-						childNode.Attributes.SetAttribute("Width", attributeValue);
-						node.Nodes.Add(childNode);
+						cellDefs[0] = attributeValue;
 						attributeValue = area.Node.Attributes.GetValue("SplitterSize");
-						if(attributeValue.Length == 0)
+						if(attributeValue.Length > 0)
 						{
-							attributeValue = "5";
+							cellDefs[1] = attributeValue;
 						}
-						childNode = new HtmlNodeItem()
-						{
-							NodeType = "ColumnDefinition",
-							SelfClosing = true
-						};
-						childNode.Attributes.SetAttribute("Width", attributeValue);
-						node.Nodes.Add(childNode);
 						attributeValue = area.Node.Attributes.GetValue("PanelBSize");
 						if(attributeValue.Length == 0)
 						{
 							attributeValue = "*";
 						}
-						childNode = new HtmlNodeItem()
+						else if(attributeValue.ToLower() == "auto")
 						{
-							NodeType = "ColumnDefinition",
-							SelfClosing = true
-						};
-						childNode.Attributes.SetAttribute("Width", attributeValue);
-						node.Nodes.Add(childNode);
+							//	This is auto. Post width of the right control.
+							if(area.FrontAreas.Count > 1 && area.FrontAreas[1].Node != null)
+							{
+								area.FrontAreas[1].Node.Attributes.SetAttribute(
+									"ifdWidthRequired", "True");
+							}
+						}
+						cellDefs[2] = attributeValue;
+						result.Attributes.SetAttribute("ColumnDefinitions",
+							string.Join(',', cellDefs));
 						break;
 					case OrthogonalOrientationEnum.Vertical:
-						node = new HtmlNodeItem()
-						{
-							NodeType = "Grid.RowDefinitions",
-							SelfClosing = false
-						};
 						attributeValue = area.Node.Attributes.GetValue("PanelASize");
 						if(attributeValue.Length == 0)
 						{
 							attributeValue = "Auto";
+							//	Post height of the top control.
+							if(area.FrontAreas.Count > 0 && area.FrontAreas[0].Node != null)
+							{
+								area.FrontAreas[0].Node.Attributes.SetAttribute(
+									"ifdHeightRequired", "True");
+							}
 						}
-						childNode = new HtmlNodeItem()
-						{
-							NodeType = "RowDefinition",
-							SelfClosing = true
-						};
-						childNode.Attributes.SetAttribute("Height", attributeValue);
-						node.Nodes.Add(childNode);
+						cellDefs[0] = attributeValue;
 						attributeValue = area.Node.Attributes.GetValue("SplitterSize");
-						if(attributeValue.Length == 0)
+						if(attributeValue.Length > 0)
 						{
-							attributeValue = "5";
+							cellDefs[1] = attributeValue;
 						}
-						childNode = new HtmlNodeItem()
-						{
-							NodeType = "RowDefinition",
-							SelfClosing = true
-						};
-						childNode.Attributes.SetAttribute("Height", attributeValue);
-						node.Nodes.Add(childNode);
 						attributeValue = area.Node.Attributes.GetValue("PanelBSize");
 						if(attributeValue.Length == 0)
 						{
 							attributeValue = "*";
 						}
-						childNode = new HtmlNodeItem()
+						else if(attributeValue.ToLower() == "auto")
 						{
-							NodeType = "RowDefinition",
-							SelfClosing = true
-						};
-						childNode.Attributes.SetAttribute("Height", attributeValue);
-						node.Nodes.Add(childNode);
+							//	This is auto. Post height of the bottom control.
+							if(area.FrontAreas.Count > 1 && area.FrontAreas[1].Node != null)
+							{
+								area.FrontAreas[1].Node.Attributes.SetAttribute(
+									"ifdHeightRequired", "True");
+							}
+						}
+						cellDefs[2] = attributeValue;
+						result.Attributes.SetAttribute("RowDefinitions",
+							string.Join(',', cellDefs));
 						break;
 				}
-				result.Nodes.Add(node);
 				if(area.FrontAreas.Count > 0)
 				{
 					switch(orientation)
@@ -2433,7 +2562,6 @@ namespace SvgToolsLib
 			RenderTokenItem renderToken)
 		{
 			ControlAreaItem buttonArea = null;
-			HtmlNodeItem childNode = null;
 			HtmlNodeItem result = null;
 			HtmlNodeItem node = null;
 			string text = null;
@@ -2448,26 +2576,8 @@ namespace SvgToolsLib
 					SelfClosing = false
 				};
 				SetRenderedControlName(area.Node, result);
-				node = new HtmlNodeItem()
-				{
-					NodeType = "Grid.ColumnDefinitions",
-					SelfClosing = false
-				};
-				childNode = new HtmlNodeItem()
-				{
-					NodeType = "ColumnDefinition",
-					SelfClosing = true
-				};
-				childNode.Attributes.SetAttribute("Width", "*");
-				node.Nodes.Add(childNode);
-				childNode = new HtmlNodeItem()
-				{
-					NodeType = "ColumnDefinition",
-					SelfClosing = true
-				};
-				childNode.Attributes.SetAttribute("Width", "Auto");
-				node.Nodes.Add(childNode);
-				result.Nodes.Add(node);
+				result.Attributes.SetAttribute(
+					"ColumnDefinitions", "*,Auto");
 				textBoxArea = area.FrontAreas.FindMatch(x =>
 					x.Intent == ImpliedDesignIntentEnum.TextBox);
 				buttonArea = area.FrontAreas.FindMatch(x => x.Intent ==
@@ -2527,6 +2637,8 @@ namespace SvgToolsLib
 						}
 					}
 					TransferAttribute(textArea.Node, "Content", node, "Content", text);
+					node.Attributes.SetAttribute(
+						"Width", buttonArea.Node.Attributes.GetValue("Width"));
 				}
 				result.Nodes.Add(node);
 			}
@@ -2825,16 +2937,23 @@ namespace SvgToolsLib
 						cellArea = referenceItem.Area;
 						childToken.Properties.SetValue(
 							"GridRowIndex", rowIndex.ToString());
+						//	Assign the child-specified row dimensions.
+						attributeValue =
+							cellArea.Node.Attributes.GetValue("RowHeight");
+						if(attributeValue?.Length > 0)
+						{
+							gridRowDims[rowIndex] = attributeValue;
+							if(attributeValue.ToLower() == "auto")
+							{
+								//	The specified width of this column is auto.
+								//	That child needs to provide its width.
+								cellArea.Node.Attributes.SetAttribute(
+									"ifdHeightRequired", "True");
+							}
+						}
 						node = RenderOutputNode(cellArea, childToken);
 						if(node != null)
 						{
-							//	Assign the child-specified row dimensions.
-							attributeValue =
-								cellArea.Node.Attributes.GetValue("RowHeight");
-							if(attributeValue?.Length > 0)
-							{
-								gridRowDims[rowIndex] = attributeValue;
-							}
 							result.Nodes.Add(node);
 						}
 					}
@@ -3169,10 +3288,6 @@ namespace SvgToolsLib
 			RenderTokenItem childToken = null;
 			HtmlNodeItem result = null;
 
-			List<string> mXamlProperties = new List<string>()
-			{
-				"This", "that", "something"
-			};
 			if(area != null)
 			{
 				//if(area?.Node.Id == "pnlMain")
