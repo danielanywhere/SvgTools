@@ -39,10 +39,18 @@ namespace SvgToolsLib
 		/// </summary>
 		ItemsPanel,
 		/// <summary>
+		/// Child nodes will be added to the matching node.
+		/// </summary>
+		Nodes,
+		/// <summary>
 		/// Property name/value pairs to be placed directly upon the target
 		/// node.
 		/// </summary>
 		Properties,
+		/// <summary>
+		/// Setter child entries will be added to the target nodes collection.
+		/// </summary>
+		Setters,
 		/// <summary>
 		/// Style extension type.
 		/// </summary>

@@ -100,41 +100,59 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//*	Selector																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="Selector">Selector</see>.
-		/// </summary>
-		private string mSelector = "";
-		/// <summary>
-		/// Get/Set the selector for this item.
-		/// </summary>
-		[JsonProperty(Order = 2)]
-		public string Selector
-		{
-			get { return mSelector; }
-			set { mSelector = value; }
-		}
-		//*-----------------------------------------------------------------------*
+		////*-----------------------------------------------------------------------*
+		////*	Selector																															*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Private member for <see cref="Selector">Selector</see>.
+		///// </summary>
+		//private string mSelector = "";
+		///// <summary>
+		///// Get/Set the selector for this item.
+		///// </summary>
+		//[JsonProperty(Order = 2)]
+		//public string Selector
+		//{
+		//	get { return mSelector; }
+		//	set { mSelector = value; }
+		//}
+		////*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	ShapeNames																														*
+		//*	Selectors																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="ShapeNames">ShapeNames</see>.
+		/// Private member for <see cref="Selectors">Selectors</see>.
 		/// </summary>
-		private List<string> mShapeNames = new List<string>();
+		private List<string> mSelectors = new List<string>();
 		/// <summary>
-		/// Get the list of shape names to which this list of extensions
+		/// Get the list of selectors to which this list of extensions
 		/// applies.
 		/// </summary>
 		[JsonProperty(Order = 1)]
-		public List<string> ShapeNames
+		public List<string> Selectors
 		{
-			get { return mShapeNames; }
+			get { return mSelectors; }
 		}
 		//*-----------------------------------------------------------------------*
+
+		////*-----------------------------------------------------------------------*
+		////*	ShapeNames																														*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Private member for <see cref="ShapeNames">ShapeNames</see>.
+		///// </summary>
+		//private List<string> mShapeNames = new List<string>();
+		///// <summary>
+		///// Get the list of shape names to which this list of extensions
+		///// applies.
+		///// </summary>
+		//[JsonProperty(Order = 1)]
+		//public List<string> ShapeNames
+		//{
+		//	get { return mShapeNames; }
+		//}
+		////*-----------------------------------------------------------------------*
 
 
 	}

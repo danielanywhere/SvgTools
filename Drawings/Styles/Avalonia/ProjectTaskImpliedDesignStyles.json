@@ -7,7 +7,7 @@
 			"x:DataType=app:{FormName}"
 		],
 		"Comment": "Window dressing.",
-		"Selector": "Window",
+		"Selectors": [ "tag:Window" ],
 		"Extensions":
 		[
 			{
@@ -24,7 +24,7 @@
 	},
 	{
 		"Comment": "Avalonia style extensions for main Navigation list.",
-		"ShapeNames": [ "lstNavigation" ],
+		"Selectors": [ "name:lstNavigation" ],
 		"Extensions":
 		[
 			{
@@ -221,7 +221,7 @@
 	},
 	{
 		"Comment": "Avalonia items panel configuration.",
-		"ShapeNames": [ "lstNavigation" ],
+		"Selectors": [ "name:lstNavigation" ],
 		"Extensions":
 		[
 			{
@@ -249,7 +249,7 @@
 	},
 	{
 		"Comment": "Main panel background.",
-		"ShapeNames": [ "pnlMain" ],
+		"Selectors": [ "name:pnlMain" ],
 		"Extensions":
 		[
 			{
@@ -266,7 +266,7 @@
 	},
 	{
 		"Comment": "Main panel margin.",
-		"ShapeNames": [ "pnlMainStack" ],
+		"Selectors": [ "name:pnlMainStack" ],
 		"Extensions": [
 			{
 				"ExtensionType": "Properties",
@@ -281,7 +281,7 @@
 	},
 	{
 		"Comment": "StatusBar foreground.",
-		"ShapeNames": [ "statMain" ],
+		"Selectors": [ "name:statMain" ],
 		"Extensions": [
 			{
 				"ExtensionType": "Properties",
@@ -296,7 +296,10 @@
 	},
 	{
 		"Comment": "Toolbar / StatusBar background.",
-		"ShapeNames": [ "statMainBorder", "toolMain" ],
+		"Selectors": [
+			"class:ToolBar",
+			"class:ToolBarButton",
+			"class:StatusBar" ],
 		"Extensions": [
 			{
 				"ExtensionType": "Properties",
@@ -310,8 +313,8 @@
 		]
 	},
 	{
-		"Comment": "TreeView background.",
-		"ShapeNames": [ "trvMain" ],
+		"Comment": "TreeView and ListView backgrounds.",
+		"Selectors": [ "name:trvMain", "name:lstNavigation" ],
 		"Extensions":
 		[
 			{

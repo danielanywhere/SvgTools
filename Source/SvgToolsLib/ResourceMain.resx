@@ -169,6 +169,10 @@
     <value>^(?&lt;pre&gt;.*?)(?&lt;seed&gt;\d+)(?&lt;post&gt;.*)$</value>
     <comment>Regular expression to separate the numerical seed in the string and to return all of the parts of the string.</comment>
   </data>
+  <data name="rxQualifiedSelector" xml:space="preserve">
+    <value>(?i:^(?&lt;qualifier&gt;[a-z][a-z0-9-_\.]+)\:(?&lt;pattern&gt;.*))</value>
+    <comment>Regular expression pattern to split a selector term into qualifier and pattern sections.</comment>
+  </data>
   <data name="rxStyleEntries" xml:space="preserve">
     <value>(?s:(?i:(?&lt;attribute&gt;(?&lt;name&gt;[^\:]+)\s*(\:\s*(?&lt;value&gt;[^\;]+)\;{0,1}){0,1}\s*)))</value>
     <comment>Regular expression pattern to find all of the individual entries in a style string.</comment>

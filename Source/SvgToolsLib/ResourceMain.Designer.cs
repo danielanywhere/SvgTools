@@ -178,6 +178,15 @@ namespace SvgToolsLib {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (?i:^(?&lt;qualifier&gt;[a-z][a-z0-9-_\.]+)\:(?&lt;pattern&gt;.*)).
+        /// </summary>
+        internal static string rxQualifiedSelector {
+            get {
+                return ResourceManager.GetString("rxQualifiedSelector", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (?s:(?i:(?&lt;attribute&gt;(?&lt;name&gt;[^\:]+)\s*(\:\s*(?&lt;value&gt;[^\;]+)\;{0,1}){0,1}\s*))).
         /// </summary>
         internal static string rxStyleEntries {

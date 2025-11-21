@@ -143,6 +143,11 @@ namespace SvgToolsLib
 		//*	Protected																															*
 		//*************************************************************************
 		/// <summary>
+		/// Collection of class names cited in this session.
+		/// </summary>
+		protected List<string> mClassesUsed = new List<string>();
+
+		/// <summary>
 		/// List of control types used in implied form design.
 		/// </summary>
 		protected static string[] mControlTypes = new string[]
@@ -196,233 +201,257 @@ namespace SvgToolsLib
 		protected virtual void FillForm(ControlAreaCollection areas,
 			HtmlNodeItem outputNode)
 		{
-			ControlAreaItem area = null;
-			List<HtmlAttributeItem> attributes = null;
-			ControlAreaCollection childAreas = null;
-			ControlAreaItem formArea = null;
-			string formName = "";
-			ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
-			List<ControlAreaItem> members = null;
-			string name = "";
-			HtmlNodeItem node = null;
-			RenderTokenItem renderToken = new RenderTokenItem();
-			List<ShapeStyleExtensionListItem> styleLists = null;
-			string text = "";
+			//ControlAreaItem area = null;
+			//List<HtmlAttributeItem> attributes = null;
+			//ControlAreaCollection childAreas = null;
+			//HtmlNodeItem childNode = null;
+			//ControlAreaItem formArea = null;
+			//string formName = "";
+			//ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
+			//List<ControlAreaItem> members = null;
+			//string name = "";
+			//HtmlNodeItem node = null;
+			//RenderTokenItem renderToken = new RenderTokenItem();
+			//List<ShapeStyleExtensionListItem> styleLists = null;
+			//string text = "";
 
-			if(areas?.Count > 0 && outputNode != null)
-			{
-				//	Initialize the form.
-				Clear(outputNode);
-				outputNode.NodeType = "Window";
-				outputNode.Attributes.SetAttribute(
-					"xmlns", "https://github.com/avaloniaui");
-				outputNode.Attributes.SetAttribute(
-					"xmlns:d", "http://schemas.microsoft.com/expression/blend/2008");
-				outputNode.Attributes.SetAttribute(
-					"xmlns:mc",
-					"http://schemas.openxmlformats.org/markup-compatibility/2006");
-				outputNode.Attributes.SetAttribute(
-					"mc:Ignorable", "d");
-				outputNode.Attributes.SetAttribute(
-					"xmlns:x", "http://schemas.microsoft.com/winfx/2006/xaml");
+			//mClassesUsed.Clear();
+			//if(areas?.Count > 0 && outputNode != null)
+			//{
+			//	//	Initialize the form.
+			//	Clear(outputNode);
+			//	outputNode.NodeType = "Window";
+			//	outputNode.Attributes.SetAttribute(
+			//		"xmlns", "https://github.com/avaloniaui");
+			//	outputNode.Attributes.SetAttribute(
+			//		"xmlns:d", "http://schemas.microsoft.com/expression/blend/2008");
+			//	outputNode.Attributes.SetAttribute(
+			//		"xmlns:mc",
+			//		"http://schemas.openxmlformats.org/markup-compatibility/2006");
+			//	outputNode.Attributes.SetAttribute(
+			//		"mc:Ignorable", "d");
+			//	outputNode.Attributes.SetAttribute(
+			//		"xmlns:x", "http://schemas.microsoft.com/winfx/2006/xaml");
 
-				members = areas.FindMatches(x =>
-					x.Intent == ImpliedDesignIntentEnum.FormInformation);
-				area = members.FirstOrDefault(x =>
-					x.Node?.Attributes.HasAttribute("ProjectName") == true);
-				if(area != null)
-				{
-					node = area.Node;
-					mProjectName = node.Attributes.GetValue("ProjectName");
-				}
-				else
-				{
-					mProjectName = "UnnamedProject";
-				}
-				outputNode.Attributes.SetAttribute(
-					"xmlns:app", $"clr-namespace:{mProjectName}");
-				outputNode.Attributes.SetAttribute(
-					"xmlns:vm", $"clr-namespace:{mProjectName}.ViewModels");
+			//	members = areas.FindMatches(x =>
+			//		x.Intent == ImpliedDesignIntentEnum.FormInformation);
+			//	area = members.FirstOrDefault(x =>
+			//		x.Node?.Attributes.HasAttribute("ProjectName") == true);
+			//	if(area != null)
+			//	{
+			//		node = area.Node;
+			//		mProjectName = node.Attributes.GetValue("ProjectName");
+			//	}
+			//	else
+			//	{
+			//		mProjectName = "UnnamedProject";
+			//	}
+			//	outputNode.Attributes.SetAttribute(
+			//		"xmlns:app", $"clr-namespace:{mProjectName}");
+			//	outputNode.Attributes.SetAttribute(
+			//		"xmlns:vm", $"clr-namespace:{mProjectName}.ViewModels");
 
-				formArea =
-					areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
-				if(formArea?.Node != null)
-				{
-					formName = formArea.Node.Id;
-				}
-				else
-				{
-					formName = "UnnamedForm";
-				}
+			//	formArea =
+			//		areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
+			//	if(formArea?.Node != null)
+			//	{
+			//		formName = formArea.Node.Id;
+			//	}
+			//	else
+			//	{
+			//		formName = "UnnamedForm";
+			//	}
 
-				//outputNode.Attributes.SetAttribute(
-				//	"x:Class", $"{mProjectName}.{formName}");
-				//outputNode.Attributes.SetAttribute(
-				//	"x:DataType", $"app:{formName}");
+			//	//outputNode.Attributes.SetAttribute(
+			//	//	"x:Class", $"{mProjectName}.{formName}");
+			//	//outputNode.Attributes.SetAttribute(
+			//	//	"x:DataType", $"app:{formName}");
 
-				if(formArea != null)
-				{
-					outputNode.Attributes.SetAttribute(
-						"Title", formArea.Reference);
-				}
+			//	if(formArea != null)
+			//	{
+			//		outputNode.Attributes.SetAttribute(
+			//			"Title", formArea.Reference);
+			//	}
 
-				//	Assign additional values.
-				foreach(ControlAreaItem memberItem in members)
-				{
-					if(memberItem.Node != null)
-					{
-						attributes = memberItem.Node.Attributes;
-						foreach(HtmlAttributeItem attributeItem in attributes)
-						{
-							name = attributeItem.Name.ToLower();
-							//	Caption and ProjectName are already handled at this point.
-							switch(name)
-							{
-								//case "caption":
-								//	//	Caption.
-								//	outputNode.Attributes.SetAttribute(
-								//		"Title", attributeItem.Value);
-								//	break;
-								//case "projectname":
-								//	mProjectName = attributeItem.Value;
-								//	break;
-								case "themename":
-									switch(attributeItem.Value.ToLower())
-									{
-										case "material":
-											outputNode.Attributes.SetAttribute(
-												"xmlns:assist",
-												"clr-namespace:Material.Styles.Assists;" +
-												"assembly=Material.Styles");
-											outputNode.Attributes.SetAttribute(
-												"Background", "{DynamicResource MaterialPaperBrush}");
-											break;
-									}
-									break;
-								case "usebackgroundcolor":
-									//	Value indicating whether to use background colors on
-									//	dropped objects by default on this form.
-									mUseBackgroundColor = ToBool(attributeItem.Value);
-									break;
-								case "usebordercolor":
-									//	Value indicating whether to use border colors of drawing
-									//	objects by default on this form.
-									mUseBorderColor = ToBool(attributeItem.Value);
-									break;
-								case "useborderwidth":
-									//	Value indicating whether to use border widths of drawing
-									//	objects by default on this form.
-									mUseBorderWidth = ToBool(attributeItem.Value);
-									break;
-								case "usecornerradius":
-									//	Value indicating whether to use border corner radii of
-									//	drawing objects by default on this form.
-									mUseCornerRadius = ToBool(attributeItem.Value);
-									break;
-							}
-						}
-					}
-				}
+			//	//	Assign additional values.
+			//	foreach(ControlAreaItem memberItem in members)
+			//	{
+			//		if(memberItem.Node != null)
+			//		{
+			//			attributes = memberItem.Node.Attributes;
+			//			foreach(HtmlAttributeItem attributeItem in attributes)
+			//			{
+			//				name = attributeItem.Name.ToLower();
+			//				//	Caption and ProjectName are already handled at this point.
+			//				switch(name)
+			//				{
+			//					//case "caption":
+			//					//	//	Caption.
+			//					//	outputNode.Attributes.SetAttribute(
+			//					//		"Title", attributeItem.Value);
+			//					//	break;
+			//					//case "projectname":
+			//					//	mProjectName = attributeItem.Value;
+			//					//	break;
+			//					case "themename":
+			//						switch(attributeItem.Value.ToLower())
+			//						{
+			//							case "material":
+			//								outputNode.Attributes.SetAttribute(
+			//									"xmlns:assist",
+			//									"clr-namespace:Material.Styles.Assists;" +
+			//									"assembly=Material.Styles");
+			//								outputNode.Attributes.SetAttribute(
+			//									"Background", "{DynamicResource MaterialPaperBrush}");
+			//								break;
+			//						}
+			//						break;
+			//					case "usebackgroundcolor":
+			//						//	Value indicating whether to use background colors on
+			//						//	dropped objects by default on this form.
+			//						mUseBackgroundColor = ToBool(attributeItem.Value);
+			//						break;
+			//					case "usebordercolor":
+			//						//	Value indicating whether to use border colors of drawing
+			//						//	objects by default on this form.
+			//						mUseBorderColor = ToBool(attributeItem.Value);
+			//						break;
+			//					case "useborderwidth":
+			//						//	Value indicating whether to use border widths of drawing
+			//						//	objects by default on this form.
+			//						mUseBorderWidth = ToBool(attributeItem.Value);
+			//						break;
+			//					case "usecornerradius":
+			//						//	Value indicating whether to use border corner radii of
+			//						//	drawing objects by default on this form.
+			//						mUseCornerRadius = ToBool(attributeItem.Value);
+			//						break;
+			//				}
+			//			}
+			//		}
+			//	}
 
-				mFormWidth = Round(GetFormWidth(mSvg.Document), 0);
-				mFormHeight = Round(GetFormHeight(mSvg.Document), 0);
-				outputNode.Attributes.SetAttribute(
-					"d:DesignWidth", mFormWidth.ToString("0"));
-				outputNode.Attributes.SetAttribute(
-					"d:DesignHeight", mFormHeight.ToString("0"));
-				outputNode.Attributes.SetAttribute(
-					"Width", mFormWidth.ToString("0"));
-				outputNode.Attributes.SetAttribute(
-					"Height", mFormHeight.ToString("0"));
+			//	mFormWidth = Round(GetFormWidth(mSvg.Document), 0);
+			//	mFormHeight = Round(GetFormHeight(mSvg.Document), 0);
+			//	outputNode.Attributes.SetAttribute(
+			//		"d:DesignWidth", mFormWidth.ToString("0"));
+			//	outputNode.Attributes.SetAttribute(
+			//		"d:DesignHeight", mFormHeight.ToString("0"));
+			//	outputNode.Attributes.SetAttribute(
+			//		"Width", mFormWidth.ToString("0"));
+			//	outputNode.Attributes.SetAttribute(
+			//		"Height", mFormHeight.ToString("0"));
 
-				//	Re-index to the base form.
-				area = null;
-				node = null;
-				formArea =
-					areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
-				if(formArea != null)
-				{
-					//	Finalize the caption.
-					if(!outputNode.Attributes.Exists(x =>
-						x.Name.ToLower() == "title" && x.Value.Length > 0))
-					{
-						text = GetFormCaption(formArea.Node);
-						if(text.Length > 0)
-						{
-							outputNode.Attributes.SetAttribute("Title", text);
-						}
-					}
-					//	Determine the initial layout.
-					childAreas = formArea.FrontAreas;
-					if(HasOrganizer(childAreas))
-					{
-						area = GetOrganizer(childAreas);
-						node = RenderOutputNode(area, renderToken);
-					}
-					else
-					{
-						//	This item needs an organizer.
-						intent = ImpliedDesignIntentEnum.VerticalGrid;
-						node = new HtmlNodeItem()
-						{
-							NodeType = "rect"
-						};
-						node.Attributes.SetAttribute(
-							"x", Round(formArea.X, 0).ToString());
-						node.Attributes.SetAttribute(
-							"y", Round(formArea.Y, 0).ToString());
-						node.Attributes.SetAttribute(
-							"width", Round(formArea.Width, 0).ToString());
-						node.Attributes.SetAttribute(
-							"height", Round(formArea.Height, 0).ToString());
-						node.Attributes.SetAttribute(
-							"Intent", intent.ToString());
-						area = new ControlAreaItem()
-						{
-							X = formArea.X,
-							Y = formArea.Y,
-							Width = formArea.Width,
-							Height = formArea.Height,
-							Intent = intent,
-							Node = node
-						};
-						area.FrontAreas.AddRange(childAreas);
-						formArea.FrontAreas.Clear();
-						formArea.FrontAreas.Add(area);
-						node = RenderOutputNode(area, renderToken);
-					}
-					if(node != null)
-					{
-						outputNode.Nodes.Add(node);
-					}
-					//	This item is a form and has an organizer.
-					PerformLayout(area, node);
-				}
+			//	//	Re-index to the base form.
+			//	area = null;
+			//	node = null;
+			//	formArea =
+			//		areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
+			//	if(formArea != null)
+			//	{
+			//		//	Finalize the caption.
+			//		if(!outputNode.Attributes.Exists(x =>
+			//			x.Name.ToLower() == "title" && x.Value.Length > 0))
+			//		{
+			//			text = GetFormCaption(formArea.Node);
+			//			if(text.Length > 0)
+			//			{
+			//				outputNode.Attributes.SetAttribute("Title", text);
+			//			}
+			//		}
+			//		//	Determine the initial layout.
+			//		childAreas = formArea.FrontAreas;
+			//		if(HasOrganizer(childAreas))
+			//		{
+			//			area = GetOrganizer(childAreas);
+			//			node = RenderOutputNode(area, renderToken);
+			//		}
+			//		else
+			//		{
+			//			//	This item needs an organizer.
+			//			intent = ImpliedDesignIntentEnum.VerticalGrid;
+			//			node = new HtmlNodeItem()
+			//			{
+			//				NodeType = "rect"
+			//			};
+			//			node.Attributes.SetAttribute(
+			//				"x", Round(formArea.X, 0).ToString());
+			//			node.Attributes.SetAttribute(
+			//				"y", Round(formArea.Y, 0).ToString());
+			//			node.Attributes.SetAttribute(
+			//				"width", Round(formArea.Width, 0).ToString());
+			//			node.Attributes.SetAttribute(
+			//				"height", Round(formArea.Height, 0).ToString());
+			//			node.Attributes.SetAttribute(
+			//				"Intent", intent.ToString());
+			//			area = new ControlAreaItem()
+			//			{
+			//				X = formArea.X,
+			//				Y = formArea.Y,
+			//				Width = formArea.Width,
+			//				Height = formArea.Height,
+			//				Intent = intent,
+			//				Node = node
+			//			};
+			//			area.FrontAreas.AddRange(childAreas);
+			//			formArea.FrontAreas.Clear();
+			//			formArea.FrontAreas.Add(area);
+			//			node = RenderOutputNode(area, renderToken);
+			//		}
+			//		if(node != null)
+			//		{
+			//			outputNode.Nodes.Add(node);
+			//		}
+			//		//	This item is a form and has an organizer.
+			//		PerformLayout(area, node);
+			//	}
 
-				//	Set extended styles directly on the window node.
-				styleLists = mStyleCatalog
-					.SelectMany(listCollection => listCollection)
-					.Where(list => list.Selector.ToLower() == "window").ToList();
-				foreach(ShapeStyleExtensionListItem listItem in styleLists)
-				{
-					foreach(ShapeStyleExtensionItem extensionItem in listItem.Extensions)
-					{
-						if(extensionItem.ExtensionType ==
-							ShapeStyleExtensionType.Properties)
-						{
-							foreach(NameValueNodesItem propertyItem in
-								extensionItem.Settings)
-							{
-								if(propertyItem.Name?.Length > 0)
-								{
-									outputNode.Attributes.SetAttribute(
-										propertyItem.Name, propertyItem.Value);
-								}
-							}
-						}
-					}
-				}
-			}
+			//	//	Configure the Window.Styles collection for the used classes.
+			//	if(mClassesUsed.Count > 0)
+			//	{
+			//		node = new HtmlNodeItem()
+			//		{
+			//			NodeType = "Window.Styles",
+			//			SelfClosing = false
+			//		};
+			//		foreach(string classNameItem in mClassesUsed)
+			//		{
+			//			childNode = new HtmlNodeItem()
+			//			{
+			//				NodeType = "Style",
+			//				SelfClosing = true
+			//			};
+			//			childNode.Attributes.SetAttribute(
+			//				"Selector", $"Window.{classNameItem}");
+			//			node.Nodes.Add(childNode);
+			//		}
+			//		outputNode.Nodes.Add(node);
+			//	}
+
+			//	//	Set extended styles directly on the window node.
+			//	styleLists = mStyleCatalog
+			//		.SelectMany(listCollection => listCollection)
+			//		.Where(list => list.Selector.ToLower() == "window").ToList();
+			//	foreach(ShapeStyleExtensionListItem listItem in styleLists)
+			//	{
+			//		foreach(ShapeStyleExtensionItem extensionItem in listItem.Extensions)
+			//		{
+			//			if(extensionItem.ExtensionType ==
+			//				ShapeStyleExtensionType.Properties)
+			//			{
+			//				foreach(NameValueNodesItem propertyItem in
+			//					extensionItem.Settings)
+			//				{
+			//					if(propertyItem.Name?.Length > 0)
+			//					{
+			//						outputNode.Attributes.SetAttribute(
+			//							propertyItem.Name, propertyItem.Value);
+			//					}
+			//				}
+			//			}
+			//		}
+			//	}
+			//}
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1161,7 +1190,7 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Private member for <see cref="FormWidth">FormWidth</see>.
 		/// </summary>
-		private float mFormWidth = 1920f;
+		protected float mFormWidth = 1920f;
 		/// <summary>
 		/// Get/Set the width of the current form.
 		/// </summary>
@@ -2782,6 +2811,97 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* IsSelectorMatch																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether one or more of the selectors matches
+		/// the provided node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to match.
+		/// </param>
+		/// <param name="selectors">
+		/// Reference to the collection of selectors to apply.
+		/// </param>
+		/// <returns>
+		/// True if one or more of the selector patterns match the supplied node.
+		/// Otherwise, false.
+		/// </returns>
+		public static bool IsSelectorMatch(HtmlNodeItem node,
+			List<string> selectors)
+		{
+			List<string> contents = new List<string>();
+			Match match = null;
+			string pattern = "";
+			string qualifier = "";
+			bool result = false;
+			char[] space = new char[] { ' ' };
+
+			if(node != null && selectors?.Count > 0)
+			{
+				//if(node.Attributes.GetValue("x:Name") == "rect8" &&
+				//	selectors[0] == "name:statMainBorder")
+				//{
+				//	Trace.WriteLine("ImpliedFormDesign.IsSelectorMatch: Break here...");
+				//}
+				foreach(string selectorItem in selectors)
+				{
+					match = Regex.Match(selectorItem, ResourceMain.rxQualifiedSelector);
+					if(match.Success)
+					{
+						contents.Clear();
+						qualifier = GetValue(match, "qualifier").ToLower();
+						pattern = GetValue(match, "pattern");
+						switch(qualifier)
+						{
+							case "class":
+								contents.AddRange(
+									node.Attributes.GetValue("Classes").Split(space).ToList());
+								break;
+							case "name":
+								contents.Add(node.Attributes.GetValue("x:Name"));
+								break;
+							case "tag":
+								contents.Add(node.NodeType);
+								break;
+							default:
+								if(qualifier.Length > 9 && qualifier.StartsWith("property."))
+								{
+									//	Property name.
+									qualifier = qualifier.Substring(9);
+									contents.Add(node.Attributes.GetValue(qualifier));
+								}
+								break;
+						}
+						foreach(string contentItem in contents)
+						{
+							if(pattern.StartsWith("(?"))
+							{
+								//	Apply a regular expression.
+								result = Regex.IsMatch(contentItem, pattern);
+							}
+							else
+							{
+								//	Apply standard equality operation.
+								result = (contentItem.ToLower() == pattern.ToLower());
+							}
+							if(result)
+							{
+								break;
+							}
+						}
+					}
+					if(result)
+					{
+						break;
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	ProjectName																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2865,7 +2985,7 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Private member for <see cref="StyleCatalog">StyleCatalog</see>.
 		/// </summary>
-		private List<ShapeStyleExtensionListCollection> mStyleCatalog =
+		protected List<ShapeStyleExtensionListCollection> mStyleCatalog =
 			new List<ShapeStyleExtensionListCollection>();
 		/// <summary>
 		/// Get a reference to the catalog shape styles used to render the output
@@ -2883,7 +3003,7 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Private member for <see cref="Svg">Svg</see>.
 		/// </summary>
-		private SvgDocumentItem mSvg = null;
+		protected SvgDocumentItem mSvg = null;
 		/// <summary>
 		/// Get/Set a reference to the active SVG document for this instance.
 		/// </summary>
