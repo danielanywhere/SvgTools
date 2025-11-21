@@ -1231,6 +1231,38 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* CapsFirstLetter																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Capitalize the first letter of the supplied text.
+		/// </summary>
+		/// <param name="text">
+		/// The text to be capitalized.
+		/// </param>
+		/// <returns>
+		/// Caller's text with first letter capitalized, if legitimate. Otherwise,
+		/// an empty string.
+		/// </returns>
+		public static string CapsFirstLetter(string text)
+		{
+			string result = "";
+
+			if(text.Length > 0)
+			{
+				if(text.Length == 1)
+				{
+					result = text.ToUpper();
+				}
+				else
+				{
+					result = char.ToUpper(text[0]) + text.Substring(1);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* Clear																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2110,6 +2142,46 @@ namespace SvgToolsLib
 		public static string GetActiveStyle(HtmlNodeItem node, string styleName,
 			string defaultValue)
 		{
+			HtmlNodeItem localNode = node;
+			string result = "";
+
+			if(localNode != null && styleName?.Length > 0)
+			{
+				if((localNode.NodeType == "text" || localNode.NodeType == "tspan") &&
+					localNode.Nodes.Count > 0)
+				{
+					localNode = GetExtent(localNode, "tspan");
+				}
+				result = GetActiveStyle(localNode, styleName, defaultValue, true);
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Return the active value of the specified style in the current node or
+		/// its ancestors.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the current node to be tested.
+		/// </param>
+		/// <param name="styleName">
+		/// Name of the style to check for.
+		/// </param>
+		/// <param name="defaultValue">
+		/// The default value to return in case no active value was found.
+		/// </param>
+		/// <param name="upOnly">
+		/// Value indicating that the process can only travel upward toward the
+		/// root.
+		/// </param>
+		/// <returns>
+		/// The active value for the specified style on the provided node or its
+		/// ancestors, if found. Otherwise, the default value, if not null.
+		/// Otherwise, an empty string.
+		/// </returns>
+		private static string GetActiveStyle(HtmlNodeItem node, string styleName,
+			string defaultValue, bool upOnly)
+		{
 			string defaultMeasure = "";
 			float defaultNumber = 0f;
 			Match match = null;
@@ -2135,7 +2207,8 @@ namespace SvgToolsLib
 								//	This is a font-relative measurement.
 								if(node.ParentNode != null)
 								{
-									result = GetActiveStyle(node.ParentNode, "font-size", style);
+									result = GetActiveStyle(node.ParentNode,
+										"font-size", style, true);
 									if(result.Length == 0 && defaultValue?.Length > 0)
 									{
 										result = defaultValue;
@@ -2178,8 +2251,8 @@ namespace SvgToolsLib
 											case "rem":
 												if(HasAncestorStyle(node, styleName))
 												{
-													result = GetActiveStyle(node.ParentNode, "font-size",
-														defaultValue);
+													result = GetActiveStyle(node.ParentNode,
+														"font-size", defaultValue, true);
 												}
 												else
 												{
@@ -2200,10 +2273,16 @@ namespace SvgToolsLib
 							result = number;
 						}
 					}
+					else
+					{
+						//	Not a number, measure combination.
+						result = style;
+					}
 				}
 				else if(node.ParentNode != null)
 				{
-					result = GetActiveStyle(node.ParentNode, styleName, defaultValue);
+					result = GetActiveStyle(node.ParentNode,
+						styleName, defaultValue, true);
 				}
 				else if(defaultValue?.Length > 0)
 				{
@@ -2516,6 +2595,44 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetExtent																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the innermost node of the specified type.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node for which the innermost item will be found.
+		/// </param>
+		/// <param name="nodeType">
+		/// The node tag to find.
+		/// </param>
+		/// <returns>
+		/// Reference of the innermost instance of the specified node type, if
+		/// found. Otherwise, null.
+		/// </returns>
+		public static HtmlNodeItem GetExtent(HtmlNodeItem node, string nodeType)
+		{
+			List<HtmlNodeItem> flat = null;
+			int maxLevel = int.MinValue;
+			HtmlNodeItem result = null;
+
+			if(node != null && nodeType?.Length > 0)
+			{
+				flat = node.Nodes.FindMatches(x => x.NodeType == nodeType);
+				foreach(HtmlNodeItem nodeItem in flat)
+				{
+					if(nodeItem.Level > maxLevel)
+					{
+						result = nodeItem;
+						maxLevel = nodeItem.Level;
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	GetFullFoldername																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2698,6 +2815,31 @@ namespace SvgToolsLib
 					//	An intersection exists.
 					result = new FArea(x1, y1, x2 - x1, y2 - y1);
 				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetNumericInt																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return only the numeric integer portion of the string.
+		/// </summary>
+		/// <param name="numericText">
+		/// String that might contain one or more numerals.
+		/// </param>
+		/// <returns>
+		/// The first numeric integer found in the caller's text, if found.
+		/// Otherwise, an empty string.
+		/// </returns>
+		public static string GetNumericInt(string numericText)
+		{
+			string result = "";
+
+			if(numericText?.Length > 0)
+			{
+				result = GetValue(numericText, ResourceMain.rxNumber, "number");
 			}
 			return result;
 		}

@@ -295,11 +295,12 @@
 		]
 	},
 	{
-		"Comment": "Toolbar / StatusBar background.",
+		"Comment": "Toolbar, StatusBar, TextWithHelperButton background.",
 		"Selectors": [
 			"class:ToolBar",
 			"class:ToolBarButton",
-			"class:StatusBar" ],
+			"class:StatusBar",
+			"class:TextWithHelperButton" ],
 		"Extensions": [
 			{
 				"ExtensionType": "Properties",
@@ -314,7 +315,7 @@
 	},
 	{
 		"Comment": "TreeView and ListView backgrounds.",
-		"Selectors": [ "name:trvMain", "name:lstNavigation" ],
+		"Selectors": [ "name:trvMain", "name:backEdit" ],
 		"Extensions":
 		[
 			{

@@ -3015,6 +3015,23 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	ThemeName																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="ThemeName">ThemeName</see>.
+		/// </summary>
+		protected string mThemeName = "";
+		/// <summary>
+		/// Get/Set the name of the active theme.
+		/// </summary>
+		public string ThemeName
+		{
+			get { return mThemeName; }
+			set { mThemeName = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* TransferAttribute																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

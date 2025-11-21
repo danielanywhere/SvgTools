@@ -1723,6 +1723,7 @@ namespace SvgToolsLib
 			RenderTokenItem renderToken)
 		{
 			HtmlNodeItem result = null;
+			string text = "";
 
 			if(area != null)
 			{
@@ -1732,6 +1733,19 @@ namespace SvgToolsLib
 					SelfClosing = true
 				};
 				SetRenderedControlName(area.Node, result);
+
+				text = GetNumericInt(GetActiveStyle(area.Node, "font-size", "10px"));
+				if(text.Length > 0)
+				{
+					result.Attributes.SetAttribute("FontSize", text);
+				}
+				text = CapsFirstLetter(
+					GetActiveStyle(area.Node, "font-weight", "Normal"));
+				if(text.Length > 0)
+				{
+					result.Attributes.SetAttribute("FontWeight", text);
+				}
+
 				result.Attributes.SetAttribute("Content", GetText(area));
 			}
 			return result;
@@ -2582,6 +2596,10 @@ namespace SvgToolsLib
 		private HtmlNodeItem RenderTextBox(ControlAreaItem area,
 			RenderTokenItem renderToken)
 		{
+			bool bTheme = mThemeName?.ToLower() == "material";
+			HtmlNodeItem childNode1 = null;
+			HtmlNodeItem childNode2 = null;
+			HtmlNodeItem node = null;
 			HtmlNodeItem result = null;
 			string text = null;
 			ControlAreaItem textArea = null;
@@ -2591,7 +2609,7 @@ namespace SvgToolsLib
 				result = new HtmlNodeItem()
 				{
 					NodeType = "TextBox",
-					SelfClosing = true
+					SelfClosing = !bTheme
 				};
 				SetRenderedControlName(area.Node, result);
 				text = null;
@@ -2610,6 +2628,23 @@ namespace SvgToolsLib
 				TransferAttribute(area.Node, "Prompt", result, "Watermark");
 				TransferAttribute(area.Node, "Text", result, "Text", text);
 				TransferAttribute(area.Node, "TextWrapping", result, "TextWrapping");
+
+				if(textArea != null)
+				{
+					text = GetNumericInt(
+						GetActiveStyle(textArea.Node, "font-size", "10px"));
+					if(text.Length > 0)
+					{
+						result.Attributes.SetAttribute("FontSize", text);
+					}
+					text = CapsFirstLetter(
+						GetActiveStyle(textArea.Node, "font-weight", "Normal"));
+					if(text.Length > 0)
+					{
+						result.Attributes.SetAttribute("FontWeight", text);
+					}
+				}
+
 				text = null;
 				textArea = area.FrontAreas.FirstOrDefault(x =>
 					x.Intent == ImpliedDesignIntentEnum.Label);
@@ -2620,9 +2655,37 @@ namespace SvgToolsLib
 					{
 						text = null;
 					}
+					if(bTheme)
+					{
+						TransferAttribute(textArea.Node, "Text",
+							result, "assist:TextFieldAssist.Label", text);
+					}
 				}
-				TransferAttribute(textArea.Node, "Text",
-					result, "assist:TextFieldAssist.Label", text);
+				if(bTheme)
+				{
+					node = new HtmlNodeItem()
+					{
+						NodeType = "TextBox.Styles",
+						SelfClosing = false
+					};
+					childNode1 = new HtmlNodeItem()
+					{
+						NodeType = "Style",
+						SelfClosing = false
+					};
+					childNode1.Attributes.SetAttribute(
+						"Selector", "TextBox /template/ TextPresenter");
+					childNode2 = new HtmlNodeItem()
+					{
+						NodeType = "Setter",
+						SelfClosing = true
+					};
+					childNode2.Attributes.SetAttribute("Property", "VerticalAlignment");
+					childNode2.Attributes.SetAttribute("Value", "Bottom");
+					childNode1.Nodes.Add(childNode2);
+					node.Nodes.Add(childNode1);
+					result.Nodes.Add(node);
+				}
 			}
 			return result;
 		}
@@ -2647,7 +2710,11 @@ namespace SvgToolsLib
 		private HtmlNodeItem RenderTextWithHelper(ControlAreaItem area,
 			RenderTokenItem renderToken)
 		{
+			bool bTheme = mThemeName?.ToLower() == "material";
 			ControlAreaItem buttonArea = null;
+			HtmlNodeItem childNode1 = null;
+			HtmlNodeItem childNode2 = null;
+			HtmlNodeItem childNode3 = null;
 			HtmlNodeItem result = null;
 			HtmlNodeItem node = null;
 			string text = null;
@@ -2662,6 +2729,8 @@ namespace SvgToolsLib
 					SelfClosing = false
 				};
 				SetRenderedControlName(area.Node, result);
+				AddClass("TextWithHelper", result);
+				result.Attributes.SetAttribute("Margin", "4");
 				result.Attributes.SetAttribute(
 					"ColumnDefinitions", "*,Auto");
 				textBoxArea = area.FrontAreas.FindMatch(x =>
@@ -2689,6 +2758,23 @@ namespace SvgToolsLib
 					}
 					TransferAttribute(textArea.Node, "Text", node, "Text", text);
 					TransferAttribute(area.Node, "Prompt", node, "Watermark");
+
+					if(textArea != null)
+					{
+						text = GetNumericInt(
+							GetActiveStyle(textArea.Node, "font-size", "10px"));
+						if(text.Length > 0)
+						{
+							node.Attributes.SetAttribute("FontSize", text);
+						}
+						text = CapsFirstLetter(
+							GetActiveStyle(textArea.Node, "font-weight", "Normal"));
+						if(text.Length > 0)
+						{
+							node.Attributes.SetAttribute("FontWeight", text);
+						}
+					}
+
 					text = null;
 					textArea = textBoxArea.FrontAreas.FirstOrDefault(x =>
 						x.Intent == ImpliedDesignIntentEnum.Label);
@@ -2700,15 +2786,47 @@ namespace SvgToolsLib
 							text = null;
 						}
 					}
-					TransferAttribute(textArea.Node, "Text",
-						node, "assist:TextFieldAssist.Label", text);
+					if(bTheme)
+					{
+						TransferAttribute(textArea.Node, "Text",
+							node, "assist:TextFieldAssist.Label", text);
+					}
 				}
+				if(bTheme)
+				{
+					childNode1 = new HtmlNodeItem()
+					{
+						NodeType = "TextBox.Styles",
+						SelfClosing = false
+					};
+					childNode2 = new HtmlNodeItem()
+					{
+						NodeType = "Style",
+						SelfClosing = false
+					};
+					childNode2.Attributes.SetAttribute(
+						"Selector", "TextBox /template/ TextPresenter");
+					childNode3 = new HtmlNodeItem()
+					{
+						NodeType = "Setter",
+						SelfClosing = true
+					};
+					childNode3.Attributes.SetAttribute("Property", "VerticalAlignment");
+					childNode3.Attributes.SetAttribute("Value", "Bottom");
+					childNode2.Nodes.Add(childNode3);
+					childNode1.Nodes.Add(childNode2);
+					node.Nodes.Add(childNode1);
+				}
+
 				result.Nodes.Add(node);
+				AddClass("TextWithHelperTextBox", node);
 				node = new HtmlNodeItem()
 				{
 					NodeType = "Button",
 					SelfClosing = true
 				};
+				node.Attributes.SetAttribute("Padding", "0,0,0,4");
+				node.Attributes.SetAttribute("VerticalContentAlignment", "Bottom");
 				node.Attributes.SetAttribute("Grid.Column", "1");
 				if(buttonArea != null)
 				{
@@ -2726,6 +2844,7 @@ namespace SvgToolsLib
 					node.Attributes.SetAttribute(
 						"Width", buttonArea.Node.Attributes.GetValue("Width"));
 				}
+				AddClass("TextWithHelperButton", node);
 				result.Nodes.Add(node);
 			}
 			return result;
@@ -3428,7 +3547,8 @@ namespace SvgToolsLib
 								//	mProjectName = attributeItem.Value;
 								//	break;
 								case "themename":
-									switch(attributeItem.Value.ToLower())
+									mThemeName = attributeItem.Value;
+									switch(mThemeName.ToLower())
 									{
 										case "material":
 											outputNode.Attributes.SetAttribute(
