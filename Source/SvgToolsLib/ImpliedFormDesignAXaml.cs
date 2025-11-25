@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using Geometry;
 using Html;
 
@@ -505,6 +506,230 @@ namespace SvgToolsLib
 				}
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ApplyRelativeProperties																								*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the relative panel child properties on the target node from the
+		/// source area.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the drawing source area whose HTML node might contain
+		/// relative panel child attributes to place on the target.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target HTML node whose attributes can be updated
+		/// by common property values.
+		/// </param>
+		private void ApplyRelativeProperties(ControlAreaItem source,
+			HtmlNodeItem target)
+		{
+			PositionPointEnum anchorEdges = PositionPointEnum.None;
+			bool bFound = false;
+			ControlAreaItem counterArea = null;
+			string lowerName = "";
+			string margin = "";
+			string[] marginEntries = new string[4];
+			string name = "";
+			HtmlNodeItem node = null;
+			string nodeType = "";
+			ControlAreaItem parentArea = null;
+
+			if(source?.Node != null && target != null && mControlAreas?.Count > 0)
+			{
+				parentArea = mControlAreas.FindMatch(x =>
+					x.FrontAreas.Contains(source));
+				margin = target.Attributes.GetValue("Margin");
+				node = source.Node;
+				nodeType = node.NodeType;
+				foreach(HtmlAttributeItem attributeItem in node.Attributes)
+				{
+					bFound = false;
+					name = attributeItem.Name.ToLower();
+					switch(name)
+					{
+						case "above":
+						case "alignbottom":
+						case "aligncenter":
+						case "alignleft":
+						case "alignmiddle":
+						case "alignright":
+						case "aligntop":
+						case "below":
+						case "leftof":
+						case "rightof":
+							lowerName = attributeItem.Value.ToLower();
+							counterArea = mControlAreas.FindMatch(x =>
+								x.Node?.Id.ToLower() == lowerName);
+							bFound = true;
+							break;
+						case "anchor":
+							anchorEdges = ParseAnchor(attributeItem.Value);
+							bFound = true;
+							break;
+					}
+					if(bFound)
+					{
+						switch(name)
+						{
+							case "above":
+								if(counterArea?.Node != null)
+								{
+									margin = UpdateMargin(margin, PositionPointEnum.Bottom,
+										counterArea.Top - source.Bottom);
+									target.Attributes.SetAttribute(
+										"RelativePanel.Above", counterArea.Node.Id);
+								}
+								break;
+							case "below":
+								if(counterArea?.Node != null)
+								{
+									margin = UpdateMargin(margin, PositionPointEnum.Top,
+										source.Top - counterArea.Bottom);
+									target.Attributes.SetAttribute(
+										"RelativePanel.Below", counterArea.Node.Id);
+								}
+								break;
+							case "alignbottom":
+								if(counterArea?.Node != null)
+								{
+									//	The bottoms of the two shapes will just align in this
+									//	version.
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignBottomWith", counterArea.Node.Id);
+								}
+								break;
+							case "aligncenter":
+								if(counterArea?.Node != null)
+								{
+									//	The horizontal centers of the two shapes will directly
+									//	align in this version.
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignHorizontalCenterWith",
+										counterArea.Node.Id);
+								}
+								break;
+							case "alignleft":
+								if(counterArea.Node != null)
+								{
+									//	The left sides of the two shapes will directly align
+									//	in this version.
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignLeftWith", counterArea.Node.Id);
+								}
+								break;
+							case "alignmiddle":
+								if(counterArea.Node != null)
+								{
+									//	The vertical centers of the two shapes will directly
+									//	align in this version.
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignVerticalCenterWith",
+										counterArea.Node.Id);
+								}
+								break;
+							case "alignright":
+								if(counterArea.Node != null)
+								{
+									//	The right sides of the two shapes will directly align
+									//	in this version.
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignRightWith", counterArea.Node.Id);
+								}
+								break;
+							case "aligntop":
+								if(counterArea.Node != null)
+								{
+									//	The top sides of the two shapes will directly align
+									//	in this version.
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignTopWith", counterArea.Node.Id);
+								}
+								break;
+							case "anchor":
+								if((anchorEdges & PositionPointEnum.Top) != 0)
+								{
+									if(parentArea != null)
+									{
+										margin = UpdateMargin(margin, PositionPointEnum.Top,
+											source.Top - parentArea.Top);
+									}
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignTopWithPanel", "True");
+								}
+								if((anchorEdges & PositionPointEnum.Left) != 0)
+								{
+									if(parentArea != null)
+									{
+										margin = UpdateMargin(margin, PositionPointEnum.Left,
+											source.Left - parentArea.Left);
+									}
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignLeftWithPanel", "True");
+								}
+								if((anchorEdges & PositionPointEnum.Bottom) != 0)
+								{
+									if(parentArea != null)
+									{
+										margin = UpdateMargin(margin, PositionPointEnum.Bottom,
+											parentArea.Bottom - source.Bottom);
+									}
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignBottomWithPanel", "True");
+								}
+								if((anchorEdges & PositionPointEnum.Right) != 0)
+								{
+									if(parentArea != null)
+									{
+										margin = UpdateMargin(margin, PositionPointEnum.Right,
+											parentArea.Right - source.Right);
+									}
+									target.Attributes.SetAttribute(
+										"RelativePanel.AlignRightWithPanel", "True");
+								}
+								break;
+							case "leftof":
+								if(counterArea.Node != null)
+								{
+									margin = UpdateMargin(margin, PositionPointEnum.Right,
+										counterArea.Left - source.Right);
+									target.Attributes.SetAttribute(
+										"RelativePanel.LeftOf", counterArea.Node.Id);
+								}
+								break;
+							case "rightof":
+								if(counterArea.Node != null)
+								{
+									margin = UpdateMargin(margin, PositionPointEnum.Left,
+										source.Left - counterArea.Right);
+									target.Attributes.SetAttribute(
+										"RelativePanel.RightOf", counterArea.Node.Id);
+								}
+								break;
+						}
+					}
+				}
+				if(!bFound && parentArea != null)
+				{
+					//	If no specifications were given, this item is aligned Top, Left.
+					margin = UpdateMargin(margin, PositionPointEnum.Top,
+						source.Top - parentArea.Top);
+					margin = UpdateMargin(margin, PositionPointEnum.Left,
+						source.Left - parentArea.Left);
+					target.Attributes.SetAttribute(
+						"RelativePanel.AlignTopWithPanel", "True");
+					target.Attributes.SetAttribute(
+						"RelativePanel.AlignLeftWithPanel", "True");
+					bFound = true;
+				}
+				if(bFound && margin.Length > 0)
+				{
+					target.Attributes.SetAttribute("Margin", margin);
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -1950,7 +2175,6 @@ namespace SvgToolsLib
 			ControlAreaItem cellArea = null;
 			HtmlNodeItem childNode = null;
 			int colIndex = 0;
-			//ControlReferenceItem gridCol = null;
 			int gridColCount = 0;
 			string[] gridColDims = null;
 			ControlReferenceCollection gridCols = null;
@@ -3107,7 +3331,6 @@ namespace SvgToolsLib
 		{
 			string attributeValue = "";
 			ControlAreaItem cellArea = null;
-			//ControlReferenceItem gridRow = null;
 			int gridRowCount = 0;
 			string[] gridRowDims = null;
 			ControlReferenceCollection gridRows = null;
@@ -3386,6 +3609,47 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RenderWidgetPanel																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Render and return the XAML representation of a WidgetPanel.
+		/// control.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area containing the dimensions, coordinates,
+		/// source node, and intention for the output.
+		/// </param>
+		/// <param name="renderToken">
+		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <param name="childToken">
+		/// Reference to the rendering token for the next level.
+		/// </param>
+		/// <returns>
+		/// XAML node representing the WidgetPanel control.
+		/// </returns>
+		private HtmlNodeItem RenderWidgetPanel(ControlAreaItem area,
+			RenderTokenItem renderToken, RenderTokenItem childToken)
+		{
+			HtmlNodeItem result = null;
+
+			if(area != null)
+			{
+				result = new HtmlNodeItem()
+				{
+					NodeType = "RelativePanel",
+					SelfClosing = false
+				};
+				SetRenderedControlName(area.Node, result);
+				childToken.Properties.SetValue("RelativeChild", "True");
+				result.Nodes.AddRange(
+					RenderOutputNodes(area.FrontAreas, childToken));
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* SetRenderedControlName																								*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -3421,15 +3685,18 @@ namespace SvgToolsLib
 					x.Value?.Length > 0);
 				if(attribute != null)
 				{
-					if(localSuffix.Length > 0 ||
-						!Regex.IsMatch(sourceNode.NodeType,
-						$"(?i:(?<defaultName>{sourceNode.NodeType})(?<index>\\d+))"))
-					{
-						//	If this control wasn't named with the default ID then
-						//	apply the user-supplied name.
-						targetNode.Attributes.SetAttribute("x:Name",
-							$"{attribute.Value}{localSuffix}");
-					}
+					//if(localSuffix.Length > 0 ||
+					//	!Regex.IsMatch(sourceNode.NodeType,
+					//	$"(?i:(?<defaultName>{sourceNode.NodeType})(?<index>\\d+))"))
+					//{
+					////	If this control wasn't named with the default ID then
+					////	apply the user-supplied name.
+					//targetNode.Attributes.SetAttribute("x:Name",
+					//	$"{attribute.Value}{localSuffix}");
+					//}
+					//	In this version, source name is going to be used at all times to
+					//	support RelativePanel cross-referencing on the source nodes.
+					targetNode.Attributes.SetAttribute("x:Name", attribute.Value);
 				}
 			}
 		}
@@ -3468,6 +3735,7 @@ namespace SvgToolsLib
 			//List<ShapeStyleExtensionListItem> styleLists = null;
 			string text = "";
 
+			mControlAreas = areas;
 			mClassesUsed.Clear();
 			if(areas?.Count > 0 && outputNode != null)
 			{
@@ -3623,11 +3891,14 @@ namespace SvgToolsLib
 					else
 					{
 						//	This item needs an organizer.
-						intent = ImpliedDesignIntentEnum.VerticalGrid;
+						intent = ImpliedDesignIntentEnum.WidgetPanel;
 						node = new HtmlNodeItem()
 						{
 							NodeType = "rect"
 						};
+						node.Attributes.SetAttribute(
+							"id", $"rect{Right(Guid.NewGuid().ToString("N"), 8)}");
+
 						node.Attributes.SetAttribute(
 							"x", Round(formArea.X, 0).ToString());
 						node.Attributes.SetAttribute(
@@ -3771,6 +4042,10 @@ namespace SvgToolsLib
 				{
 					childToken = RenderTokenItem.DeepCopyWithRemove(renderToken,
 						"Dock", "GridColumnIndex", "GridRowIndex");
+					if(IsOrganizerControl(area))
+					{
+						RenderTokenItem.RemoveProperties(childToken, "RelativeChild");
+					}
 				}
 				switch(area.Intent)
 				{
@@ -3901,10 +4176,19 @@ namespace SvgToolsLib
 					case ImpliedDesignIntentEnum.VerticalStackPanel:
 						result = RenderVerticalStackPanel(area, renderToken, childToken);
 						break;
+					case ImpliedDesignIntentEnum.WidgetPanel:
+						result = RenderWidgetPanel(area, renderToken, childToken);
+						break;
 				}
 				if(result != null)
 				{
 					ApplyCommonProperties(area, result);
+					if(renderToken.Properties.Exists(x =>
+						x.Name.ToLower() == "relativechild" &&
+						x.Value.ToLower() == "true"))
+					{
+						ApplyRelativeProperties(area, result);
+					}
 					//ApplyStyleExtensions(result);
 					result = ApplyPreemptiveProperties(area, result);
 					//	The token-level properties are applied after the pre-emtive
@@ -3980,6 +4264,104 @@ namespace SvgToolsLib
 
 			FillForm(mControlAreas, node);
 			return node.Html;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* UpdateMargin																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Update the value in the specified position of the supplied margin and
+		/// return the updated margin string.
+		/// </summary>
+		/// <param name="margin">
+		/// The margin string to update.
+		/// </param>
+		/// <param name="position">
+		/// The position to update: Top, Left, Bottom, or Right.
+		/// </param>
+		/// <param name="value">
+		/// The value whose integer equivalent will be entered.
+		/// </param>
+		/// <returns>
+		/// The updated margin string. If the incoming margin value was null or
+		/// empty, the base value will be set to 0,0,0,0.
+		/// </returns>
+		/// <remarks>
+		/// All incoming patterns are normalized to four-point margins.
+		/// </remarks>
+		public static string UpdateMargin(string margin,
+			PositionPointEnum position, float value)
+		{
+			StringBuilder builder = new StringBuilder();
+			int count = 0;
+			string[] entries = null;
+			int index = 0;
+			MatchCollection matches = null;
+			string n1 = "";
+			string n2 = "";
+			string result = "0,0,0,0";
+
+			if(margin?.Length > 0)
+			{
+				result = margin;
+			}
+			matches = Regex.Matches(result, ResourceMain.rxNumeric);
+			count = Math.Min(matches.Count, 4);
+			switch(count)
+			{
+				case 0:
+					result = "0,0,0,0";
+					break;
+				case 1:
+					n1 = GetValue(matches[0], "pattern");
+					result = $"{n1:0},{n1:0},{n1:0},{n1:0}";
+					break;
+				case 2:
+				case 3:
+					n1 = GetValue(matches[0], "pattern");
+					n2 = GetValue(matches[1], "pattern");
+					result = $"{n1:0},{n2:0},{n1:0},{n2:0}";
+					break;
+				case 4:
+					for(index = 0; index < count; index ++)
+					{
+						if(index > 0)
+						{
+							builder.Append(',');
+						}
+						builder.Append(GetValue(matches[index], "pattern"));
+					}
+					result = builder.ToString();
+					break;
+			}
+			if((position &
+				(PositionPointEnum.Bottom |
+				PositionPointEnum.Left |
+				PositionPointEnum.Right |
+				PositionPointEnum.Top)) !=
+				PositionPointEnum.None)
+			{
+				entries = result.Split(',');
+				if((position & PositionPointEnum.Bottom) != 0)
+				{
+					entries[3] = $"{value:0}";
+				}
+				if((position & PositionPointEnum.Left) != 0)
+				{
+					entries[0] = $"{value:0}";
+				}
+				if((position & PositionPointEnum.Right) != 0)
+				{
+					entries[2] = $"{value:0}";
+				}
+				if((position & PositionPointEnum.Top) != 0)
+				{
+					entries[1] = $"{value:0}";
+				}
+				result = string.Join(',', entries);
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 

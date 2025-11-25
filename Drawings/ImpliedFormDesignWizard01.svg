@@ -44,7 +44,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.98994949"
-     inkscape:cx="372.74629"
+     inkscape:cx="372.24121"
      inkscape:cy="339.91633"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -62,7 +62,7 @@
      id="metadata5"><rdf:RDF><cc:Work
          rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><g
-     inkscape:label="Layer 1"
+     inkscape:label="Form-Start Page"
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-17.6)"><text
@@ -74,9 +74,9 @@
        y="0"><tspan
          x="34.285156"
          y="45.142578"
-         id="tspan2"><tspan
+         id="tspan19"><tspan
            style="font-weight:bold;-inkscape-font-specification:'Roboto Bold';text-align:start"
-           id="tspan1">Implied Form Design Wizard</tspan></tspan></text><text
+           id="tspan7">Implied Form Design Wizard</tspan></tspan></text><text
        xml:space="preserve"
        transform="translate(0,17.6)"
        id="text2"
@@ -85,55 +85,55 @@
        y="0"><tspan
          x="23.234375"
          y="100.10485"
-         id="tspan4"><tspan
+         id="tspan23"><tspan
            style="text-align:start"
-           id="tspan3">Welcome to the implied form design wizard.
+           id="tspan22">Welcome to the implied form design wizard.
 </tspan></tspan><tspan
          x="23.234375"
          y="133.43822"
-         id="tspan6"><tspan
+         id="tspan28"><tspan
            style="text-align:start"
-           id="tspan5">
+           id="tspan27">
 </tspan></tspan><tspan
          x="23.234375"
          y="166.7716"
-         id="tspan9"><tspan
+         id="tspan30"><tspan
            style="text-align:start"
-           id="tspan8">In this session, we will read your
+           id="tspan29">In this session, we will read your
 </tspan></tspan><tspan
          x="23.234375"
          y="200.10497"
-         id="tspan11"><tspan
+         id="tspan32"><tspan
            style="text-align:start"
-           id="tspan10">graphics-first form design file and
+           id="tspan31">graphics-first form design file and
 </tspan></tspan><tspan
          x="23.234375"
          y="233.43834"
-         id="tspan13"><tspan
+         id="tspan34"><tspan
            style="text-align:start"
-           id="tspan12">generate a practical, working form for
+           id="tspan33">generate a practical, working form for
 </tspan></tspan><tspan
          x="23.234375"
          y="266.77172"
-         id="tspan15"><tspan
+         id="tspan36"><tspan
            style="text-align:start"
-           id="tspan14">your Graphics User Interface application.
+           id="tspan35">your Graphics User Interface application.
 </tspan></tspan><tspan
          x="23.234375"
          y="300.10509"
-         id="tspan17"><tspan
+         id="tspan38"><tspan
            style="text-align:start"
-           id="tspan16">
+           id="tspan37">
 </tspan></tspan><tspan
          x="23.234375"
          y="333.43847"
-         id="tspan24"><tspan
+         id="tspan42"><tspan
            style="text-align:start"
-           id="tspan18">Please click </tspan><tspan
+           id="tspan39">Please click </tspan><tspan
            style="font-weight:bold;text-align:start"
-           id="tspan20">[Next]</tspan><tspan
+           id="tspan40">[Next]</tspan><tspan
            style="text-align:start"
-           id="tspan21"> to get started.</tspan></tspan></text><g
+           id="tspan41"> to get started.</tspan></tspan></text><g
        id="g6"
        transform="translate(263.56893)"><rect
          style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#999999;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
@@ -150,7 +150,7 @@
          style="font-size:24px;line-height:normal;font-family:Roboto;-inkscape-font-specification:Roboto;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect4);display:inline;fill:#000000;-inkscape-stroke:none;stop-color:#000000"><tspan
            x="207.08203"
            y="388.69531"
-           id="tspan25">_Next</tspan></text></g><g
+           id="tspan43">_Next</tspan></text></g><g
        id="g7"
        transform="translate(-155.55335)"><rect
          style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#999999;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
@@ -167,7 +167,7 @@
          style="font-size:24px;line-height:normal;font-family:Roboto;-inkscape-font-specification:Roboto;text-decoration-color:#000000;white-space:pre;shape-inside:url(#rect5);display:inline;fill:#000000;-inkscape-stroke:none;stop-color:#000000"><tspan
            x="207.08203"
            y="388.69531"
-           id="tspan26">_Cancel</tspan></text></g><image
+           id="tspan44">_Cancel</tspan></text></g><image
        width="283.55817"
        height="283.55817"
        preserveAspectRatio="none"

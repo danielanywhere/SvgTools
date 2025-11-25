@@ -61,6 +61,15 @@ namespace SvgToolsLib {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (?i:(?&lt;=\W|^)(?&lt;anchorEdge&gt;top|left|bottom|right)(?=\W|$)).
+        /// </summary>
+        internal static string rxAnchorEdge {
+            get {
+                return ResourceManager.GetString("rxAnchorEdge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (?i:(?&lt;pattern&gt;controlstyle(-\d+){0,1})).
         /// </summary>
         internal static string rxControlStyleName {

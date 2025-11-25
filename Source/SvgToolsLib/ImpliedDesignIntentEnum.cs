@@ -237,7 +237,13 @@ namespace SvgToolsLib
 		/// A layout container that arranges child elements in a single vertical
 		/// line.
 		/// </summary>
-		VerticalStackPanel
+		VerticalStackPanel,
+		/// <summary>
+		/// A layout container that arranges child elements relative to the parent
+		/// and to one-another, as specified by the alignment style properties
+		/// specified on the child controls.
+		/// </summary>
+		WidgetPanel
 	}
 	//*-------------------------------------------------------------------------*
 

@@ -155,6 +155,35 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//* RemoveProperties																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Remove the specified properties from the supplied render token.
+		/// </summary>
+		/// <param name="token">
+		/// Reference to the token to be updated.
+		/// </param>
+		/// <param name="propertyNames">
+		/// Names of the properties to be removed, if found.
+		/// </param>
+		public static void RemoveProperties(RenderTokenItem token,
+			params string[] propertyNames)
+		{
+			string lowerName = "";
+
+			if(token != null && token.mProperties.Count > 0 &&
+				propertyNames?.Length > 0)
+			{
+				foreach(string propertyNameItem in propertyNames)
+				{
+					lowerName = propertyNameItem.ToLower();
+					token.mProperties.RemoveAll(x => x.Name.ToLower() == lowerName);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
 
 	}
 	//*-------------------------------------------------------------------------*

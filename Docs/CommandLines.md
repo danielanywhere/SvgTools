@@ -52,9 +52,15 @@ Enumerate the elements in an Implicit Form Design file
 svgtools /wait /action:ImpliedDesignEnumerateControls /infile:ProjectTaskImpliedDesign.svg /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
 ```
 
-Render Avalonia XAML file (.axaml) from an Implicit Form Design file
+Render Avalonia XAML file (.axaml) from an Implicit Form Design file.
 
 ```
 svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ProjectTaskImpliedDesign.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmMainTest.axaml /styleworksheet:Styles/Avalonia/ProjectTaskImpliedDesignStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+```
+
+Render a widget-styled form in Avalonia XAML (.axaml) from a minimal Implicit Form Design file.
+
+```
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard01.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmSvgToolsWizardPage01.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
 ```
 

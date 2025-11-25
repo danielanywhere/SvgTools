@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2025 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2000 - 2025 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ using SkiaSharp;
 
 using Html;
 using Geometry;
+using System.Net.NetworkInformation;
 
 namespace SvgToolsLib
 {
@@ -3623,6 +3624,44 @@ namespace SvgToolsLib
 				}
 			}
 			return filenames;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* Right																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the specified length of characters from the right side of the
+		/// provided string.
+		/// </summary>
+		/// <param name="source">
+		/// The string to inspect.
+		/// </param>
+		/// <param name="length">
+		/// The length of characters to return.
+		/// </param>
+		/// <returns>
+		/// The rightmost number of characters from the caller's string specified
+		/// in the length parameter, if available, otherwise, the full content of
+		/// the string, if provided. Otherwise, an empty string.
+		/// </returns>
+		public static string Right(string source, int length)
+		{
+			string result = "";
+
+			if(source?.Length > 0 && length > 0)
+			{
+				if(length >= source.Length)
+				{
+					result = source;
+				}
+				else
+				{
+					//	The return value is narrower than the source.
+					result = source.Substring(source.Length - length, length);
+				}
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 

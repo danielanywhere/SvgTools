@@ -117,6 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="rxAnchorEdge" xml:space="preserve">
+    <value>(?i:(?&lt;=\W|^)(?&lt;anchorEdge&gt;top|left|bottom|right)(?=\W|$))</value>
+    <comment>Regular expression to find the edges to which a shape can anchor.</comment>
+  </data>
   <data name="rxControlStyleName" xml:space="preserve">
     <value>(?i:(?&lt;pattern&gt;controlstyle(-\d+){0,1}))</value>
     <comment>Regular expression pattern to identify user control style name variations.</comment>

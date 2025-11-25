@@ -159,7 +159,7 @@ namespace SvgToolsLib
 			"forminformation", "flowpanel", "grid", "groupbox", "horizontalgrid",
 			"horizontalscrollpanel", "horizontalstackpanel", "panel", "scrollpanel",
 			"splitpanel", "staticpanel", "verticalgrid", "verticalscrollpanel",
-			"verticalstackpanel"
+			"verticalstackpanel", "widgetpanel"
 		};
 
 		/// <summary>
@@ -180,9 +180,9 @@ namespace SvgToolsLib
 		{
 			"dockpanel", "flowpanel",
 			"grid", "groupbox", "horizontalgrid", "horizontalscrollpanel",
-			"horizontalstackpanel", "panel", "scrollpanel", "splitpanel",
-			"staticpanel", "verticalgrid", "verticalscrollpanel",
-			"verticalstackpanel"
+			"horizontalstackpanel", "panel", "scrollpanel",
+			"splitpanel", "staticpanel", "verticalgrid", "verticalscrollpanel",
+			"verticalstackpanel", "widgetpanel"
 		};
 
 		//*-----------------------------------------------------------------------*
@@ -2786,6 +2786,29 @@ namespace SvgToolsLib
 		//* IsOrganizerControl																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
+		/// Return a value indicating whether the specified area is a container /
+		/// organizer.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the area to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the area represents a space-occupying organizer. Otherwise,
+		/// false.
+		/// </returns>
+		public static bool IsOrganizerControl(ControlAreaItem area)
+		{
+			bool result = false;
+
+			if(area != null)
+			{
+				result = mOrganizerControlTypes.Contains(
+					area.Intent.ToString().ToLower());
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
 		/// Return a value indicating whether the specified node is an area
 		/// organizer.
 		/// </summary>
@@ -2896,6 +2919,62 @@ namespace SvgToolsLib
 						break;
 					}
 				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ParseAnchor																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the anchor position corresponding to the caller's supplied text.
+		/// </summary>
+		/// <param name="anchorText">
+		/// The anchoring text to parse.
+		/// </param>
+		/// <returns>
+		/// The position point most closely corresponding with the caller's
+		/// specified anchor value. If no value was provided, Top, Left is assumed.
+		/// </returns>
+		public static PositionPointEnum ParseAnchor(string anchorText)
+		{
+			MatchCollection matches = null;
+			PositionPointEnum result = PositionPointEnum.None;
+			string text = "";
+
+			if(anchorText?.Length > 0)
+			{
+				matches = Regex.Matches(anchorText, ResourceMain.rxAnchorEdge);
+				foreach(Match matchItem in matches)
+				{
+					text = GetValue(matchItem, "anchorEdge").ToLower();
+					switch(text)
+					{
+						case "bottom":
+							result |= PositionPointEnum.Bottom;
+							break;
+						case "left":
+							result |= PositionPointEnum.Left;
+							break;
+						case "right":
+							result |= PositionPointEnum.Right;
+							break;
+						case "top":
+							result |= PositionPointEnum.Top;
+							break;
+					}
+				}
+			}
+			if((result & (PositionPointEnum.Bottom | PositionPointEnum.Top)) == 0)
+			{
+				//	No vertical anchor specified.
+				result |= PositionPointEnum.Top;
+			}
+			if((result & (PositionPointEnum.Left | PositionPointEnum.Right)) == 0)
+			{
+				//	No horizontal anchor specified.
+				result |= PositionPointEnum.Left;
 			}
 			return result;
 		}
