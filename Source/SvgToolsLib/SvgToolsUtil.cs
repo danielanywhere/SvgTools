@@ -2307,6 +2307,46 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetActiveStyleCombined																								*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the name of the first-found active style for the supplied node
+		/// and the name of the style, using a combined search of CSS styles first
+		/// a presentation attributes second.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to be analyzed.
+		/// </param>
+		/// <param name="styleName">
+		/// Name of the style and attribute to search for.
+		/// </param>
+		/// <returns>
+		/// The first active value found for the name of the style in the caller's
+		/// node and its ancestors.
+		/// </returns>
+		public static string GetActiveStyleCombined(HtmlNodeItem node,
+			string styleName)
+		{
+			HtmlAttributeItem attribute = null;
+			string result = "";
+
+			if(node != null && styleName?.Length > 0)
+			{
+				result = GetActiveStyle(node, styleName, "");
+				if(result.Length == 0)
+				{
+					attribute = GetActiveAttribute(node, styleName);
+					if(attribute != null)
+					{
+						result = attribute.Value;
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetArea																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2822,6 +2862,61 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetNodeWithAttributes																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return either the supplied node or the first ancestor found having
+		/// the specified attribute names.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node at which to start searching for the specified
+		/// attributes.
+		/// </param>
+		/// <param name="attributeNames">
+		/// Names of the attributes to search for.
+		/// </param>
+		/// <returns>
+		/// Reference to the supplied node, if it contained the specified
+		/// attributes, or if no attribute names were specified. Otherwise, the first
+		/// ancestor node found containing the specified attributes. Otherwise, null.
+		/// </returns>
+		public static HtmlNodeItem GetNodeWithAttributes(HtmlNodeItem node,
+			params string[] attributeNames)
+		{
+			bool bContinue = true;
+			HtmlNodeItem result = null;
+
+			if(node != null)
+			{
+				if(attributeNames?.Length > 0)
+				{
+					foreach(string attributeNameItem in attributeNames)
+					{
+						if(!node.Attributes.HasAttribute(attributeNameItem))
+						{
+							bContinue = false;
+							break;
+						}
+					}
+					if(bContinue)
+					{
+						result = node;
+					}
+					else if(!bContinue && node.ParentNode != null)
+					{
+						result = GetNodeWithAttributes(node.ParentNode, attributeNames);
+					}
+				}
+				else
+				{
+					result = node;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetNumericInt																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -3088,6 +3183,44 @@ namespace SvgToolsLib
 			{
 				result = mAbsStart.Any(x => pathName.StartsWith(x)) ||
 					mAbsIndex.Any(x => pathName.IndexOf(x) > -1);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* IsAncestorOf																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the supplied source is an ancestor of
+		/// the specified target.
+		/// </summary>
+		/// <param name="source">
+		/// Reference to the source node that might be an ancestor.
+		/// </param>
+		/// <param name="target">
+		/// Reference to the target node that might be a descendant.
+		/// </param>
+		/// <returns>
+		/// True if the source is an ancestor of the target. Otherwise, false.
+		/// </returns>
+		public static bool IsAncestorOf(HtmlNodeItem source, HtmlNodeItem target)
+		{
+			bool result = false;
+
+			if(source != null && target != null)
+			{
+				if(target.ParentNode != null)
+				{
+					if(target.ParentNode == source)
+					{
+						result = true;
+					}
+					else
+					{
+						result = IsAncestorOf(source, target.ParentNode);
+					}
+				}
 			}
 			return result;
 		}

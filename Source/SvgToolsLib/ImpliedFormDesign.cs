@@ -2141,7 +2141,8 @@ namespace SvgToolsLib
 		{
 			string result = "";
 
-			result = ToStringFromHtml(ControlAreaItem.GetInnerText(area));
+			result = ToStringFromHtml(ControlAreaItem.GetInnerText(area))
+				.Replace("\r", "\\r").Replace("\n", "\\n");
 			return result;
 		}
 		//*-----------------------------------------------------------------------*
@@ -2570,6 +2571,34 @@ namespace SvgToolsLib
 				//{
 				//	result = true;
 				//}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* HasLocationNode																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified area has a location
+		/// specification on its node.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the area whose node will be inspected.
+		/// </param>
+		/// <returns>
+		/// True if the node attached to the supplied area specifies a location.
+		/// Otherwise, false.
+		/// </returns>
+		public static bool HasLocationNode(ControlAreaItem area)
+		{
+			bool result = false;
+
+			if(area?.Node != null &&
+				(area.Node.Attributes.HasAttribute("x") ||
+				area.Node.Attributes.HasAttribute("y")))
+			{
+				result = true;
 			}
 			return result;
 		}

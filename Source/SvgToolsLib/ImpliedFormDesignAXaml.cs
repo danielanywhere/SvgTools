@@ -358,6 +358,127 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* AppendTextBlocks																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Append text blocks corresponding to the tspan nodes found in the
+		/// caller's area nodes.
+		/// </summary>
+		/// <param name="area">
+		/// Reference to the control area being enumerated.
+		/// </param>
+		/// <param name="leftOffset">
+		/// The absolute left offset of the set, used to establish a relative value
+		/// for each output control.
+		/// </param>
+		/// <param name="topOffset">
+		/// The absolute top offset of the set, used to establish a relative value
+		/// for each output control.
+		/// </param>
+		/// <param name="textFormat">
+		/// Reference to the current text format token.
+		/// </param>
+		/// <param name="outputNode">
+		/// Reference to the output node where the generated controls will be
+		/// posted.
+		/// </param>
+		/// <remarks>
+		/// <para>
+		/// A tspan with a location might contain text. However, if it
+		///	doesn't, it may contain other tspans.
+		/// </para>
+		/// <para>
+		///	It is assumed that a tspan containing text doesn't have child
+		///	levels.
+		/// </para>
+		/// </remarks>
+		private static void AppendTextBlocks(ControlAreaItem area,
+			float leftOffset, float topOffset,
+			TextFormatTokenItem textFormat, HtmlNodeItem outputNode)
+		{
+			List<ControlAreaItem> areas = null;
+			StringBuilder builder = new StringBuilder();
+			HtmlNodeItem childNode = null;
+			float left = 0f;
+			float localX = 0f;
+			float localY = 0f;
+			List<ControlAreaItem> locations = null;
+			HtmlNodeItem node = null;
+			TextFormatTokenItem textFormatLocal = null;
+			List<ControlAreaItem> texts = null;
+			float top = 0f;
+
+			//	TODO: !1 - Stopped here...
+			//	TODO: Test AppendTextBlocks.
+			if(area != null)
+			{
+				areas = area.FrontAreas.FindMatches(x => x.Node?.NodeType == "tspan");
+				RemoveParentLocations(areas);
+				locations = areas.FindAll(x => HasLocationNode(x));
+				foreach(ControlAreaItem locationAreaItem in locations)
+				{
+					textFormatLocal = new TextFormatTokenItem(textFormat);
+					localX = ToFloat(locationAreaItem.Node.Attributes.GetValue("x"));
+					localY = ToFloat(locationAreaItem.Node.Attributes.GetValue("y"));
+					left = localX - leftOffset;
+					top = localY = topOffset;
+
+					node = new HtmlNodeItem()
+					{
+						NodeType = "TextBlock",
+						SelfClosing = false
+					};
+					SetRenderedControlName(area.Node, node);
+					node.Attributes.SetAttribute(
+						"RelativePanel.AlignTopWithPanel", "True");
+					node.Attributes.SetAttribute(
+						"RelativePanel.AlignLeftWithPanel", "True");
+					node.Attributes.SetAttribute("Margin",
+						$"{left},{top},0,0");
+					if(textFormatLocal.FontNameChanged)
+					{
+						node.Attributes.SetAttribute(
+							"FontFamily", textFormatLocal.FontName);
+					}
+					if(textFormatLocal.FontSizeChanged)
+					{
+						node.Attributes.SetAttribute(
+							"FontSize", $"{textFormatLocal.FontSize:0}");
+					}
+					if(textFormatLocal.Color.Length > 0)
+					{
+						childNode = new HtmlNodeItem()
+						{
+							NodeType = "Span",
+							SelfClosing = false
+						};
+						childNode.Attributes.SetAttribute(
+							"Foreground", textFormatLocal.Color);
+						node.Nodes.Add(childNode);
+					}
+					else
+					{
+						childNode = node;
+					}
+					Clear(builder);
+					texts = areas.FindAll(x =>
+						x.Node?.Text.Trim().Length > 0 &&
+						IsAncestorOf(locationAreaItem.Node, x.Node));
+					foreach(ControlAreaItem textAreaItem in texts)
+					{
+						textFormatLocal =
+							TextFormatTokenItem.GetActiveTextFormat(textAreaItem.Node,
+								textFormatLocal);
+						FormatInline(textAreaItem.Node.Text, textFormatLocal, builder);
+					}
+					childNode.Text = builder.ToString();
+					outputNode.Nodes.Add(node);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ApplyCommonProperties																									*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -945,6 +1066,109 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* FormatInline																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Apply inline formatting to the caller's text and return the formatted
+		/// version.
+		/// </summary>
+		/// <param name="text">
+		/// Text to be decorated.
+		/// </param>
+		/// <param name="token">
+		/// Reference to the text formatting token to apply.
+		/// </param>
+		/// <param name="builder">
+		/// Reference to the string builder to which the output is being appended.
+		/// </param>
+		private static void FormatInline(string text, TextFormatTokenItem token,
+			StringBuilder builder)
+		{
+			TextFormatTypeEnum seek = TextFormatTypeEnum.None;
+
+			if(token != null && builder != null)
+			{
+				if(token.BoldChanged)
+				{
+					if(token.Bold)
+					{
+						builder.Append("<Bold>");
+						token.Sequence.Add(TextFormatTypeEnum.Bold);
+					}
+					else
+					{
+						while(token.Sequence.Contains(TextFormatTypeEnum.Bold))
+						{
+							seek = token.Sequence[^1];
+							switch(seek)
+							{
+								case TextFormatTypeEnum.Bold:
+								case TextFormatTypeEnum.Italic:
+								case TextFormatTypeEnum.Underline:
+									builder.Append($"</{seek}>");
+									break;
+							}
+							token.Sequence.RemoveAt(token.Sequence.Count - 1);
+						}
+					}
+				}
+				if(token.ItalicChanged)
+				{
+					if(token.Italic)
+					{
+						builder.Append("<Italic>");
+						token.Sequence.Add(TextFormatTypeEnum.Italic);
+					}
+					else
+					{
+						while(token.Sequence.Contains(TextFormatTypeEnum.Italic))
+						{
+							seek = token.Sequence[^1];
+							switch(seek)
+							{
+								case TextFormatTypeEnum.Bold:
+								case TextFormatTypeEnum.Italic:
+								case TextFormatTypeEnum.Underline:
+									builder.Append($"</{seek}>");
+									break;
+							}
+							token.Sequence.RemoveAt(token.Sequence.Count - 1);
+						}
+					}
+				}
+				if(token.UnderlineChanged)
+				{
+					if(token.Underline)
+					{
+						builder.Append("<Underline>");
+						token.Sequence.Add(TextFormatTypeEnum.Underline);
+					}
+					else
+					{
+						while(token.Sequence.Contains(TextFormatTypeEnum.Underline))
+						{
+							seek = token.Sequence[^1];
+							switch(seek)
+							{
+								case TextFormatTypeEnum.Bold:
+								case TextFormatTypeEnum.Italic:
+								case TextFormatTypeEnum.Underline:
+									builder.Append($"</{seek}>");
+									break;
+							}
+							token.Sequence.RemoveAt(token.Sequence.Count - 1);
+						}
+					}
+				}
+				if(text?.Length > 0)
+				{
+					builder.Append(text);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetCommonPropertyName																									*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1088,6 +1312,53 @@ namespace SvgToolsLib
 				}
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* RemoveParentLocations																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Remove any of a location's ancestors from the supplied list.
+		/// </summary>
+		/// <param name="spans">
+		/// Reference to a collection of spans to enumerate.
+		/// </param>
+		private static void RemoveParentLocations(List<ControlAreaItem> spans)
+		{
+			ControlAreaItem area = null;
+			List<ControlAreaItem> areas = null;
+			bool bContinue = true;
+			int count = 0;
+			int index = 0;
+
+			if(spans?.Count > 0)
+			{
+				while(bContinue)
+				{
+					bContinue = false;
+					count = spans.Count;
+					for(index = 0; index < count; index++)
+					{
+						area = spans[index];
+						if(HasLocationNode(area))
+						{
+							areas = spans.FindAll(x =>
+								IsAncestorOf(x.Node, area.Node) &&
+								HasLocationNode(x));
+							if(areas.Count > 0)
+							{
+								foreach(ControlAreaItem areaItem in areas)
+								{
+									spans.Remove(areaItem);
+								}
+								bContinue = true;
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -2785,17 +3056,57 @@ namespace SvgToolsLib
 		private HtmlNodeItem RenderTextBlock(ControlAreaItem area,
 			RenderTokenItem renderToken)
 		{
+			List<ControlAreaItem> flat = null;
+			float minLeft = float.MaxValue;
+			float minTop = float.MaxValue;
 			HtmlNodeItem result = null;
+			int textBearingSpanCount = 0;
+			TextFormatTokenItem textFormat = null;
 
 			if(area != null)
 			{
-				result = new HtmlNodeItem()
+				flat = area.FrontAreas.FindMatches(x => x.Node?.NodeType == "tspan");
+				foreach(ControlAreaItem areaItem in flat)
 				{
-					NodeType = "TextBlock",
-					SelfClosing = true
-				};
-				SetRenderedControlName(area.Node, result);
-				result.Attributes.SetAttribute("Text", GetText(area));
+					if(areaItem.Node != null)
+					{
+						if(HasLocationNode(areaItem))
+						{
+							minLeft = Math.Min(minLeft, areaItem.Left);
+							minTop = Math.Min(minTop, areaItem.Top);
+						}
+						if(areaItem.Node.Text.Length > 0)
+						{
+							textBearingSpanCount++;
+						}
+					}
+				}
+				if(textBearingSpanCount > 1)
+				{
+					//	A tspan with a location might contain text. However, if it
+					//	doesn't, it may contain other tspans.
+					//	We will assume that a tspan containing text is residing at the
+					//	deepest level.
+					result = new HtmlNodeItem()
+					{
+						NodeType = "RelativePanel",
+						SelfClosing = false
+					};
+					SetRenderedControlName(area.Node, result);
+
+					textFormat = TextFormatTokenItem.GetActiveTextFormat(area.Node);
+					AppendTextBlocks(area, minLeft, minTop, textFormat, result);
+				}
+				else if(textBearingSpanCount >= 0)
+				{
+					result = new HtmlNodeItem()
+					{
+						NodeType = "TextBlock",
+						SelfClosing = true
+					};
+					SetRenderedControlName(area.Node, result);
+					result.Attributes.SetAttribute("Text", GetText(area));
+				}
 			}
 			return result;
 		}
