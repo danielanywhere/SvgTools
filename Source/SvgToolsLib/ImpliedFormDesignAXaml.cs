@@ -1443,6 +1443,10 @@ namespace SvgToolsLib
 						};
 						result.Attributes.SetAttribute(captionProperty, text);
 						SetRenderedControlName(area.Node, result);
+						result.Attributes.SetAttribute(
+							"Width", GetWidth(area.Node).ToString("0"));
+						result.Attributes.SetAttribute(
+							"Height", GetHeight(area.Node).ToString("0"));
 						break;
 					case 2:
 						//	Images only, no text.
@@ -1453,6 +1457,10 @@ namespace SvgToolsLib
 							SelfClosing = false
 						};
 						SetRenderedControlName(area.Node, result);
+						result.Attributes.SetAttribute(
+							"Width", GetWidth(area.Node).ToString("0"));
+						result.Attributes.SetAttribute(
+							"Height", GetHeight(area.Node).ToString("0"));
 						childNode = RenderOutputNode(imageArea, childToken);
 						if(childNode != null)
 						{
@@ -1471,6 +1479,10 @@ namespace SvgToolsLib
 								SelfClosing = false
 							};
 							SetRenderedControlName(area.Node, result);
+							result.Attributes.SetAttribute(
+								"Width", GetWidth(area.Node).ToString("0"));
+							result.Attributes.SetAttribute(
+								"Height", GetHeight(area.Node).ToString("0"));
 							containerNode = new HtmlNodeItem()
 							{
 								NodeType = "StackPanel"
