@@ -2197,7 +2197,7 @@ namespace SvgToolsLib
 				if(style.Length > 0)
 				{
 					match = Regex.Match(style, ResourceMain.rxCssNumberWithMeasure);
-					if(match.Success)
+					if(match.Success && match.Length == style.Length)
 					{
 						number = GetValue(match, "number");
 						measure = GetValue(match, "measure");
@@ -3126,6 +3126,33 @@ namespace SvgToolsLib
 				{
 					result = HasAncestorStyle(node.ParentNode, styleName);
 				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* HasLocation																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the specified node has a local
+		/// location specification.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to be inspected.
+		/// </param>
+		/// <returns>
+		/// True if the node specifies a location. Otherwise, false.
+		/// </returns>
+		public static bool HasLocation(HtmlNodeItem node)
+		{
+			bool result = false;
+
+			if(node != null &&
+				(node.Attributes.HasAttribute("x") ||
+				node.Attributes.HasAttribute("y")))
+			{
+				result = true;
 			}
 			return result;
 		}

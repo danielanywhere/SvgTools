@@ -396,32 +396,30 @@ namespace SvgToolsLib
 			float leftOffset, float topOffset,
 			TextFormatTokenItem textFormat, HtmlNodeItem outputNode)
 		{
-			List<ControlAreaItem> areas = null;
 			StringBuilder builder = new StringBuilder();
 			HtmlNodeItem childNode = null;
 			float left = 0f;
 			float localX = 0f;
 			float localY = 0f;
-			List<ControlAreaItem> locations = null;
+			List<HtmlNodeItem> locations = null;
 			HtmlNodeItem node = null;
+			List<HtmlNodeItem> nodes = null;
 			TextFormatTokenItem textFormatLocal = null;
-			List<ControlAreaItem> texts = null;
+			List<HtmlNodeItem> texts = null;
 			float top = 0f;
 
-			//	TODO: !1 - Stopped here...
-			//	TODO: Test AppendTextBlocks.
-			if(area != null)
+			if(area?.Node != null)
 			{
-				areas = area.FrontAreas.FindMatches(x => x.Node?.NodeType == "tspan");
-				RemoveParentLocations(areas);
-				locations = areas.FindAll(x => HasLocationNode(x));
-				foreach(ControlAreaItem locationAreaItem in locations)
+				nodes = area.Node.Nodes.FindMatches(x => x.NodeType == "tspan");
+				RemoveParentLocations(nodes);
+				locations = nodes.FindAll(x => HasLocation(x));
+				foreach(HtmlNodeItem locationNodeItem in locations)
 				{
 					textFormatLocal = new TextFormatTokenItem(textFormat);
-					localX = ToFloat(locationAreaItem.Node.Attributes.GetValue("x"));
-					localY = ToFloat(locationAreaItem.Node.Attributes.GetValue("y"));
+					localX = ToFloat(GetX(locationNodeItem));
+					localY = ToFloat(GetY(locationNodeItem));
 					left = localX - leftOffset;
-					top = localY = topOffset;
+					top = localY - topOffset;
 
 					node = new HtmlNodeItem()
 					{
@@ -445,34 +443,43 @@ namespace SvgToolsLib
 						node.Attributes.SetAttribute(
 							"FontSize", $"{textFormatLocal.FontSize:0}");
 					}
+					//if(textFormatLocal.Color.Length > 0)
+					//{
+					//	childNode = new HtmlNodeItem()
+					//	{
+					//		NodeType = "Span",
+					//		SelfClosing = false
+					//	};
+					//	childNode.Attributes.SetAttribute(
+					//		"Foreground", textFormatLocal.Color);
+					//	node.Nodes.Add(childNode);
+					//}
+					//else
+					//{
+					//	childNode = node;
+					//}
 					if(textFormatLocal.Color.Length > 0)
 					{
-						childNode = new HtmlNodeItem()
-						{
-							NodeType = "Span",
-							SelfClosing = false
-						};
-						childNode.Attributes.SetAttribute(
+						node.Attributes.SetAttribute(
 							"Foreground", textFormatLocal.Color);
-						node.Nodes.Add(childNode);
 					}
-					else
-					{
-						childNode = node;
-					}
+					childNode = node;
 					Clear(builder);
-					texts = areas.FindAll(x =>
-						x.Node?.Text.Trim().Length > 0 &&
-						IsAncestorOf(locationAreaItem.Node, x.Node));
-					foreach(ControlAreaItem textAreaItem in texts)
+					texts = nodes.FindAll(x =>
+						x.Text.Trim().Length > 0 &&
+						IsAncestorOf(locationNodeItem, x));
+					if(texts.Count > 0)
 					{
-						textFormatLocal =
-							TextFormatTokenItem.GetActiveTextFormat(textAreaItem.Node,
-								textFormatLocal);
-						FormatInline(textAreaItem.Node.Text, textFormatLocal, builder);
+						foreach(HtmlNodeItem textNodeItem in texts)
+						{
+							textFormatLocal =
+								TextFormatTokenItem.GetActiveTextFormat(textNodeItem,
+									textFormatLocal);
+							FormatInline(textNodeItem.Text, textFormatLocal, builder);
+						}
+						childNode.Text = builder.ToString();
+						outputNode.Nodes.Add(node);
 					}
-					childNode.Text = builder.ToString();
-					outputNode.Nodes.Add(node);
 				}
 			}
 		}
@@ -650,6 +657,7 @@ namespace SvgToolsLib
 		{
 			PositionPointEnum anchorEdges = PositionPointEnum.None;
 			bool bFound = false;
+			bool bProcessed = false;
 			ControlAreaItem counterArea = null;
 			string lowerName = "";
 			string margin = "";
@@ -703,6 +711,7 @@ namespace SvgToolsLib
 										counterArea.Top - source.Bottom);
 									target.Attributes.SetAttribute(
 										"RelativePanel.Above", counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 							case "below":
@@ -712,6 +721,7 @@ namespace SvgToolsLib
 										source.Top - counterArea.Bottom);
 									target.Attributes.SetAttribute(
 										"RelativePanel.Below", counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 							case "alignbottom":
@@ -721,6 +731,7 @@ namespace SvgToolsLib
 									//	version.
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignBottomWith", counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 							case "aligncenter":
@@ -731,6 +742,7 @@ namespace SvgToolsLib
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignHorizontalCenterWith",
 										counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 							case "alignleft":
@@ -740,6 +752,7 @@ namespace SvgToolsLib
 									//	in this version.
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignLeftWith", counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 							case "alignmiddle":
@@ -750,6 +763,7 @@ namespace SvgToolsLib
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignVerticalCenterWith",
 										counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 							case "alignright":
@@ -759,6 +773,7 @@ namespace SvgToolsLib
 									//	in this version.
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignRightWith", counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 							case "aligntop":
@@ -768,6 +783,7 @@ namespace SvgToolsLib
 									//	in this version.
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignTopWith", counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 							case "anchor":
@@ -780,6 +796,7 @@ namespace SvgToolsLib
 									}
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignTopWithPanel", "True");
+									bProcessed = true;
 								}
 								if((anchorEdges & PositionPointEnum.Left) != 0)
 								{
@@ -790,6 +807,7 @@ namespace SvgToolsLib
 									}
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignLeftWithPanel", "True");
+									bProcessed = true;
 								}
 								if((anchorEdges & PositionPointEnum.Bottom) != 0)
 								{
@@ -800,6 +818,7 @@ namespace SvgToolsLib
 									}
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignBottomWithPanel", "True");
+									bProcessed = true;
 								}
 								if((anchorEdges & PositionPointEnum.Right) != 0)
 								{
@@ -810,6 +829,7 @@ namespace SvgToolsLib
 									}
 									target.Attributes.SetAttribute(
 										"RelativePanel.AlignRightWithPanel", "True");
+									bProcessed = true;
 								}
 								break;
 							case "leftof":
@@ -819,6 +839,7 @@ namespace SvgToolsLib
 										counterArea.Left - source.Right);
 									target.Attributes.SetAttribute(
 										"RelativePanel.LeftOf", counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 							case "rightof":
@@ -828,12 +849,13 @@ namespace SvgToolsLib
 										source.Left - counterArea.Right);
 									target.Attributes.SetAttribute(
 										"RelativePanel.RightOf", counterArea.Node.Id);
+									bProcessed = true;
 								}
 								break;
 						}
 					}
 				}
-				if(!bFound && parentArea != null)
+				if(!bProcessed && parentArea != null)
 				{
 					//	If no specifications were given, this item is aligned Top, Left.
 					margin = UpdateMargin(margin, PositionPointEnum.Top,
@@ -844,9 +866,9 @@ namespace SvgToolsLib
 						"RelativePanel.AlignTopWithPanel", "True");
 					target.Attributes.SetAttribute(
 						"RelativePanel.AlignLeftWithPanel", "True");
-					bFound = true;
+					bProcessed = true;
 				}
-				if(bFound && margin.Length > 0)
+				if(bProcessed && margin.Length > 0)
 				{
 					target.Attributes.SetAttribute("Margin", margin);
 				}
@@ -1092,8 +1114,9 @@ namespace SvgToolsLib
 				{
 					if(token.Bold)
 					{
+						//	The sequence token for this item is added during the change.
 						builder.Append("<Bold>");
-						token.Sequence.Add(TextFormatTypeEnum.Bold);
+						//token.Sequence.Add(TextFormatTypeEnum.Bold);
 					}
 					else
 					{
@@ -1117,7 +1140,7 @@ namespace SvgToolsLib
 					if(token.Italic)
 					{
 						builder.Append("<Italic>");
-						token.Sequence.Add(TextFormatTypeEnum.Italic);
+						//token.Sequence.Add(TextFormatTypeEnum.Italic);
 					}
 					else
 					{
@@ -1141,7 +1164,7 @@ namespace SvgToolsLib
 					if(token.Underline)
 					{
 						builder.Append("<Underline>");
-						token.Sequence.Add(TextFormatTypeEnum.Underline);
+						//token.Sequence.Add(TextFormatTypeEnum.Underline);
 					}
 					else
 					{
@@ -1324,13 +1347,13 @@ namespace SvgToolsLib
 		/// <param name="spans">
 		/// Reference to a collection of spans to enumerate.
 		/// </param>
-		private static void RemoveParentLocations(List<ControlAreaItem> spans)
+		private static void RemoveParentLocations(List<HtmlNodeItem> spans)
 		{
-			ControlAreaItem area = null;
-			List<ControlAreaItem> areas = null;
 			bool bContinue = true;
 			int count = 0;
 			int index = 0;
+			HtmlNodeItem node = null;
+			List<HtmlNodeItem> nodes = null;
 
 			if(spans?.Count > 0)
 			{
@@ -1340,17 +1363,17 @@ namespace SvgToolsLib
 					count = spans.Count;
 					for(index = 0; index < count; index++)
 					{
-						area = spans[index];
-						if(HasLocationNode(area))
+						node = spans[index];
+						if(HasLocation(node))
 						{
-							areas = spans.FindAll(x =>
-								IsAncestorOf(x.Node, area.Node) &&
-								HasLocationNode(x));
-							if(areas.Count > 0)
+							nodes = spans.FindAll(x =>
+								IsAncestorOf(x, node) &&
+								HasLocation(x));
+							if(nodes.Count > 0)
 							{
-								foreach(ControlAreaItem areaItem in areas)
+								foreach(HtmlNodeItem nodeItem in nodes)
 								{
-									spans.Remove(areaItem);
+									spans.Remove(nodeItem);
 								}
 								bContinue = true;
 								break;
@@ -3056,7 +3079,7 @@ namespace SvgToolsLib
 		private HtmlNodeItem RenderTextBlock(ControlAreaItem area,
 			RenderTokenItem renderToken)
 		{
-			List<ControlAreaItem> flat = null;
+			List<HtmlNodeItem> flat = null;
 			float minLeft = float.MaxValue;
 			float minTop = float.MaxValue;
 			HtmlNodeItem result = null;
@@ -3065,20 +3088,17 @@ namespace SvgToolsLib
 
 			if(area != null)
 			{
-				flat = area.FrontAreas.FindMatches(x => x.Node?.NodeType == "tspan");
-				foreach(ControlAreaItem areaItem in flat)
+				flat = area.Node.Nodes.FindMatches(x => x.NodeType == "tspan");
+				foreach(HtmlNodeItem nodeItem in flat)
 				{
-					if(areaItem.Node != null)
+					if(HasLocation(nodeItem))
 					{
-						if(HasLocationNode(areaItem))
-						{
-							minLeft = Math.Min(minLeft, areaItem.Left);
-							minTop = Math.Min(minTop, areaItem.Top);
-						}
-						if(areaItem.Node.Text.Length > 0)
-						{
-							textBearingSpanCount++;
-						}
+						minLeft = Math.Min(minLeft, GetX(nodeItem));
+						minTop = Math.Min(minTop, GetY(nodeItem));
+					}
+					if(nodeItem.Text.Length > 0)
+					{
+						textBearingSpanCount++;
 					}
 				}
 				if(textBearingSpanCount > 1)
@@ -3099,6 +3119,7 @@ namespace SvgToolsLib
 				}
 				else if(textBearingSpanCount >= 0)
 				{
+					textFormat = TextFormatTokenItem.GetActiveTextFormat(area.Node);
 					result = new HtmlNodeItem()
 					{
 						NodeType = "TextBlock",
@@ -3106,6 +3127,36 @@ namespace SvgToolsLib
 					};
 					SetRenderedControlName(area.Node, result);
 					result.Attributes.SetAttribute("Text", GetText(area));
+					if(textFormat.FontName.Length > 0)
+					{
+						result.Attributes.SetAttribute(
+							"FontFamily", textFormat.FontName);
+					}
+					if(textFormat.FontSize > 0)
+					{
+						result.Attributes.SetAttribute(
+							"FontSize", $"{textFormat.FontSize:0}");
+					}
+					if(textFormat.Color != "#000000")
+					{
+						result.Attributes.SetAttribute(
+							"Foreground", textFormat.Color);
+					}
+					if(textFormat.Bold)
+					{
+						result.Attributes.SetAttribute(
+							"FontWeight", "Bold");
+					}
+					if(textFormat.Italic)
+					{
+						result.Attributes.SetAttribute(
+							"FontStyle", "Italic");
+					}
+					if(textFormat.Underline)
+					{
+						result.Attributes.SetAttribute(
+							"TextDecorations", "Underline");
+					}
 				}
 			}
 			return result;
@@ -3996,6 +4047,18 @@ namespace SvgToolsLib
 					x.Value?.Length > 0);
 				if(attribute != null)
 				{
+					if(Regex.IsMatch(sourceNode.Id,
+						$"(?i:(?<defaultName>{sourceNode.NodeType})(?<index>\\d+))"))
+					{
+						//	If this control has its default name, then make it unique.
+						targetNode.Attributes.SetAttribute(
+							"x:Name",
+							sourceNode.NodeType + Right(Guid.NewGuid().ToString("N"), 8));
+					}
+					else
+					{
+						targetNode.Attributes.SetAttribute("x:Name", attribute.Value);
+					}
 					//if(localSuffix.Length > 0 ||
 					//	!Regex.IsMatch(sourceNode.NodeType,
 					//	$"(?i:(?<defaultName>{sourceNode.NodeType})(?<index>\\d+))"))
@@ -4005,9 +4068,9 @@ namespace SvgToolsLib
 					//targetNode.Attributes.SetAttribute("x:Name",
 					//	$"{attribute.Value}{localSuffix}");
 					//}
-					//	In this version, source name is going to be used at all times to
-					//	support RelativePanel cross-referencing on the source nodes.
-					targetNode.Attributes.SetAttribute("x:Name", attribute.Value);
+					////	In this version, source name is going to be used at all times to
+					////	support RelativePanel cross-referencing on the source nodes.
+					//targetNode.Attributes.SetAttribute("x:Name", attribute.Value);
 				}
 			}
 		}

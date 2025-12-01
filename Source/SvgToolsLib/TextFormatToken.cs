@@ -474,48 +474,51 @@ namespace SvgToolsLib
 				result.mUnderlineChanged =
 					(result.mUnderline != comparison?.mUnderline);
 				//	Maintain the same sequence for the previous items.
-				foreach(TextFormatTypeEnum formatTypeItem in comparison.mSequence)
-				{
-					switch(formatTypeItem)
-					{
-						case TextFormatTypeEnum.Bold:
-							if(result.mBold)
-							{
-								result.mSequence.Add(TextFormatTypeEnum.Bold);
-							}
-							break;
-						case TextFormatTypeEnum.Color:
-							if(result.mColor.Length > 0)
-							{
-								result.mSequence.Add(TextFormatTypeEnum.Color);
-							}
-							break;
-						case TextFormatTypeEnum.FontName:
-							if(result.mFontName.Length > 0)
-							{
-								result.mSequence.Add(TextFormatTypeEnum.FontName);
-							}
-							break;
-						case TextFormatTypeEnum.FontSize:
-							if(result.mFontSize > 0f)
-							{
-								result.mSequence.Add(TextFormatTypeEnum.FontSize);
-							}
-							break;
-						case TextFormatTypeEnum.Italic:
-							if(result.mItalic)
-							{
-								result.mSequence.Add(TextFormatTypeEnum.Italic);
-							}
-							break;
-						case TextFormatTypeEnum.Underline:
-							if(result.mUnderline)
-							{
-								result.mSequence.Add(TextFormatTypeEnum.Underline);
-							}
-							break;
-					}
-				}
+				//	The caller will remove items from the stack after they have been
+				//	processed.
+				result.mSequence.AddRange(comparison.mSequence);
+				//foreach(TextFormatTypeEnum formatTypeItem in comparison.mSequence)
+				//{
+				//	switch(formatTypeItem)
+				//	{
+				//		case TextFormatTypeEnum.Bold:
+				//			if(result.mBold)
+				//			{
+				//				result.mSequence.Add(TextFormatTypeEnum.Bold);
+				//			}
+				//			break;
+				//		case TextFormatTypeEnum.Color:
+				//			if(result.mColor.Length > 0)
+				//			{
+				//				result.mSequence.Add(TextFormatTypeEnum.Color);
+				//			}
+				//			break;
+				//		case TextFormatTypeEnum.FontName:
+				//			if(result.mFontName.Length > 0)
+				//			{
+				//				result.mSequence.Add(TextFormatTypeEnum.FontName);
+				//			}
+				//			break;
+				//		case TextFormatTypeEnum.FontSize:
+				//			if(result.mFontSize > 0f)
+				//			{
+				//				result.mSequence.Add(TextFormatTypeEnum.FontSize);
+				//			}
+				//			break;
+				//		case TextFormatTypeEnum.Italic:
+				//			if(result.mItalic)
+				//			{
+				//				result.mSequence.Add(TextFormatTypeEnum.Italic);
+				//			}
+				//			break;
+				//		case TextFormatTypeEnum.Underline:
+				//			if(result.mUnderline)
+				//			{
+				//				result.mSequence.Add(TextFormatTypeEnum.Underline);
+				//			}
+				//			break;
+				//	}
+				//}
 				if(result.mBold && !result.mSequence.Contains(TextFormatTypeEnum.Bold))
 				{
 					result.mSequence.Add(TextFormatTypeEnum.Bold);
