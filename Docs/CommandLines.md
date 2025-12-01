@@ -64,3 +64,8 @@ Render a widget-styled form in Avalonia XAML (.axaml) from a minimal Implicit Fo
 svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard01.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmSvgToolsWizardPage01.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
 ```
 
+Render a widget-styled form in Avalonia XAML (.axaml) from a minimal Implicit Form Design file with an external configuration file.
+
+```
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard01.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmSvgToolsWizardPage01.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+```

@@ -1,0 +1,24 @@
+[
+	{
+		"Comment": "Form configuration.",
+		"MatchPatterns": [ "tag:FormInformation" ],
+		"Extensions":
+		[
+			{
+				"ExtensionType": "Properties",
+				"Settings":
+				[
+					{
+						"Name": "FormName",
+						"Value": "frmImpliedFormDesignWizard01"
+					},
+					{
+						"Name": "ProjectName",
+						"Value": "ImpliedFormDesignWizard"
+					}
+				]
+			}
+		]
+	}
+]
+

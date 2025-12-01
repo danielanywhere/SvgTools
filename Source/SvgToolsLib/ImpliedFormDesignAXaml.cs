@@ -904,7 +904,7 @@ namespace SvgToolsLib
 				{
 					foreach(ShapeStyleExtensionListItem listItem in listCollectionItem)
 					{
-						if(IsSelectorMatch(node, listItem.Selectors))
+						if(IsSelectorMatch(node, listItem.MatchPatterns))
 						{
 							foreach(ShapeStyleExtensionItem extensionItem in
 								listItem.Extensions)
@@ -4114,11 +4114,13 @@ namespace SvgToolsLib
 			ControlAreaItem formArea = null;
 			string formName = "";
 			ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
+			string lowerName = "";
 			List<ControlAreaItem> members = null;
 			string name = "";
 			HtmlNodeItem node = null;
 			RenderTokenItem renderToken = new RenderTokenItem();
-			//List<ShapeStyleExtensionListItem> styleLists = null;
+			//List<ShapeStyleExtensionListCollection> styleCollections = null;
+			List<ShapeStyleExtensionListItem> styleLists = null;
 			string text = "";
 
 			mControlAreas = areas;
@@ -4153,6 +4155,7 @@ namespace SvgToolsLib
 				{
 					mProjectName = "UnnamedProject";
 				}
+
 				outputNode.Attributes.SetAttribute(
 					"xmlns:app", $"clr-namespace:{mProjectName}");
 				outputNode.Attributes.SetAttribute(
@@ -4238,6 +4241,70 @@ namespace SvgToolsLib
 						}
 					}
 				}
+
+				//	Allow the user configuration to override the configured properties.
+				styleLists = mStyleCatalog
+					.SelectMany(listCollection => listCollection)
+					.Where(list => list.MatchPatterns.Contains(
+						"tag:FormInformation", StringComparer.OrdinalIgnoreCase)).ToList();
+				foreach(ShapeStyleExtensionListItem extensionListItem in styleLists)
+				{
+					foreach(ShapeStyleExtensionItem extensionItem in
+						extensionListItem.Extensions)
+					{
+						if(extensionItem.ExtensionType == ShapeStyleExtensionType.Properties)
+						{
+							foreach(NameValueNodesItem propertyItem in extensionItem.Settings)
+							{
+								lowerName = propertyItem.Name.ToLower();
+								switch(lowerName)
+								{
+									case "formname":
+										formName = propertyItem.Value;
+										break;
+									case "projectname":
+										mProjectName = propertyItem.Value;
+										break;
+									case "themename":
+										mThemeName = propertyItem.Value;
+										switch(mThemeName.ToLower())
+										{
+											case "material":
+												outputNode.Attributes.SetAttribute(
+													"xmlns:assist",
+													"clr-namespace:Material.Styles.Assists;" +
+													"assembly=Material.Styles");
+												outputNode.Attributes.SetAttribute(
+													"Background", "{DynamicResource MaterialPaperBrush}");
+												break;
+										}
+										break;
+									case "usebackgroundcolor":
+										//	Value indicating whether to use background colors on
+										//	dropped objects by default on this form.
+										mUseBackgroundColor = ToBool(propertyItem.Value);
+										break;
+									case "usebordercolor":
+										//	Value indicating whether to use border colors of drawing
+										//	objects by default on this form.
+										mUseBorderColor = ToBool(propertyItem.Value);
+										break;
+									case "useborderwidth":
+										//	Value indicating whether to use border widths of drawing
+										//	objects by default on this form.
+										mUseBorderWidth = ToBool(propertyItem.Value);
+										break;
+									case "usecornerradius":
+										//	Value indicating whether to use border corner radii of
+										//	drawing objects by default on this form.
+										mUseCornerRadius = ToBool(propertyItem.Value);
+										break;
+								}
+							}
+						}
+					}
+				}
+
 
 				mFormWidth = Round(GetFormWidth(mSvg.Document), 0);
 				mFormHeight = Round(GetFormHeight(mSvg.Document), 0);
@@ -4345,7 +4412,7 @@ namespace SvgToolsLib
 				////	Set extended styles directly on the window node.
 				//styleLists = mStyleCatalog
 				//	.SelectMany(listCollection => listCollection)
-				//	.Where(list => list.Selectors.Contains(
+				//	.Where(list => list.MatchPatterns.Contains(
 				//		"tag:window", StringComparer.OrdinalIgnoreCase)).ToList();
 				//foreach(ShapeStyleExtensionListItem listItem in styleLists)
 				//{

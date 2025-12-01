@@ -100,6 +100,24 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//*	MatchPatterns																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="MatchPatterns">MatchPatterns</see>.
+		/// </summary>
+		private List<string> mMatchPatterns = new List<string>();
+		/// <summary>
+		/// Get the list of pattern matches to which this list of extensions
+		/// applies.
+		/// </summary>
+		[JsonProperty(Order = 1)]
+		public List<string> MatchPatterns
+		{
+			get { return mMatchPatterns; }
+		}
+		//*-----------------------------------------------------------------------*
+
 		////*-----------------------------------------------------------------------*
 		////*	Selector																															*
 		////*-----------------------------------------------------------------------*
@@ -117,24 +135,6 @@ namespace SvgToolsLib
 		//	set { mSelector = value; }
 		//}
 		////*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	Selectors																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="Selectors">Selectors</see>.
-		/// </summary>
-		private List<string> mSelectors = new List<string>();
-		/// <summary>
-		/// Get the list of selectors to which this list of extensions
-		/// applies.
-		/// </summary>
-		[JsonProperty(Order = 1)]
-		public List<string> Selectors
-		{
-			get { return mSelectors; }
-		}
-		//*-----------------------------------------------------------------------*
 
 		////*-----------------------------------------------------------------------*
 		////*	ShapeNames																														*
