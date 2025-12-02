@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1000,6 +1001,25 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	CreateBackingFile																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for
+		/// <see cref="CreateBackingFile">CreateBackingFile</see>.
+		/// </summary>
+		protected bool mCreateBackingFile = false;
+		/// <summary>
+		/// Get/Set a value indicating whether a companion backing file will be
+		/// created during this conversion.
+		/// </summary>
+		public bool CreateBackingFile
+		{
+			get { return mCreateBackingFile; }
+			set { mCreateBackingFile = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	CurrentFontSize																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1142,23 +1162,6 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	FormHeight																														*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="FormHeight">FormHeight</see>.
-		/// </summary>
-		protected float mFormHeight = 1080f;
-		/// <summary>
-		/// Get/Set the height of the current form.
-		/// </summary>
-		public float FormHeight
-		{
-			get { return mFormHeight; }
-			set { mFormHeight = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//* FormatShortcut																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1185,6 +1188,40 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	FormHeight																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="FormHeight">FormHeight</see>.
+		/// </summary>
+		protected float mFormHeight = 1080f;
+		/// <summary>
+		/// Get/Set the height of the current form.
+		/// </summary>
+		public float FormHeight
+		{
+			get { return mFormHeight; }
+			set { mFormHeight = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	FormName																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="FormName">FormName</see>.
+		/// </summary>
+		protected string mFormName = "";
+		/// <summary>
+		/// Get/Set the name of the form;.
+		/// </summary>
+		public string FormName
+		{
+			get { return mFormName; }
+			set { mFormName = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	FormWidth																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1198,6 +1235,22 @@ namespace SvgToolsLib
 		{
 			get { return mFormWidth; }
 			set { mFormWidth = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetBackingFileContent																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the content of the backing file for this conversion.
+		/// </summary>
+		/// <returns>
+		/// The content of the companion backing file for the conversion, if
+		/// configured. Otherwise, an empty string.
+		/// </returns>
+		public virtual string GetBackingFileContent()
+		{
+			return "";
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -2950,6 +3003,24 @@ namespace SvgToolsLib
 				}
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	OutputFile																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="OutputFile">OutputFile</see>.
+		/// </summary>
+		protected FileInfo mOutputFile = null;
+		/// <summary>
+		/// Get/Set a reference to the information about the output file to be
+		/// created by this conversion.
+		/// </summary>
+		public FileInfo OutputFile
+		{
+			get { return mOutputFile; }
+			set { mOutputFile = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

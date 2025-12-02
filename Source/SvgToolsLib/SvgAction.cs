@@ -2227,6 +2227,7 @@ namespace SvgToolsLib
 		/// </param>
 		private static void ImpliedDesignToAvaloniaXaml(SvgActionItem item)
 		{
+			bool bSuccess = false;
 			string content = "";
 			SvgDocumentItem doc = null;
 			FileInfo fileInfo = null;
@@ -2289,16 +2290,48 @@ namespace SvgToolsLib
 							}
 						}
 					}
-					formDesign = new ImpliedFormDesignAXaml(doc, styleCatalog);
+					formDesign = new ImpliedFormDesignAXaml(doc, styleCatalog)
+					{
+						OutputFile = item.OutputFile
+					};
 					content = formDesign.ToXaml();
 					try
 					{
 						File.WriteAllText(item.OutputFile.FullName, content);
 						Trace.WriteLine($" File written: {item.OutputFile.Name}");
+						bSuccess = true;
 					}
 					catch(Exception ex)
 					{
 						Trace.WriteLine($"Error writing file: {ex.Message}");
+					}
+					if(bSuccess && formDesign.CreateBackingFile)
+					{
+						if(File.Exists($"{item.OutputFile.FullName}.cs"))
+						{
+							Trace.WriteLine(" Backing file already exists. Skipping...");
+						}
+						else
+						{
+							content = formDesign.GetBackingFileContent();
+							if(content.Length > 0)
+							{
+								try
+								{
+									File.WriteAllText($"{item.OutputFile.FullName}.cs", content);
+									Trace.WriteLine(
+										$" Backing file written: {item.OutputFile.Name}.cs");
+								}
+								catch(Exception ex)
+								{
+									Trace.WriteLine($"Error writing backing file: {ex.Message}");
+								}
+							}
+							else
+							{
+								Trace.Write("Warning: Blank backing file not written.");
+							}
+						}
 					}
 				}
 			}

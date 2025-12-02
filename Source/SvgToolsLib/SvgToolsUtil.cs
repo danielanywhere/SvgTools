@@ -256,6 +256,40 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* AppendLineIndented																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Append the supplied text line to the provided string builder, indenting
+		/// the beginning of the line by the specified number of tabs.
+		/// </summary>
+		/// <param name="builder">
+		/// Reference to the string builder to be appended to.
+		/// </param>
+		/// <param name="indent">
+		/// Number of tab characters to insert at the beginning of the line.
+		/// </param>
+		/// <param name="text">
+		/// The text to write on the current line.
+		/// </param>
+		public static void AppendLineIndented(StringBuilder builder, int indent,
+			string text)
+		{
+			if(builder != null)
+			{
+				if(indent > 0)
+				{
+					builder.Append(new string('\t', indent));
+				}
+				if(text?.Length >= 0)
+				{
+					builder.Append(text);
+				}
+				builder.AppendLine();
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ApplyTransforms																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

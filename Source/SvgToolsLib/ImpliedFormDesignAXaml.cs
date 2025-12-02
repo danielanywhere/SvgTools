@@ -426,7 +426,7 @@ namespace SvgToolsLib
 						NodeType = "TextBlock",
 						SelfClosing = false
 					};
-					SetRenderedControlName(area.Node, node);
+					SetRenderedControlName(locationNodeItem, node);
 					node.Attributes.SetAttribute(
 						"RelativePanel.AlignTopWithPanel", "True");
 					node.Attributes.SetAttribute(
@@ -1422,12 +1422,22 @@ namespace SvgToolsLib
 			int state = 0;
 			string text = "";
 			ControlAreaItem textArea = null;
+			TextFormatTokenItem textFormat = null;
 
 			if(area != null && buttonType?.Length > 0)
 			{
 				state =
 					(HasImages(area.FrontAreas) ? 0x2 : 0x0) |
 					(HasText(area.FrontAreas) ? 0x1 : 0x0);
+				if((state & 1) > 0)
+				{
+					textArea = GetTextArea(area);
+					if(textArea?.Node != null)
+					{
+						textFormat =
+							TextFormatTokenItem.GetActiveTextFormat(textArea.Node);
+					}
+				}
 				switch(state)
 				{
 					case 0:
@@ -1447,6 +1457,13 @@ namespace SvgToolsLib
 							"Width", GetWidth(area.Node).ToString("0"));
 						result.Attributes.SetAttribute(
 							"Height", GetHeight(area.Node).ToString("0"));
+						if(textFormat?.FontName.Length > 0)
+						{
+							result.Attributes.SetAttribute(
+								"FontFamily", textFormat.FontName);
+							result.Attributes.SetAttribute(
+								"FontSize", textFormat.FontSize.ToString("0"));
+						}
 						break;
 					case 2:
 						//	Images only, no text.
@@ -1521,8 +1538,22 @@ namespace SvgToolsLib
 									}
 								}
 							}
+							if(textFormat?.FontName.Length > 0)
+							{
+								result.Attributes.SetAttribute(
+									"FontFamily", textFormat.FontName);
+								result.Attributes.SetAttribute(
+									"FontSize", textFormat.FontSize.ToString("0"));
+							}
 						}
 						break;
+				}
+				if(result != null)
+				{
+					result.Attributes.SetAttribute(
+						"HorizontalContentAlignment", "Center");
+					result.Attributes.SetAttribute(
+						"VerticalContentAlignment", "Center");
 				}
 			}
 			return result;
@@ -4112,7 +4143,7 @@ namespace SvgToolsLib
 			ControlAreaCollection childAreas = null;
 			HtmlNodeItem childNode = null;
 			ControlAreaItem formArea = null;
-			string formName = "";
+			//string formName = "";
 			ImpliedDesignIntentEnum intent = ImpliedDesignIntentEnum.None;
 			string lowerName = "";
 			List<ControlAreaItem> members = null;
@@ -4120,7 +4151,8 @@ namespace SvgToolsLib
 			HtmlNodeItem node = null;
 			RenderTokenItem renderToken = new RenderTokenItem();
 			//List<ShapeStyleExtensionListCollection> styleCollections = null;
-			List<ShapeStyleExtensionListItem> styleLists = null;
+			//List<ShapeStyleExtensionListItem> styleLists = null;
+			List<NameValueNodesItem> styleProperties = null;
 			string text = "";
 
 			mControlAreas = areas;
@@ -4156,16 +4188,26 @@ namespace SvgToolsLib
 					mProjectName = "UnnamedProject";
 				}
 
+				//	Get the form name.
+				mFormName = "";
+				if(mOutputFile != null)
+				{
+					mFormName = Path.GetFileNameWithoutExtension(mOutputFile.Name);
+				}
+				if(mFormName.Length == 0)
+				{
+					mFormName = "UnnamedForm";
+				}
 				formArea =
 					areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
-				if(formArea?.Node != null)
-				{
-					formName = formArea.Node.Id;
-				}
-				else
-				{
-					formName = "UnnamedForm";
-				}
+				//if(formArea?.Node != null)
+				//{
+				//	mFormName = formArea.Node.Id;
+				//}
+				//else
+				//{
+				//	mFormName = "UnnamedForm";
+				//}
 
 				if(formArea != null)
 				{
@@ -4173,7 +4215,7 @@ namespace SvgToolsLib
 						"Title", formArea.Reference);
 				}
 
-				//	Assign additional values.
+				//	Assign additional values from the FormInformation visual object.
 				foreach(ControlAreaItem memberItem in members)
 				{
 					if(memberItem.Node != null)
@@ -4190,9 +4232,12 @@ namespace SvgToolsLib
 								//	outputNode.Attributes.SetAttribute(
 								//		"Title", attributeItem.Value);
 								//	break;
-								//case "projectname":
-								//	mProjectName = attributeItem.Value;
-								//	break;
+								case "createbackingfile":
+									mCreateBackingFile = ToBool(attributeItem.Value);
+									break;
+								case "projectname":
+									mProjectName = attributeItem.Value;
+									break;
 								case "themename":
 									mThemeName = attributeItem.Value;
 									switch(mThemeName.ToLower())
@@ -4233,65 +4278,63 @@ namespace SvgToolsLib
 				}
 
 				//	Allow the user configuration to override the configured properties.
-				styleLists = mStyleCatalog
+				styleProperties = mStyleCatalog
 					.SelectMany(listCollection => listCollection)
-					.Where(list => list.MatchPatterns.Contains(
-						"tag:FormInformation", StringComparer.OrdinalIgnoreCase)).ToList();
-				foreach(ShapeStyleExtensionListItem extensionListItem in styleLists)
+					.Where(list =>
+						list.MatchPatterns.Contains(
+							"tag:FormInformation", StringComparer.OrdinalIgnoreCase))
+					.SelectMany(list => list.Extensions)
+					.Where(item => item.ExtensionType ==
+						ShapeStyleExtensionType.Properties)
+					.SelectMany(item => item.Settings).ToList();
+				foreach(NameValueNodesItem propertyItem in styleProperties)
 				{
-					foreach(ShapeStyleExtensionItem extensionItem in
-						extensionListItem.Extensions)
+					lowerName = propertyItem.Name.ToLower();
+					switch(lowerName)
 					{
-						if(extensionItem.ExtensionType == ShapeStyleExtensionType.Properties)
-						{
-							foreach(NameValueNodesItem propertyItem in extensionItem.Settings)
+						case "createbackingfile":
+							mCreateBackingFile = ToBool(propertyItem.Value);
+							break;
+						case "formname":
+							mFormName = propertyItem.Value;
+							break;
+						case "projectname":
+							mProjectName = propertyItem.Value;
+							break;
+						case "themename":
+							mThemeName = propertyItem.Value;
+							switch(mThemeName.ToLower())
 							{
-								lowerName = propertyItem.Name.ToLower();
-								switch(lowerName)
-								{
-									case "formname":
-										formName = propertyItem.Value;
-										break;
-									case "projectname":
-										mProjectName = propertyItem.Value;
-										break;
-									case "themename":
-										mThemeName = propertyItem.Value;
-										switch(mThemeName.ToLower())
-										{
-											case "material":
-												outputNode.Attributes.SetAttribute(
-													"xmlns:assist",
-													"clr-namespace:Material.Styles.Assists;" +
-													"assembly=Material.Styles");
-												outputNode.Attributes.SetAttribute(
-													"Background", "{DynamicResource MaterialPaperBrush}");
-												break;
-										}
-										break;
-									case "usebackgroundcolor":
-										//	Value indicating whether to use background colors on
-										//	dropped objects by default on this form.
-										mUseBackgroundColor = ToBool(propertyItem.Value);
-										break;
-									case "usebordercolor":
-										//	Value indicating whether to use border colors of drawing
-										//	objects by default on this form.
-										mUseBorderColor = ToBool(propertyItem.Value);
-										break;
-									case "useborderwidth":
-										//	Value indicating whether to use border widths of drawing
-										//	objects by default on this form.
-										mUseBorderWidth = ToBool(propertyItem.Value);
-										break;
-									case "usecornerradius":
-										//	Value indicating whether to use border corner radii of
-										//	drawing objects by default on this form.
-										mUseCornerRadius = ToBool(propertyItem.Value);
-										break;
-								}
+								case "material":
+									outputNode.Attributes.SetAttribute(
+										"xmlns:assist",
+										"clr-namespace:Material.Styles.Assists;" +
+										"assembly=Material.Styles");
+									outputNode.Attributes.SetAttribute(
+										"Background", "{DynamicResource MaterialPaperBrush}");
+									break;
 							}
-						}
+							break;
+						case "usebackgroundcolor":
+							//	Value indicating whether to use background colors on
+							//	dropped objects by default on this form.
+							mUseBackgroundColor = ToBool(propertyItem.Value);
+							break;
+						case "usebordercolor":
+							//	Value indicating whether to use border colors of drawing
+							//	objects by default on this form.
+							mUseBorderColor = ToBool(propertyItem.Value);
+							break;
+						case "useborderwidth":
+							//	Value indicating whether to use border widths of drawing
+							//	objects by default on this form.
+							mUseBorderWidth = ToBool(propertyItem.Value);
+							break;
+						case "usecornerradius":
+							//	Value indicating whether to use border corner radii of
+							//	drawing objects by default on this form.
+							mUseCornerRadius = ToBool(propertyItem.Value);
+							break;
 					}
 				}
 
@@ -4694,6 +4737,52 @@ namespace SvgToolsLib
 			List<ShapeStyleExtensionListCollection> styleCatalog) :
 			base(svgDocument, styleCatalog)
 		{
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetBackingFileContent																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the content of the backing file for this conversion.
+		/// </summary>
+		/// <returns>
+		/// The content of the companion backing file for the conversion, if
+		/// configured. Otherwise, an empty string.
+		/// </returns>
+		public override string GetBackingFileContent()
+		{
+			StringBuilder builder = new StringBuilder();
+			int indent = 0;
+
+			if(mCreateBackingFile)
+			{
+				builder.AppendLine("using Avalonia.Controls;\r\n");
+				if(mProjectName.Length > 0)
+				{
+					builder.AppendLine($"namespace {mProjectName}");
+					builder.AppendLine("{");
+					indent++;
+				}
+				AppendLineIndented(builder, indent,
+					$"public partial class {mFormName} : Window");
+				AppendLineIndented(builder, indent, "{");
+				indent++;
+				AppendLineIndented(builder, indent, $"public {mFormName}()");
+				AppendLineIndented(builder, indent, "{");
+				indent++;
+				AppendLineIndented(builder, indent, "InitializeComponent();");
+				indent--;
+				AppendLineIndented(builder, indent, "}");
+				indent--;
+				AppendLineIndented(builder, indent, "}");
+				if(mProjectName.Length > 0)
+				{
+					indent--;
+					AppendLineIndented(builder, indent, "}");
+				}
+			}
+			return builder.ToString();
 		}
 		//*-----------------------------------------------------------------------*
 

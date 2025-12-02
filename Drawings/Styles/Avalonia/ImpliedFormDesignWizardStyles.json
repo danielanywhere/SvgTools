@@ -9,8 +9,8 @@
 				"Settings":
 				[
 					{
-						"Name": "FormName",
-						"Value": "frmImpliedFormDesignWizard01"
+						"Name": "CreateBackingFile",
+						"Value": "True"
 					},
 					{
 						"Name": "ProjectName",
