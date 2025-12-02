@@ -4156,11 +4156,6 @@ namespace SvgToolsLib
 					mProjectName = "UnnamedProject";
 				}
 
-				outputNode.Attributes.SetAttribute(
-					"xmlns:app", $"clr-namespace:{mProjectName}");
-				outputNode.Attributes.SetAttribute(
-					"xmlns:vm", $"clr-namespace:{mProjectName}.ViewModels");
-
 				formArea =
 					areas.FindMatch(x => x.Intent == ImpliedDesignIntentEnum.Form);
 				if(formArea?.Node != null)
@@ -4171,11 +4166,6 @@ namespace SvgToolsLib
 				{
 					formName = "UnnamedForm";
 				}
-
-				//outputNode.Attributes.SetAttribute(
-				//	"x:Class", $"{mProjectName}.{formName}");
-				//outputNode.Attributes.SetAttribute(
-				//	"x:DataType", $"app:{formName}");
 
 				if(formArea != null)
 				{
@@ -4305,6 +4295,19 @@ namespace SvgToolsLib
 					}
 				}
 
+				if(mProjectName?.Length > 0 &&
+					mProjectName.ToLower() != "unnammedproject")
+				{
+					outputNode.Attributes.SetAttribute(
+						"xmlns:app", $"clr-namespace:{mProjectName}");
+					outputNode.Attributes.SetAttribute(
+						"xmlns:vm", $"clr-namespace:{mProjectName}.ViewModels");
+					//outputNode.Attributes.SetAttribute(
+					//	"x:Class", $"{mProjectName}.{formName}");
+					//outputNode.Attributes.SetAttribute(
+					//	"x:DataType", $"app:{formName}");
+
+				}
 
 				mFormWidth = Round(GetFormWidth(mSvg.Document), 0);
 				mFormHeight = Round(GetFormHeight(mSvg.Document), 0);
