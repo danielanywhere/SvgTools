@@ -56,6 +56,10 @@ All parameters can be prefixed with either '/' or '--'.
                     SaveWorkingSvg * - Save the current working SVG to
                         the specified output filename.
                         OutputFilename
+                    XamlMergeContents - Merge the contents of two or more XAML
+                        files, producing a single output file.
+                        Properties: CreateBackingFile (bool, optional,
+                                                        default = false)
     /infile     -   Input path and filename only. Wherever infile and outfile
                         are both specified options and the outfile parameter
                         has not been supplied, the value of outfile is assumed

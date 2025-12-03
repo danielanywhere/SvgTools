@@ -2298,18 +2298,21 @@ namespace SvgToolsLib
 					try
 					{
 						File.WriteAllText(item.OutputFile.FullName, content);
-						Trace.WriteLine($" File written: {item.OutputFile.Name}");
+						Trace.WriteLine($" File written: {item.OutputFile.Name}",
+							$"{MessageImportanceEnum.Info}");
 						bSuccess = true;
 					}
 					catch(Exception ex)
 					{
-						Trace.WriteLine($"Error writing file: {ex.Message}");
+						Trace.WriteLine($"Error writing file: {ex.Message}",
+							$"{MessageImportanceEnum.Err}");
 					}
 					if(bSuccess && formDesign.CreateBackingFile)
 					{
 						if(File.Exists($"{item.OutputFile.FullName}.cs"))
 						{
-							Trace.WriteLine(" Backing file already exists. Skipping...");
+							Trace.WriteLine(" Backing file already exists. Skipping...",
+								$"{MessageImportanceEnum.Warn}");
 						}
 						else
 						{
@@ -2320,16 +2323,19 @@ namespace SvgToolsLib
 								{
 									File.WriteAllText($"{item.OutputFile.FullName}.cs", content);
 									Trace.WriteLine(
-										$" Backing file written: {item.OutputFile.Name}.cs");
+										$" Backing file written: {item.OutputFile.Name}.cs",
+										$"{MessageImportanceEnum.Info}");
 								}
 								catch(Exception ex)
 								{
-									Trace.WriteLine($"Error writing backing file: {ex.Message}");
+									Trace.WriteLine($"Error writing backing file: {ex.Message}",
+										$"{MessageImportanceEnum.Err}");
 								}
 							}
 							else
 							{
-								Trace.Write("Warning: Blank backing file not written.");
+								Trace.Write("Warning: Blank backing file not written.",
+									$"{MessageImportanceEnum.Warn}");
 							}
 						}
 					}
@@ -2850,6 +2856,181 @@ namespace SvgToolsLib
 				{
 					Trace.WriteLine($" Error: Input files were not specified.",
 						$"{MessageImportanceEnum.Err}");
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* XamlMergeContents																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Merge the contents of two or more XAML files, producing a single
+		/// output file.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the action item to process.
+		/// </param>
+		private static void XamlMergeContents(SvgActionItem item)
+		{
+			bool bContinue = true;
+			bool bBackingFile = false;
+			StringBuilder builder = new StringBuilder();
+			string content = "";
+			int count = 0;
+			List<HtmlDocument> docs = null;
+			string formName = "";
+			int indent = 0;
+			int index = 0;
+			HtmlNodeItem node = null;
+			string projectName = "";
+			HtmlDocument sourceDoc = null;
+			HtmlNodeItem sourceNode = null;
+			HtmlDocument targetDoc = null;
+			HtmlNodeItem targetNode = null;
+			string text = "";
+
+			if(item != null)
+			{
+				if(CheckElements(item,
+					ActionElementEnum.InputFilename |
+					ActionElementEnum.OutputFilename))
+				{
+					//	Load all of the input documents.
+					docs = new List<HtmlDocument>();
+					foreach(FileInfo fileInfoItem in item.InputFiles)
+					{
+						content = File.ReadAllText(fileInfoItem.FullName);
+						docs.Add(new HtmlDocument(content, true, true));
+					}
+					//	The target document is the first input.
+					count = docs.Count;
+					if(count > 0)
+					{
+						formName = Path.GetFileNameWithoutExtension(item.OutputFile.Name);
+						targetDoc = docs[0];
+						targetNode = targetDoc.Nodes.FindMatch(x =>
+							x.NodeType.ToLower() == "window");
+						if(targetNode != null)
+						{
+							text = targetNode.Attributes.GetValue("xmlns:app");
+							if(text.Length > 0)
+							{
+								projectName = RightOf(text, ":");
+							}
+							bBackingFile =
+								(GetPropertyByName(item, "CreateBackingFile").ToLower() ==
+									"true");
+							if(bBackingFile)
+							{
+								targetNode.Attributes.SetAttribute("x:Class",
+									$"{projectName}.{formName}");
+								targetNode.Attributes.SetAttribute("x:DataType",
+									$"app:{formName}");
+							}
+							else
+							{
+								targetNode.Attributes.Remove("x:Class");
+								targetNode.Attributes.Remove("x:DataType");
+							}
+							node = new HtmlNodeItem()
+							{
+								NodeType = "Grid",
+								SelfClosing = false,
+								Text = "\r\n"
+							};
+							node.Nodes.AddRange(targetNode.Nodes);
+							targetNode.Nodes.Clear();
+							targetNode.Nodes.Add(node);
+							targetNode = node;
+							for(index = 1; index < count; index++)
+							{
+								sourceDoc = docs[index];
+								sourceNode = sourceDoc.Nodes.FindMatch(x =>
+									x.NodeType.ToLower() == "window");
+								foreach(HtmlNodeItem nodeItem in sourceNode.Nodes)
+								{
+									targetNode.Nodes.Add(nodeItem);
+								}
+							}
+						}
+						content = targetDoc.Html;
+						try
+						{
+							File.WriteAllText(item.OutputFile.FullName, content);
+							Trace.WriteLine($" File written: {item.OutputFile.Name}",
+								$"{MessageImportanceEnum.Info}");
+						}
+						catch(Exception ex)
+						{
+							Trace.WriteLine($"Error writing file: {ex.Message}",
+								$"{MessageImportanceEnum.Err}");
+							bContinue = false;
+						}
+						if(bContinue && bBackingFile)
+						{
+							if(File.Exists($"{item.OutputFile.FullName}.cs"))
+							{
+								Trace.WriteLine(" Backing file already exists. Skipping...",
+									$"{MessageImportanceEnum.Warn}");
+							}
+							else
+							{
+								Clear(builder);
+								builder.AppendLine("using Avalonia.Controls;\r\n");
+								if(projectName.Length > 0)
+								{
+									builder.AppendLine($"namespace {projectName}");
+									builder.AppendLine("{");
+									indent++;
+								}
+								AppendLineIndented(builder, indent,
+									$"public partial class {formName} : Window");
+								AppendLineIndented(builder, indent, "{");
+								indent++;
+								AppendLineIndented(builder, indent, $"public {formName}()");
+								AppendLineIndented(builder, indent, "{");
+								indent++;
+								AppendLineIndented(builder, indent, "InitializeComponent();");
+								indent--;
+								AppendLineIndented(builder, indent, "}");
+								indent--;
+								AppendLineIndented(builder, indent, "}");
+								if(projectName.Length > 0)
+								{
+									indent--;
+									AppendLineIndented(builder, indent, "}");
+								}
+								if(builder.Length > 0)
+								{
+									try
+									{
+										File.WriteAllText($"{item.OutputFile.FullName}.cs",
+											builder.ToString());
+										Trace.WriteLine(
+											$" Backing file written: {item.OutputFile.Name}.cs",
+											$"{MessageImportanceEnum.Info}");
+									}
+									catch(Exception ex)
+									{
+										Trace.WriteLine($"Error writing backing file: {ex.Message}",
+											$"{MessageImportanceEnum.Err}");
+									}
+								}
+								else
+								{
+									Trace.Write("Warning: Blank backing file not written.",
+										$"{MessageImportanceEnum.Warn}");
+								}
+							}
+						}
+
+					}
+					else
+					{
+						Trace.WriteLine(" No documents found...",
+							$"{MessageImportanceEnum.Warn}");
+					}
 				}
 			}
 		}
@@ -3932,13 +4113,14 @@ namespace SvgToolsLib
 							if(topItem.Action == SvgActionTypeEnum.Batch)
 							{
 								//	All of the top item information is added to this item.
+								//	Allow working path to be specified at the first level.
 								CopyFields(topItem, this,
 									skipList: new string[]
 									{
 									"mAction", "mConfigFilename",
-									"mCurrentFile", "mParent",
-									"mWorkingPath"
-									});
+									"mCurrentFile", "mParent"
+									},
+									nonBlanks: new string[] { "mWorkingPath" });
 							}
 							else
 							{
@@ -4026,11 +4208,6 @@ namespace SvgToolsLib
 				case SvgActionTypeEnum.ApplyTransforms:
 					ApplyTransforms(this);
 					break;
-				//	TODO: Work out the object and property cheat sheet, and possibly start with GTKSharp first!
-				//case SvgActionTypeEnum.ArtToGtk3:
-				//	break;
-				//case SvgActionTypeEnum.ArtToXaml:
-				//	break;
 				case SvgActionTypeEnum.Batch:
 					//	TODO: Allow multiple Soloed items to run.
 					//	This is a file batch.
@@ -4251,6 +4428,9 @@ namespace SvgToolsLib
 				//	SuffixFilenames(this);
 				//	break;
 				#endregion
+				case SvgActionTypeEnum.XamlMergeContents:
+					XamlMergeContents(this);
+					break;
 				default:
 					Trace.WriteLine($" Error: {Action} not implemented...",
 						$"{MessageImportanceEnum.Err}");

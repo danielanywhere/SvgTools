@@ -64,8 +64,34 @@ Render a widget-styled form in Avalonia XAML (.axaml) from a minimal Implicit Fo
 svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard01.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmSvgToolsWizardPage01.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
 ```
 
+### Implicit Form Design Wizard Form 01
+
 Render a widget-styled form in Avalonia XAML (.axaml) from a minimal Implicit Form Design file with an external configuration file.
 
 ```
 svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard01.svg /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage01.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+```
+
+### Implicit Form Design Wizard Form 02
+
+Render a second widget-styled form in Avalonia XAML (.axaml) from a minimal Implicit Form Design file with an external configuration file.
+
+```
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard02.svg /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage02.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+```
+
+### Implicit Form Design Wizard Join Forms
+
+Combine the contents of the wizard forms into a series of panels under a single window.
+
+```
+svgtools /wait /action:XamlMergeContents /infile:frmImpliedFormDesignWizardPage0?.axaml /outfile:frmImpliedFormDesignWizard.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia /properties:[{'name':'CreateBackingFile','value':'true'}]
+```
+
+### Implicit Form Processing as a Single Batch
+
+Convert the SVG files to Avalonia XAML and merge them into a single, final form file with companion code-backing file for the project.
+
+```
+svgtools /wait /action:Batch /configfile:C:/Files/Dropbox/Develop/Shared/SvgTools/Scripts/SvgToolsBuildWizardForms.json
 ```

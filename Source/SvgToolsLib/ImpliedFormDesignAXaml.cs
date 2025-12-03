@@ -432,7 +432,7 @@ namespace SvgToolsLib
 					node.Attributes.SetAttribute(
 						"RelativePanel.AlignLeftWithPanel", "True");
 					node.Attributes.SetAttribute("Margin",
-						$"{left},{top},0,0");
+						$"{left:0},{top:0},0,0");
 					if(textFormatLocal.FontNameChanged)
 					{
 						node.Attributes.SetAttribute(
@@ -3241,6 +3241,10 @@ namespace SvgToolsLib
 					SelfClosing = !bTheme
 				};
 				SetRenderedControlName(area.Node, result);
+				result.Attributes.SetAttribute(
+					"Width", $"{GetWidth(area.Node):0}");
+				result.Attributes.SetAttribute(
+					"Height", $"{GetHeight(area.Node):0}");
 				text = null;
 				textArea = area.FrontAreas.FirstOrDefault(x =>
 					x.Intent == ImpliedDesignIntentEnum.Text);
@@ -3374,6 +3378,10 @@ namespace SvgToolsLib
 				node.Attributes.SetAttribute("Grid.Column", "0");
 				if(textBoxArea != null)
 				{
+					node.Attributes.SetAttribute(
+						"Width", $"{GetWidth(textBoxArea.Node):0}");
+					node.Attributes.SetAttribute(
+						"Height", $"{GetHeight(textBoxArea.Node):0}");
 					text = null;
 					textArea = textBoxArea.FrontAreas.FirstOrDefault(x =>
 						x.Intent == ImpliedDesignIntentEnum.Text);
@@ -4343,8 +4351,8 @@ namespace SvgToolsLib
 				{
 					outputNode.Attributes.SetAttribute(
 						"xmlns:app", $"clr-namespace:{mProjectName}");
-					outputNode.Attributes.SetAttribute(
-						"xmlns:vm", $"clr-namespace:{mProjectName}.ViewModels");
+					//outputNode.Attributes.SetAttribute(
+					//	"xmlns:vm", $"clr-namespace:{mProjectName}.ViewModels");
 					//outputNode.Attributes.SetAttribute(
 					//	"x:Class", $"{mProjectName}.{formName}");
 					//outputNode.Attributes.SetAttribute(
@@ -4452,33 +4460,18 @@ namespace SvgToolsLib
 					outputNode.Nodes.Insert(0, node);
 				}
 
+				if(mCreateBackingFile)
+				{
+					outputNode.Attributes.SetAttribute(
+						"x:Class", $"{mProjectName}.{mFormName}");
+					outputNode.Attributes.SetAttribute(
+						"x:DataType", $"app:{mFormName}");
+				}
+
 				//	Apply extended styles to the document structure.
 				ApplyStyleExtensions(outputNode);
 
-				////	Set extended styles directly on the window node.
-				//styleLists = mStyleCatalog
-				//	.SelectMany(listCollection => listCollection)
-				//	.Where(list => list.MatchPatterns.Contains(
-				//		"tag:window", StringComparer.OrdinalIgnoreCase)).ToList();
-				//foreach(ShapeStyleExtensionListItem listItem in styleLists)
-				//{
-				//	foreach(ShapeStyleExtensionItem extensionItem in listItem.Extensions)
-				//	{
-				//		if(extensionItem.ExtensionType ==
-				//			ShapeStyleExtensionType.Properties)
-				//		{
-				//			foreach(NameValueNodesItem propertyItem in
-				//				extensionItem.Settings)
-				//			{
-				//				if(propertyItem.Name?.Length > 0)
-				//				{
-				//					outputNode.Attributes.SetAttribute(
-				//						propertyItem.Name, propertyItem.Value);
-				//				}
-				//			}
-				//		}
-				//	}
-				//}
+				outputNode.Text += "\r\n";
 			}
 		}
 		//*-----------------------------------------------------------------------*
@@ -4525,6 +4518,7 @@ namespace SvgToolsLib
 		protected override HtmlNodeItem RenderOutputNode(ControlAreaItem area,
 			RenderTokenItem renderToken)
 		{
+			bool bLineFeed = false;
 			char[] charColon = new char[] { ':' };
 			char[] charComma = new char[] { ',' };
 			char[] charSemicolon = new char[] { ';' };
@@ -4550,24 +4544,30 @@ namespace SvgToolsLib
 				{
 					case ImpliedDesignIntentEnum.Button:
 						result = RenderButton(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.CheckBox:
 						//	A checkbox might have an integrated label or nothing else.
 						result = RenderCheckBox(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.ComboBox:
 						result = RenderComboBox(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.DockPanel:
 						result = RenderDockPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.FlowPanel:
 						result = RenderFlowPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.Form:
 						//	Inner forms are not supported, but their controls can be
 						//	rendered.
 						result = RenderForm(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.FormInformation:
 						//	Form information is not rendered.
@@ -4576,39 +4576,50 @@ namespace SvgToolsLib
 						//	The direct front area items will be the only participants
 						//	in a grid layout.
 						result = RenderGrid(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.GridView:
 						//	Avalonia doesn't explicitly have a GridView control, but
 						//	they do have a DataGrid.
 						result = RenderGridView(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.GroupBox:
 						result = RenderGroupBox(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.HorizontalGrid:
 						result = RenderHorizontalGrid(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.HorizontalScrollPanel:
 						result =
 							RenderHorizontalScrollPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.HorizontalStackPanel:
 						result = RenderHorizontalStackPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.Image:
 						result = RenderImage(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.Label:
 						result = RenderLabel(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.ListBox:
 						result = RenderListBox(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.ListView:
 						result = RenderListView(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.MenuBar:
 						result = RenderMenuBar(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.MenuItem:
 					case ImpliedDesignIntentEnum.MenuPanel:
@@ -4617,70 +4628,94 @@ namespace SvgToolsLib
 						break;
 					case ImpliedDesignIntentEnum.Panel:
 						result = RenderPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.PictureBox:
 						result = RenderImage(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.ProgressBar:
 						result = RenderProgressBar(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.RadioButton:
 						result = RenderRadioButton(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.ScrollPanel:
 						result = RenderScrollPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.Slider:
 						result = RenderSlider(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.SplitPanel:
 						result = RenderSplitPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.StaticPanel:
 						//	For the time-being, this will be a normal panel. If
 						//	we go ahead with statically-positioned things, we'll
 						//	let you know.
 						result = RenderPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.StatusBar:
 						result = RenderStatusBar(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.TabControl:
 						result = RenderTabControl(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.Text:
 						result = RenderTextBlock(area, renderToken);
+						bLineFeed = false;
 						break;
 					case ImpliedDesignIntentEnum.TextBox:
 						result = RenderTextBox(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.TextWithHelper:
 						result = RenderTextWithHelper(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.ToolBar:
 						result = RenderToolBar(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.TreeView:
 						result = RenderTreeView(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.UpDown:
 						result = RenderUpDown(area, renderToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.VerticalGrid:
 						result = RenderVerticalGrid(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.VerticalScrollPanel:
 						result = RenderVerticalScrollPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.VerticalStackPanel:
 						result = RenderVerticalStackPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 					case ImpliedDesignIntentEnum.WidgetPanel:
 						result = RenderWidgetPanel(area, renderToken, childToken);
+						bLineFeed = true;
 						break;
 				}
 				if(result != null)
 				{
+					if(bLineFeed)
+					{
+						result.Text += "\r\n";
+					}
 					ApplyCommonProperties(area, result);
 					if(renderToken.Properties.Exists(x =>
 						x.Name.ToLower() == "relativechild" &&
@@ -4875,7 +4910,7 @@ namespace SvgToolsLib
 						{
 							builder.Append(',');
 						}
-						builder.Append(GetValue(matches[index], "pattern"));
+						builder.Append($"{GetValue(matches[index], "pattern"):0}");
 					}
 					result = builder.ToString();
 					break;

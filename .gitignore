@@ -4,6 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Internal reference
+UpdateSharedFiles.cmd
+
 Docs/InProgress/
 Docs/Reference/
 

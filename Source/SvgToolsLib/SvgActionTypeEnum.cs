@@ -153,7 +153,12 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Sort the symbols alphabetically in the defs section.
 		/// </summary>
-		SortSymbols
+		SortSymbols,
+		/// <summary>
+		/// Merge the contents of two or more XAML files, producing a single
+		/// output file.
+		/// </summary>
+		XamlMergeContents
 	}
 	//*-------------------------------------------------------------------------*
 

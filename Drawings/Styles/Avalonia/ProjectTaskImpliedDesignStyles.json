@@ -1,11 +1,5 @@
 [
 	{
-		"Remarks":
-		[
-			"If this file has a code-behind, you can add ",
-			"x:Class={ProjectName}.{FormName} and ",
-			"x:DataType=app:{FormName}"
-		],
 		"Comment": "Window dressing.",
 		"Selectors": [ "tag:Window" ],
 		"Extensions":

@@ -236,7 +236,8 @@ namespace SvgToolsApp
 				keyLength = AgnosticArgStart(lowerArg, key);
 				if(keyLength > 0)
 				{
-					prg.ActionItem.InputFilename = arg.Substring(keyLength);
+					prg.ActionItem.InputNames.Add(arg.Substring(keyLength));
+					//prg.ActionItem.InputFilename = arg.Substring(keyLength);
 					continue;
 				}
 				key = "option:";

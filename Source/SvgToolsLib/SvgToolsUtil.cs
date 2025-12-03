@@ -1388,13 +1388,18 @@ namespace SvgToolsLib
 		/// <param name="skipList">
 		/// Optional list of field names to skip.
 		/// </param>
+		/// <param name="nonBlanks">
+		/// Optional list of field names to write if non-blank.
+		/// </param>
 		public static void CopyFields<T>(T source, T target,
-			string[] skipList = null) where T : class
+			string[] skipList = null,
+			string[] nonBlanks = null) where T : class
 		{
 			BindingFlags bindingFlagsF =
 				BindingFlags.Instance | BindingFlags.NonPublic;
 			BindingFlags bindingFlagsP =
 				BindingFlags.Instance | BindingFlags.Public;
+			bool bWrite = true;
 			Type elementType = null;
 			FieldInfo[] fields = typeof(T).GetFields(bindingFlagsF);
 			MethodInfo addMethod = null;
@@ -1430,7 +1435,18 @@ namespace SvgToolsLib
 					}
 					else
 					{
-						field.SetValue(target, workingValue);
+						if(nonBlanks?.Contains(field.Name) == true)
+						{
+							bWrite = (workingValue?.ToString().Length > 0);
+						}
+						else
+						{
+							bWrite = true;
+						}
+						if(bWrite)
+						{
+							field.SetValue(target, workingValue);
+						}
 					}
 				}
 			}
@@ -3853,6 +3869,44 @@ namespace SvgToolsLib
 				{
 					//	The return value is narrower than the source.
 					result = source.Substring(source.Length - length, length);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	RightOf																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the portion of the caller's string to the right of the last
+		/// instance of the specified pattern.
+		/// </summary>
+		/// <param name="value">
+		/// The string value to inspect.
+		/// </param>
+		/// <param name="pattern">
+		/// The pattern to find.
+		/// </param>
+		/// <returns>
+		/// The portion of the string to the right of the last instance of the
+		/// specified pattern, if found. Otherwise, the original string if
+		/// the caller's value was non-null. Otherwise, an empty string.
+		/// </returns>
+		public static string RightOf(string value, string pattern)
+		{
+			string result = "";
+
+			if(value?.Length > 0)
+			{
+				result = value;
+				if(pattern?.Length > 0)
+				{
+					if(value.LastIndexOf(pattern) > -1)
+					{
+						result =
+							value.Substring(value.LastIndexOf(pattern) + pattern.Length);
+					}
 				}
 			}
 			return result;
