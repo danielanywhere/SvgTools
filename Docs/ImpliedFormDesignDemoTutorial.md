@@ -13,7 +13,7 @@ This tutorial took much longer to write, and might even take longer to read, tha
 <p>&nbsp;</p>
 
 ## Create and Configure the Application
-This application is created on Linux in the community version of **JetBrains Rider** using the **Avalonia Rider** plugin, but could be created using a similar process on Windows in the community version of Microsoft Visual Studio as well.
+The demo application is created on Linux in the community version of **JetBrains Rider** using the **Avalonia Rider** plugin, but could be created using a similar process on Windows in the community version of Microsoft Visual Studio as well.
 
 For more information about configuring **JetBrains Rider** to host **Avalonia UI** projects, please see <https://docs.avaloniaui.net/docs/reference/jetbrains-rider-ide/jetbrains-rider-setup>
 
