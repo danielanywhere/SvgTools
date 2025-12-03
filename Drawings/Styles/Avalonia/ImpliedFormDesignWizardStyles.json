@@ -1,5 +1,11 @@
 [
 	{
+		"Remarks":
+		[
+			"UnnamedPanelName could be used in this context, but since this file is used on ",
+			"all of the wizard pages, it will be specified on the command-line Properties ",
+			"parameter."
+		],
 		"Comment": "Form configuration.",
 		"MatchPatterns": [ "tag:FormInformation" ],
 		"Extensions":

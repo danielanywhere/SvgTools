@@ -4260,6 +4260,13 @@ namespace SvgToolsLib
 											break;
 									}
 									break;
+								case "unnamedpanelname":
+									//	Name for the automatically created panel.
+									if(mUnnamedPanelName.Length == 0)
+									{
+										mUnnamedPanelName = attributeItem.Value;
+									}
+									break;
 								case "usebackgroundcolor":
 									//	Value indicating whether to use background colors on
 									//	dropped objects by default on this form.
@@ -4321,6 +4328,13 @@ namespace SvgToolsLib
 									outputNode.Attributes.SetAttribute(
 										"Background", "{DynamicResource MaterialPaperBrush}");
 									break;
+							}
+							break;
+						case "unnamedpanelname":
+							//	Name for the automatically created panel.
+							if(mUnnamedPanelName.Length == 0)
+							{
+								mUnnamedPanelName = propertyItem.Value;
 							}
 							break;
 						case "usebackgroundcolor":
@@ -4403,8 +4417,15 @@ namespace SvgToolsLib
 						{
 							NodeType = "rect"
 						};
-						node.Attributes.SetAttribute(
-							"id", $"rect{Right(Guid.NewGuid().ToString("N"), 8)}");
+						if(mUnnamedPanelName.Length == 0)
+						{
+							node.Attributes.SetAttribute(
+								"id", $"rect{Right(Guid.NewGuid().ToString("N"), 8)}");
+						}
+						else
+						{
+							node.Attributes.SetAttribute("id", mUnnamedPanelName);
+						}
 
 						node.Attributes.SetAttribute(
 							"x", Round(formArea.X, 0).ToString());

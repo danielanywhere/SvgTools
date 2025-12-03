@@ -2292,7 +2292,8 @@ namespace SvgToolsLib
 					}
 					formDesign = new ImpliedFormDesignAXaml(doc, styleCatalog)
 					{
-						OutputFile = item.OutputFile
+						OutputFile = item.OutputFile,
+						UnnamedPanelName = GetPropertyByName(item, "UnnamedPanelName")
 					};
 					content = formDesign.ToXaml();
 					try

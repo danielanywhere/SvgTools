@@ -7,12 +7,26 @@
 		{
 			"Action": "ImpliedDesignToAvaloniaXaml",
 			"InputFilename": "ImpliedFormDesignWizard01.svg",
-			"OutputFilename": "../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage01.axaml"
+			"OutputFilename": "../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage01.axaml",
+			"Properties":
+			[
+				{
+					"Name": "UnnamedPanelName",
+					"Value": "Page1"
+				}
+			]
 		},
 		{
 			"Action": "ImpliedDesignToAvaloniaXaml",
 			"InputFilename": "ImpliedFormDesignWizard02.svg",
-			"OutputFilename": "../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage02.axaml"
+			"OutputFilename": "../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage02.axaml",
+			"Properties":
+			[
+				{
+					"Name": "UnnamedPanelName",
+					"Value": "Page2"
+				}
+			]
 		},
 		{
 			"Action": "XamlMergeContents",

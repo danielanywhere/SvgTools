@@ -3328,6 +3328,28 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	UnnamedPanelName																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="UnnamedPanelName">UnnamedPanelName</see>.
+		/// </summary>
+		protected string mUnnamedPanelName = "";
+		/// <summary>
+		/// Get/Set the name of the unnamed container panel, if one is created.
+		/// </summary>
+		/// <remarks>
+		/// If this value is not set the default name for an automatically created
+		/// background panel will be a globally unique value in the pattern of
+		/// rect[a-f0-9]{8}.
+		/// </remarks>
+		public string UnnamedPanelName
+		{
+			get { return mUnnamedPanelName; }
+			set { mUnnamedPanelName = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	UseBackgroundColor																										*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
