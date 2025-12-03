@@ -113,7 +113,7 @@ We are going to merge the base forms from above to create a single main form for
  - Use a sample command line similar to the following, making any adjustments necessary so it will work on your own machine, to merge the base XAML forms into a single, new composite form.
 
 ```
-svgtools /wait /action:XamlMergeContents /infile:frmImpliedFormDesignWizardPage01.axaml /infile:frmImpliedFormDesignWizardPage02.axaml /outfile:frmImpliedFormDesignWizard.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia /properties:[{'name':'CreateBackingFile','value':'true'}]
+svgtools /wait /action:XamlMergeContents /infile:frmImpliedFormDesignWizardPage01.axaml /infile:frmImpliedFormDesignWizardPage02.axaml /outfile:frmImpliedFormDesignWizard.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia "/properties:[{'name':'CreateBackingFile','value':'true'}]"
 ```
 
 In the above command, note that the input filename (infile) could also be specified just once with a '?' wildcard in the second digit's position, indicating that any character is valid for that position. When explicitly specifying each filename, however, we have full control over the order in which those forms appear in the output.

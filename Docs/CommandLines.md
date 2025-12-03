@@ -85,7 +85,7 @@ svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWiza
 Combine the contents of the wizard forms into a series of panels under a single window.
 
 ```
-svgtools /wait /action:XamlMergeContents /infile:frmImpliedFormDesignWizardPage0?.axaml /outfile:frmImpliedFormDesignWizard.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia /properties:[{'name':'CreateBackingFile','value':'true'}]
+svgtools /wait /action:XamlMergeContents /infile:frmImpliedFormDesignWizardPage0?.axaml /outfile:frmImpliedFormDesignWizard.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia "/properties:[{'name':'CreateBackingFile','value':'true'}]"
 ```
 
 ### Implicit Form Processing as a Single Batch
