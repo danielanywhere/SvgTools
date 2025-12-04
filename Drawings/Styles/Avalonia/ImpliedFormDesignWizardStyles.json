@@ -3,7 +3,7 @@
 		"Remarks":
 		[
 			"UnnamedPanelName could be used in this context, but since this file is used on ",
-			"all of the wizard pages, it will be specified on the command-line Properties ",
+			"all of the wizard pages, it should be specified on the command-line Properties ",
 			"parameter."
 		],
 		"Comment": "Form configuration.",
@@ -21,6 +21,23 @@
 					{
 						"Name": "ProjectName",
 						"Value": "ImpliedFormDesignWizard"
+					}
+				]
+			}
+		]
+	},
+	{
+		"Comment": "Target Window properties.",
+		"MatchPatterns": [ "tag:Window" ],
+		"Extensions":
+		[
+			{
+				"ExtensionType": "Properties",
+				"Settings":
+				[
+					{
+						"Name": "Loaded",
+						"Value": "window_Loaded"
 					}
 				]
 			}
@@ -55,6 +72,27 @@
 					{
 						"Name": "IsVisible",
 						"Value": "False"
+					}
+				]
+			}
+		]
+	},
+	{
+		"Comment": "TextBox default font.",
+		"MatchPatterns": [ "tag:TextBox" ],
+		"Extensions":
+		[
+			{
+				"ExtensionType": "DefaultProperties",
+				"Settings":
+				[
+					{
+						"Name": "FontName",
+						"Value": "Roboto"
+					},
+					{
+						"Name": "FontSize",
+						"Value": "20"
 					}
 				]
 			}

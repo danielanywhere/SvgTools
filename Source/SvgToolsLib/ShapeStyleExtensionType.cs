@@ -35,6 +35,11 @@ namespace SvgToolsLib
 		/// </summary>
 		None = 0,
 		/// <summary>
+		/// Property name/value pairs to be directly placed upon the target node,
+		/// but only when that property has not yet been specified.
+		/// </summary>
+		DefaultProperties,
+		/// <summary>
 		/// Items panel customization.
 		/// </summary>
 		ItemsPanel,

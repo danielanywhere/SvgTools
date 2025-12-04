@@ -911,6 +911,18 @@ namespace SvgToolsLib
 							{
 								switch(extensionItem.ExtensionType)
 								{
+									case ShapeStyleExtensionType.DefaultProperties:
+										foreach(NameValueNodesItem propertyItem in
+											extensionItem.Settings)
+										{
+											if(propertyItem.Name.Length > 0 &&
+												!node.Attributes.HasAttribute(propertyItem.Name))
+											{
+												node.Attributes.SetAttribute(
+													propertyItem.Name, propertyItem.Value);
+											}
+										}
+										break;
 									case ShapeStyleExtensionType.ItemsPanel:
 										lowerName = $"{node.NodeType.ToLower()}.itemspanel";
 										childNode = node.Nodes.FirstOrDefault(x =>
