@@ -25,6 +25,40 @@
 				]
 			}
 		]
+	},
+	{
+		"Comment": "Page 1 starting properties.",
+		"MatchPatterns": [ "name:Page1" ],
+		"Extensions":
+		[
+			{
+				"ExtensionType": "Properties",
+				"Settings":
+				[
+					{
+						"Name": "IsVisible",
+						"Value": "True"
+					}
+				]
+			}
+		]
+	},
+	{
+		"Comment": "Page 2 starting properties.",
+		"MatchPatterns": [ "name:Page2" ],
+		"Extensions":
+		[
+			{
+				"ExtensionType": "Properties",
+				"Settings":
+				[
+					{
+						"Name": "IsVisible",
+						"Value": "False"
+					}
+				]
+			}
+		]
 	}
 ]
 
