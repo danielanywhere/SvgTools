@@ -904,7 +904,7 @@ namespace SvgToolsLib
 				{
 					foreach(ShapeStyleExtensionListItem listItem in listCollectionItem)
 					{
-						if(IsSelectorMatch(node, listItem.MatchPatterns))
+						if(IsSelectorMatch(node, listItem))
 						{
 							foreach(ShapeStyleExtensionItem extensionItem in
 								listItem.Extensions)

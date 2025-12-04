@@ -2925,31 +2925,36 @@ namespace SvgToolsLib
 		/// <param name="node">
 		/// Reference to the node to match.
 		/// </param>
-		/// <param name="selectors">
-		/// Reference to the collection of selectors to apply.
+		/// <param name="extensionList">
+		/// Reference to the extension list to match.
 		/// </param>
 		/// <returns>
-		/// True if one or more of the selector patterns match the supplied node.
-		/// Otherwise, false.
+		/// True if the extension list's MatchPatterns property matches the
+		/// supplied node. Otherwise, false.
 		/// </returns>
 		public static bool IsSelectorMatch(HtmlNodeItem node,
-			List<string> selectors)
+			ShapeStyleExtensionListItem extensionList)
 		{
 			List<string> contents = new List<string>();
 			Match match = null;
+			int matchCount = 0;
 			string pattern = "";
+			List<string> patterns = null;
+			int patternCount = 0;
 			string qualifier = "";
 			bool result = false;
 			char[] space = new char[] { ' ' };
 
-			if(node != null && selectors?.Count > 0)
+			if(node != null && extensionList?.MatchPatterns.Count > 0)
 			{
 				//if(node.Attributes.GetValue("x:Name") == "rect8" &&
 				//	selectors[0] == "name:statMainBorder")
 				//{
 				//	Trace.WriteLine("ImpliedFormDesign.IsSelectorMatch: Break here...");
 				//}
-				foreach(string selectorItem in selectors)
+				patterns = extensionList.MatchPatterns;
+				patternCount = patterns.Count;
+				foreach(string selectorItem in patterns)
 				{
 					match = Regex.Match(selectorItem, ResourceMain.rxQualifiedSelector);
 					if(match.Success)
@@ -2992,16 +2997,28 @@ namespace SvgToolsLib
 							}
 							if(result)
 							{
-								break;
+								matchCount++;
+								if(extensionList.MatchType == ShapeStyleMatchType.Or)
+								{
+									break;
+								}
 							}
 						}
 					}
 					if(result)
 					{
-						break;
+						if(extensionList.MatchType == ShapeStyleMatchType.Or)
+						{
+							break;
+						}
 					}
 				}
 			}
+			result =
+				((extensionList.MatchType == ShapeStyleMatchType.And &&
+					matchCount == patternCount) ||
+				(extensionList.MatchType == ShapeStyleMatchType.Or &&
+					matchCount > 0));
 			return result;
 		}
 		//*-----------------------------------------------------------------------*

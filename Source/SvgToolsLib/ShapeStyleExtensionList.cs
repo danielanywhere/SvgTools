@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace SvgToolsLib
 {
@@ -118,42 +119,24 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		////*-----------------------------------------------------------------------*
-		////*	Selector																															*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Private member for <see cref="Selector">Selector</see>.
-		///// </summary>
-		//private string mSelector = "";
-		///// <summary>
-		///// Get/Set the selector for this item.
-		///// </summary>
-		//[JsonProperty(Order = 2)]
-		//public string Selector
-		//{
-		//	get { return mSelector; }
-		//	set { mSelector = value; }
-		//}
-		////*-----------------------------------------------------------------------*
-
-		////*-----------------------------------------------------------------------*
-		////*	ShapeNames																														*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Private member for <see cref="ShapeNames">ShapeNames</see>.
-		///// </summary>
-		//private List<string> mShapeNames = new List<string>();
-		///// <summary>
-		///// Get the list of shape names to which this list of extensions
-		///// applies.
-		///// </summary>
-		//[JsonProperty(Order = 1)]
-		//public List<string> ShapeNames
-		//{
-		//	get { return mShapeNames; }
-		//}
-		////*-----------------------------------------------------------------------*
-
+		//*-----------------------------------------------------------------------*
+		//*	MatchType																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="MatchType">MatchType</see>.
+		/// </summary>
+		private ShapeStyleMatchType mMatchType = ShapeStyleMatchType.Or;
+		/// <summary>
+		/// Get/Set the type of match to make in the MatchPatterns property.
+		/// </summary>
+		[JsonConverter(typeof(StringEnumConverter))]
+		[JsonProperty(Order = 2)]
+		public ShapeStyleMatchType MatchType
+		{
+			get { return mMatchType; }
+			set { mMatchType = value; }
+		}
+		//*-----------------------------------------------------------------------*
 
 	}
 	//*-------------------------------------------------------------------------*
