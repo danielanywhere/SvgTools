@@ -2945,7 +2945,9 @@ namespace SvgToolsLib
 			bool result = false;
 			char[] space = new char[] { ' ' };
 
-			if(node != null && extensionList?.MatchPatterns.Count > 0)
+			if(node != null &&
+				extensionList.MatchType != ShapeStyleMatchType.Always &&
+				extensionList?.MatchPatterns.Count > 0)
 			{
 				//if(node.Attributes.GetValue("x:Name") == "rect8" &&
 				//	selectors[0] == "name:statMainBorder")
@@ -3015,6 +3017,8 @@ namespace SvgToolsLib
 				}
 			}
 			result =
+				(node != null &&
+				extensionList.MatchType == ShapeStyleMatchType.Always) ||
 				((extensionList.MatchType == ShapeStyleMatchType.And &&
 					matchCount == patternCount) ||
 				(extensionList.MatchType == ShapeStyleMatchType.Or &&

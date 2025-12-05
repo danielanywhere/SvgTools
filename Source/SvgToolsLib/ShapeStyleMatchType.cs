@@ -36,6 +36,10 @@ namespace SvgToolsLib
 		/// </summary>
 		None = 0,
 		/// <summary>
+		///	Every node matches.
+		/// </summary>
+		Always,
+		/// <summary>
 		/// All of the values in the property must match.
 		/// </summary>
 		And,
