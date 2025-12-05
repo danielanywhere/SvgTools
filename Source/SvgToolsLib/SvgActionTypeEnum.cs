@@ -155,6 +155,11 @@ namespace SvgToolsLib
 		/// </summary>
 		SortSymbols,
 		/// <summary>
+		/// Output a manifest of the objects, and optionally, the properties of
+		/// a XAML file.
+		/// </summary>
+		XamlManifest,
+		/// <summary>
 		/// Merge the contents of two or more XAML files, producing a single
 		/// output file.
 		/// </summary>

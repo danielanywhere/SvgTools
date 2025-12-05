@@ -95,3 +95,11 @@ Convert the SVG files to Avalonia XAML and merge them into a single, final form 
 ```
 svgtools /wait /action:Batch /configfile:C:/Files/Dropbox/Develop/Shared/SvgTools/Scripts/SvgToolsBuildWizardForms.json
 ```
+
+### XAML File Manifest
+
+Output a list of objects, and optionally properties, found in the specified XAML file.
+
+```
+svgtools /wait /action:XamlManifest /infile:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizard.axaml /outfile:C:/Temp/XAMLManifest-frmImpliedFormDesignWizard.txt "/properties:[{'name':'IncludeProperties','value':'True'}]"
+```

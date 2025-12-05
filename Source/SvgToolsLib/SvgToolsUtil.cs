@@ -2912,6 +2912,39 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetLineIndented																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Get the supplied text line to the provided string builder, indenting
+		/// the beginning of the line by the specified number of tabs.
+		/// </summary>
+		/// <param name="indent">
+		/// Number of tab characters to insert at the beginning of the line.
+		/// </param>
+		/// <param name="text">
+		/// The text to write on the current line.
+		/// </param>
+		/// <param name="indentCharacter">
+		/// The character to use as the indent.
+		/// </param>
+		public static string GetLineIndented(int indent,
+			string text, char indentCharacter = '\t')
+		{
+			StringBuilder builder = new StringBuilder();
+
+			if(indent > 0)
+			{
+				builder.Append(new string(indentCharacter, indent));
+			}
+			if(text?.Length >= 0)
+			{
+				builder.Append(text);
+			}
+			return builder.ToString();
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetNodeWithAttributes																									*
 		//*-----------------------------------------------------------------------*
 		/// <summary>

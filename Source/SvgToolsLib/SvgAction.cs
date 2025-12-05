@@ -2863,6 +2863,187 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* XamlManifest																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Output a manifest of the objects, and optionally, the properties of
+		/// a XAML file.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the action item to process.
+		/// </param>
+		/// <remarks>
+		/// <para>
+		/// The following properties apply:
+		/// </para>
+		/// <list type="bullet">
+		/// <item>IncludeProperties. True or False. If True, the properties
+		/// of each object will be listed.</item>
+		/// </list>
+		/// </remarks>
+		private static void XamlManifest(SvgActionItem item)
+		{
+			bool bOutputFile = false;
+			bool bProperties = false;
+			StringBuilder builder = null;
+			string content = "";
+			HtmlDocument doc = null;
+			int indent = 1;
+			string line = "";
+			HtmlNodeItem windowNode = null;
+
+			if(item != null)
+			{
+				if(CheckElements(item, ActionElementEnum.InputFilename))
+				{
+					//	Load the input document.
+					content = File.ReadAllText(item.InputFiles[0].FullName);
+					doc = new HtmlDocument(content, true, true);
+					if(doc != null)
+					{
+						windowNode = doc.Nodes.FindMatch(x =>
+							x.NodeType.ToLower() == "window");
+						if(windowNode != null)
+						{
+							bProperties =
+								(GetPropertyByName(item, "IncludeProperties").ToLower() ==
+									"true");
+							bOutputFile = (item.OutputFile != null);
+							if(bOutputFile)
+							{
+								builder = new StringBuilder();
+							}
+							line = GetLineIndented(indent,
+								"->Window, " +
+								$"Title:{windowNode.Attributes.GetValue("Title")}", '-');
+							Trace.WriteLine(line);
+							if(bOutputFile)
+							{
+								builder.AppendLine(line);
+							}
+							indent++;
+							if(bProperties)
+							{
+								indent++;
+								foreach(HtmlAttributeItem attributeItem in
+									windowNode.Attributes)
+								{
+									line = GetLineIndented(indent,
+										$"|{attributeItem.Name}| {attributeItem.Value}", ' ');
+									Trace.WriteLine(line);
+									if(bOutputFile)
+									{
+										builder.AppendLine(line);
+									}
+								}
+								if(windowNode.Text.Trim().Length > 0)
+								{
+									line = GetLineIndented(indent,
+										$"|InnerText| {windowNode.Text.Trim()}", ' ');
+									Trace.WriteLine(line);
+									if(bOutputFile)
+									{
+										builder.AppendLine(line);
+									}
+								}
+								indent--;
+							}
+							XamlManifestNodes(windowNode, bProperties, builder, indent);
+
+							Trace.WriteLine("");
+
+							if(bOutputFile)
+							{
+								builder.AppendLine();
+								File.WriteAllText(item.OutputFile.FullName,
+									builder.ToString());
+								Trace.WriteLine($"File written: {item.OutputFile.Name}",
+									$"{MessageImportanceEnum.Info}");
+							}
+						}
+						else
+						{
+							Trace.WriteLine("Error: Window node not found.",
+								$"{MessageImportanceEnum.Err}");
+						}
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* XamlManifestNodes																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Write the child nodes of the provided node to the console and,
+		/// optionally, to the supplied builder, using the specified line indent.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node whose child nodes will be documented.
+		/// </param>
+		/// <param name="includeProperties">
+		/// Value indicating whether to include properties in the the output.
+		/// </param>
+		/// <param name="builder">
+		/// Optional string builder to which lines will be written.
+		/// </param>
+		/// <param name="indent">
+		/// The indent at which to begin each line.
+		/// </param>
+		private static void XamlManifestNodes(HtmlNodeItem node,
+			bool includeProperties, StringBuilder builder, int indent)
+		{
+			string line = "";
+
+			if(node?.Nodes.Count > 0)
+			{
+				foreach(HtmlNodeItem nodeItem in node.Nodes)
+				{
+					line = GetLineIndented(indent,
+						$"->{nodeItem.NodeType}, " +
+						$"Name:{nodeItem.Attributes.GetValue("x:Name")}", '-');
+					Trace.WriteLine("");
+					Trace.WriteLine(line);
+					if(builder != null)
+					{
+						builder.AppendLine();
+						builder.AppendLine(line);
+					}
+					indent++;
+					if(includeProperties)
+					{
+						indent++;
+						foreach(HtmlAttributeItem attributeItem in
+							nodeItem.Attributes)
+						{
+							line = GetLineIndented(indent,
+								$"|{attributeItem.Name}| {attributeItem.Value}", ' ');
+							Trace.WriteLine(line);
+							if(builder != null)
+							{
+								builder.AppendLine(line);
+							}
+						}
+						if(nodeItem.Text.Trim().Length > 0)
+						{
+							line = GetLineIndented(indent,
+								$"|InnerText| {nodeItem.Text.Trim()}", ' ');
+							Trace.WriteLine(line);
+							if(includeProperties)
+							{
+								builder.AppendLine(line);
+							}
+						}
+						indent--;
+					}
+					XamlManifestNodes(nodeItem, includeProperties, builder, indent);
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* XamlMergeContents																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -4429,6 +4610,9 @@ namespace SvgToolsLib
 				//	SuffixFilenames(this);
 				//	break;
 				#endregion
+				case SvgActionTypeEnum.XamlManifest:
+					XamlManifest(this);
+					break;
 				case SvgActionTypeEnum.XamlMergeContents:
 					XamlMergeContents(this);
 					break;

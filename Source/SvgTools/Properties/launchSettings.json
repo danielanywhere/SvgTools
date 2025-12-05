@@ -2,7 +2,7 @@
   "profiles": {
     "SvgTools": {
       "commandName": "Project",
-      "commandLineArgs": "svgtools /wait /action:Batch /configfile:C:/Files/Dropbox/Develop/Shared/SvgTools/Scripts/SvgToolsBuildWizardForms.json"
+      "commandLineArgs": "svgtools /wait /action:XamlManifest /infile:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizard.axaml /outfile:C:/Temp/XAMLManifest-frmImpliedFormDesignWizard.txt \"/properties:[{'name':'IncludeProperties','value':'True'}]\""
     },
     "WSL": {
       "commandName": "WSL",
