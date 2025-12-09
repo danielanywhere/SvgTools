@@ -6,9 +6,9 @@
 
 The notion of implied form design involves giving you the ability to draw normal art in your favorite vector editor then to convert it directly to a working application GUI with very little effort, effectively separating the roles of artist from front-end developer, simultaneously giving each of those roles drastically increased focus on their own unique tasks, and retaining the original art as the maintainable center of visual truth during the evolution cycle.
 
-Rather than spending weeks and months on declarative, code based approaches like those dictated by XML and XAML, without any decent visual editor, and where the smallest creative change decision can set you back by hours or even days, you can now spend most of your design time in the visual SVG editor\* easily producing reliable, flexible art as normal SVG files that, once saved, are piped directly into to the development team's application project and related compiler.
+Rather than spending weeks and months on declarative, code based approaches like those dictated by XML and XAML, without any decent visual editor, and where the smallest creative change decision can set you back by hours or even days, you can now spend most of your design time in the visual SVG editor\* easily producing reliable, flexible art as normal SVG files that, once saved, are piped directly into the development team's application project and related compiler.
 
-The basic goal of Implied Form Design is that if you can at least indicate what you want on your form, then SvgTools can give you that actual, working GUI form that compiles successfully into a desktop application. There shouldn't be any other requirements other than when you feel like becoming more specific about various details. In other words, you imply what you want, and when the conversion runs, it infers a working form from your indications.
+The basic goal of Implied Form Design is that if you can at least indicate what you want on your form, then SvgTools can give you that actual, working GUI form that compiles successfully into a desktop application. There shouldn't be any other requirements than when you happen to feel like becoming more specific about various details. In other words, you imply what you want, and when the conversion runs, it infers a working form from your indications.
 
 <p>&nbsp;</p>
 
@@ -20,7 +20,7 @@ Among others, the Implied Form Design approach can solve the following problems.
 
 #### The Code-First Method Problem
 
-Over the past two decades, the software industry has drifted steadily, and now almost unavoidably, into what can only be described as a **code-first** approach to user interface creation. In practice, though, code-first is a gentle euphemism. A more honest and accurate description is that today's frameworks enforce a **code-only** tactic for UI design. The canonical form of any user interface is now invariably some variant of XML, XAML, JSX, HTML/CSS, or another declarative syntax. Visual composition is no longer something you design, it's something you author as text.
+Over the past two decades, the software industry has drifted steadily, and now almost unavoidably, into what can only be described as a **code-first** approach to user interface creation. In practice, though, code-first is a gentle euphemism. A more honest and accurate description is that today's frameworks enforce a **code-only** tactic for UI design. The canonical form of any user interface is now invariably some variant of XML, XAML, HTML/CSS, or another declarative syntax. Visual composition is no longer something you design, it's something you author as text.
 
 Even the most advanced UI frameworks reveal this bias. Many provide a preview window, but those previews often serve only as thin veneers over the underlying markup. They lag behind, render inconsistently, or fail outright unless the code is fully valid and correctly structured. Only a handful of frameworks make any meaningful attempt to offer visual-first editing tools, and among those, even fewer allow designers to actually begin with a blank visual canvas, which is the natural starting point for any creative visual medium. In nearly all of today's systems, the visual editor is treated not as the primary workspace but as an optional, secondary convenience. Possibly something you consult at the end to verify that the wall of code produced the form you imagined.
 
@@ -52,11 +52,11 @@ In essence, the Excluded Artist Problem describes the growing disconnection betw
 
 #### The Structure Before Expression Problem
 
-Even in the cases where some visual editing capabilities for GUI design have been produced and made available to the public, they fail the artist horribly when it comes to the fundamental limitation in today's GUI application design stems from what can be called the **Structure Before Expression Problem**. This problem arises most visibly in XML-, XAML-, and other declarative-layout frameworks, where visual design must be articulated through hierarchical containment structures before any expressive, creative, or compositional decisions can be made.
+Even in the cases where some visual editing capabilities for GUI design have been produced and made available to the public, they fail the artist horribly when it comes to the fundamental limitation in today's GUI application design which stems from what can be called the **Structure Before Expression Problem**. This problem arises most visibly in XML, XAML, and other declarative-layout frameworks, where visual design must be articulated through hierarchical containment structures before any expressive, creative, or compositional decisions can be made.
 
 Declarative layout languages achieve their capabilities primarily through nested containment, where every visible element must live inside a container, which itself lives inside another container, and so on. While this approach has technical coherence, is easy to compile, and at the very highest level, may feel passably aligned with how we think of a "page" containing its elements, it profoundly fails to map cleanly onto how human designers conceptualize visual composition.
 
-Even at that top level, the containment metaphor is already strained. Human designers don't mentally begin by placing everything inside of a box called "page". Instead, they think spatially, compositionally, and relationally. Objects exist in a 2D, or other conceptual space, not because they are children of a node, but because they have position, relationship, intention, and visual meaning. In practice, elements frequently violate or transcend boundaries; bleeding, overlapping, floating, or existing in conceptual space outside the so-called "frame", and all of which, all declarative hierarchies struggle to represent.
+Even at that top level, the containment metaphor is already strained. Human designers don't mentally begin by placing everything inside of a box called "page". Instead, they think spatially, compositionally, and relationally. Objects exist in a 2D, or other conceptual space, not because they are children of a node, but because they have position, relationship, intention, and visual meaning. In practice, elements frequently violate or transcend boundaries; bleeding, overlapping, floating, or existing in conceptual space outside the so-called "frame", all of which, declarative hierarchies struggle to represent.
 
 However, the real breakdown occurs as the required structure becomes deeper and more rigid. Modern interfaces often contain multiple layers of grids, stacks, panels, and alignment containers. In XML/XAML paradigms, which constitute the basis for almost all contemporary GUI development platforms, this means every alteration, no matter how visually small, must be expressed through structural rearrangement of nested nodes. The designer's creative expression becomes constrained not by visual intent but by the strictures of a hierarchical syntax.
 
@@ -80,7 +80,7 @@ Following are some of the benefits afforded by the Implied Form Design process.
 
 UI is allowed to begin with freeform expression. Artists are able to place elements intuitively, as though they were painting on a canvas, without needing to define containers, hierarchies, or layout rules upfront. In other words, the artist is allowed complete freedom to let the design emerge organically, where structure follows creativity rather than preceding it.
 
-This approach also maintains consideration for the artist's permanent participation throughout the evolution of the application, so that any visual changes needing to be made for the next version of application can be initiated directly by the artist, without requiring that individual to make any changes to the file, in it's interpreted state, before getting started.
+This approach also maintains consideration for the artist's permanent participation throughout the evolution of the application, so that any visual changes needing to be made for the next version of the application can be initiated directly by the artist, without requiring that individual to make any changes to the file, in it's interpreted state, before getting started.
 
 ####  Visual-First, Code-Second
 
@@ -130,7 +130,7 @@ Implied Form Design is an iterative process that involves the following speciali
 -   **Translator**. Often a person in an IT-style role, who requires very little artistic or development skill, but is able to organize and manage files and identities. In teams of two, the application developer is able to cover the translation steps as a separate task.
 -   **Application developer**. The developer of the functional target application.
 
-<center><img src="Images/Figure-ArtTranslationLogicProcess.png" width="250" alt="Implied Form Design Process" /></center>
+<p style="text-align:center;"><img src="Images/Figure-ArtTranslationLogicProcess.png" width="250" alt="Implied Form Design Process" /></p>
 
 ### Single Role GUI Application Development
 
@@ -160,7 +160,7 @@ This version only supports output to Avalonia XAML, a cross-platform .NET GUI pl
 
 ### More Information
 
-If you plan to use the SvgTools impled form design processes, please feel free to read the user manual on this website at \[Docs/ImpliedFormDesign-UserManual.pdf\](https://danielanywhere.github.io/SvgTools/ImpliedFormDesign-UserManual.pdf)
+If you plan to use the SvgTools implied form design processes, please feel free to read the user manual on this website at [Docs/ImpliedFormDesign-UserManual.pdf](https://danielanywhere.github.io/SvgTools/ImpliedFormDesign-UserManual.pdf).
 
 The general README for SvgTools follows.
 

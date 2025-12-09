@@ -56,7 +56,7 @@
 	{
 		"Remarks": "Center the current line.",
 		"FindPattern": "(?s:(?i:( |\\t)*\\{center\\}(?<lineContent>.*?)( |\\t)*\\{/center\\}))",
-		"ReplacePattern": "<center>${lineContent}</center>",
+		"ReplacePattern": "<p style=\"text-align:center;\">${lineContent}</p>",
 		"UseRegEx": 1
 	},
 	{
