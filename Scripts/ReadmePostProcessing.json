@@ -25,8 +25,8 @@
 	},
 	{
 		"Remarks": "Add manually defined on-page images.",
-		"FindPattern": "(?i:\\{\\s*(?<block>Image)\\s*,\\s*(?<text>[^,]+)\\s*,\\s*(?<link>[^\\}]+)\\s*\\})",
-		"ReplacePattern": "![${text}](${link})",
+		"FindPattern": "(?i:\\{\\s*(?<block>Image)\\s*,\\s*(?<text>[^,]+)\\s*,\\s*(?<link>[^,]+)\\s*,\\s*(?<width>[^\\}]+)\\s*\\})",
+		"ReplacePattern": "<img src=\"${link}\" width=\"${width}\" alt=\"${text}\" />",
 		"UseRegEx": 1
 	},
 	{
