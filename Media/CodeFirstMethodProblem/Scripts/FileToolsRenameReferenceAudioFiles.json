@@ -1,0 +1,21 @@
+{
+	"Action": "Batch",
+	"Actions":
+	[
+		{
+			"Action": "RenameFiles",
+			"WorkingPath": "../Audio/Reference",
+			"Properties":
+			[
+				{
+					"Name": "Find",
+					"Value": "(?i:(?<source>[a-z0-9-]+)_(?<year>[0-9]{4})[-_](?<month>[0-9]{1,2})[-_](?<day>[0-9]{1,2})[a-z](?<hour>[0-9]{1,2})[-_](?<minute>[0-9]{1,2})[-_](?<second>[0-9]{1,2})_(?<speaker>[0-9a-z]+)_.*?\\.mp3)"
+				},
+				{
+					"Name": "Replace",
+					"Value": "CopyFirstMethodProblem-${speaker}-${year}${month}${day}${hour}${minute}${second}.mp3"
+				}
+			]
+		}
+	]
+}

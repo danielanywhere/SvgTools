@@ -1,0 +1,171 @@
+[
+	{
+		"SceneIndex": 1,
+		"Script": [
+			"For decades, software had been defined by its graphical user interface.",
+			"The GUI transformed computing from a niche skill into a globally accessible resource.",
+			"And it empowered billions of users, but with a hidden design cost."
+		],
+		"VisualDescription": [
+			"Montage of early computers with command lines.",
+			"Transition to modern devices with colorful GUIs.",
+			"Crowds of diverse people using phones and laptops."
+		],
+		"CameraDirections": "Wide establishing shots, slow zoom into faces.",
+		"Tone": "Inspirational, historical context.",
+		"ScriptReferenceAudio":
+		[
+			"CopyFirstMethodProblem-Brian-20251210172842.mp3",
+			"CopyFirstMethodProblem-Brian-20251210173011.mp3",
+			"CopyFirstMethodProblem-Brian-20251210173057.mp3"
+		]
+	},
+	{
+		"SceneIndex": 2,
+		"Script": [
+			"Meanwhile, behind the scenes, a quiet shift was occurring.",
+			"Graphic artists, once central to design, were pushed aside.",
+			"Art-first gave way to code-first, which eventually became code-only."
+		],
+		"VisualDescription": [
+			"Split screen: artist sketching on paper vs. developer typing code.",
+			"Sketch fades out, leaving only scrolling XML and CSS.",
+			"Artist’s tools dissolve into lines of markup."
+		],
+		"CameraDirections": "Crossfade transitions, close-up on hands.",
+		"Tone": "Revealing, somber.",
+		"ScriptReferenceAudio":
+		[
+			"CopyFirstMethodProblem-Brian-20251210173150.mp3",
+			"CopyFirstMethodProblem-Brian-20251210173517.mp3",
+			"CopyFirstMethodProblem-Brian-20251210173728.mp3"
+		]
+	},
+	{
+		"SceneIndex": 3,
+		"Script": [
+			"Framework publishers promised visual editors would come...",
+			"But previews lagged, broke, or misled the public.",
+			"What was still known as design was really only a wall of cryptic text, ",
+			"instead of the visual canvas everyone had been promised."
+		],
+		"VisualDescription": [
+			"UI preview windows glitching and freezing.",
+			"Code scrolling endlessly in background.",
+			"Canvas locked behind glass, unreachable."
+		],
+		"CameraDirections": "Fast cuts, glitch effects, overlay of broken previews.",
+		"Tone": "Critical, exposing flaws.",
+		"ScriptReferenceAudio":
+		[
+			"CopyFirstMethodProblem-Brian-20251210173832.mp3",
+			"CopyFirstMethodProblem-Brian-20251210173943.mp3",
+			"CopyFirstMethodProblem-Brian-20251210174119.mp3"
+		]
+	},
+	{
+		"SceneIndex": 4,
+		"Script": [
+			"Today, even when visual editing is offered in tiny, specialized ",
+			"enclaves, it remains chained to rigid structures.",
+			"Because all of GUI design intent is now lost in containers and hierarchies."
+		],
+		"VisualDescription": [
+			"Artist dragging shapes on canvas.",
+			"Shapes snap back into rigid boxes.",
+			"Chains wrap around the canvas, symbolizing constraint."
+		],
+		"CameraDirections": "Symbolic animation, medium shots of canvas.",
+		"Tone": "Metaphorical, dramatic.",
+		"ScriptReferenceAudio": [
+			"CopyFirstMethodProblem-Brian-20251210174421.mp3",
+			"CopyFirstMethodProblem-Brian-20251210174539.mp3"
+		]
+	},
+	{
+		"SceneIndex": 5,
+		"Script": [
+			"This inversion disqualifies true graphic designers, ",
+			"completely replacing visual composition with textual coding.",
+			"And in the process, it alienates the very people who know how ",
+			"to make interfaces that appeal to human beings."
+		],
+		"VisualDescription": [
+			"Artist fades into background.",
+			"Engineer dominates screen with code.",
+			"Users look confused at sterile, lifeless interfaces."
+		],
+		"CameraDirections": "Slow fade transitions, muted color palette.",
+		"Tone": "Emotional, empathetic.",
+		"ScriptReferenceAudio": [
+			"CopyFirstMethodProblem-Brian-20251210174742.mp3",
+			"CopyFirstMethodProblem-Brian-20251210174858.mp3"
+		]
+	},
+	{
+		"SceneIndex": 6,
+		"Script": [
+			"Visual liberation means returning power to artists.",
+			"It means starting and working with a blank visual canvas, instead of a data tree.",
+			"It also means design before structure, and expression over syntax."
+		],
+		"VisualDescription": [
+			"Canvas opens, glowing with vibrant colors.",
+			"Artist paints freely, shapes flow naturally.",
+			"Interfaces emerge organically from visual ideas."
+		],
+		"CameraDirections": "Bright lighting, sweeping camera pans.",
+		"Tone": "Hopeful, visionary.",
+		"ScriptReferenceAudio":
+		[
+			"CopyFirstMethodProblem-Brian-20251210175002.mp3",
+			"CopyFirstMethodProblem-Brian-20251210175140.mp3",
+			"CopyFirstMethodProblem-Brian-20251210175230.mp3"
+		]
+	},
+	{
+		"SceneIndex": 7,
+		"Script": [
+			"Small developers deserve tools that respect artistry.",
+			"And graphic artists deserve the freedom to create visually.",
+			"While users deserve intuitive interfaces actually born of human imagination."
+		],
+		"VisualDescription": [
+			"Indie developers collaborating with artists.",
+			"Interfaces forming from sketches into polished GUIs.",
+			"Smiling users interacting with intuitive designs."
+		],
+		"CameraDirections": "Montage of collaboration, close-ups of joyful faces.",
+		"Tone": "Empowering, uplifting.",
+		"ScriptReferenceAudio":
+		[
+			"CopyFirstMethodProblem-Brian-20251210175335.mp3",
+			"CopyFirstMethodProblem-Brian-20251210175448.mp3",
+			"CopyFirstMethodProblem-Brian-20251210175552.mp3"
+		]
+	},
+	{
+		"SceneIndex": 8,
+		"Script": [
+			"The future of software is not code-only.",
+			"It is visual liberation.",
+			"It is artistry restored.",
+			"Follow us on GitHub to find out how Implied Form Design in SvgTools will ",
+			"help to solve this problem."
+		],
+		"VisualDescription": [
+			"Final logo animation: 'Visual Liberation'.",
+			"Canvas bursts into radiant light.",
+			"Tagline: 'Design First, Code Automatically with Implied Form Design'"
+		],
+		"CameraDirections": "Cinematic closing shot, fade to white.",
+		"Tone": "Triumphant, call-to-action.",
+		"ScriptReferenceAudio":
+		[
+			"CopyFirstMethodProblem-Brian-20251210175652.mp3",
+			"CopyFirstMethodProblem-Brian-20251210175737.mp3",
+			"CopyFirstMethodProblem-Brian-20251210175815.mp3",
+			"CopyFirstMethodProblem-Brian-20251210175916.mp3"
+		]
+	}
+]
