@@ -1,0 +1,680 @@
+<?xml version="1.0" standalone="no"?>
+<mlt LC_NUMERIC="C" version="7.8.0" title="Shotcut version 22.06.23" producer="main_bin">
+  <profile description="PAL 4:3 DV or DVD" width="1920" height="1080" progressive="1" sample_aspect_num="1" sample_aspect_den="1" display_aspect_num="16" display_aspect_den="9" frame_rate_num="24" frame_rate_den="1" colorspace="709"/>
+  <chain id="chain0" out="00:00:04.833">
+    <property name="length">00:00:04.875</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-01.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="shotcut:hash">64d7673052d3043a0ce52ee3c977b8a1</property>
+    <property name="ignore_points">0</property>
+    <property name="creation_time">2025-12-11T19:22:36</property>
+    <property name="xml">was here</property>
+  </chain>
+  <chain id="chain1" out="00:00:05.792">
+    <property name="length">00:00:05.833</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-02.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">abcb7426b04cc7d3afea03dc612e85d0</property>
+  </chain>
+  <chain id="chain2" out="00:00:03.958">
+    <property name="length">00:00:04.000</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-03.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">3c90a31a5fd0663dadac8dd4ca01d774</property>
+  </chain>
+  <chain id="chain3" out="00:00:03.167">
+    <property name="length">00:00:03.208</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-04.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">a3014c4c4a18b133ecb94769f4a8dca9</property>
+  </chain>
+  <chain id="chain4" out="00:00:04.875">
+    <property name="length">00:00:04.917</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-05.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">22892185b5e52811db1abc971dafa150</property>
+  </chain>
+  <chain id="chain5" out="00:00:04.833">
+    <property name="length">00:00:04.875</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-06.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">c777163bc897dc0d0ec338ca5be04982</property>
+  </chain>
+  <chain id="chain6" out="00:00:03.333">
+    <property name="length">00:00:03.375</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-07.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">e198af63edc372282c2d861c5bc5fc79</property>
+  </chain>
+  <chain id="chain7" out="00:00:03.417">
+    <property name="length">00:00:03.458</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-08.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">ec8fb83ec46ef83e66e9cb966c175793</property>
+  </chain>
+  <chain id="chain8" out="00:00:07.333">
+    <property name="length">00:00:07.375</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-09.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">9a66af7a2154aa5b89d51a2ef1618e77</property>
+  </chain>
+  <chain id="chain9" out="00:00:08.167">
+    <property name="length">00:00:08.208</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-10.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">6583c869ad84a38994253dfe3c2cb1ce</property>
+  </chain>
+  <chain id="chain10" out="00:00:04.750">
+    <property name="length">00:00:04.792</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-11.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">dd2a2ae040ed02f3ee01705537d401e9</property>
+  </chain>
+  <chain id="chain11" out="00:00:07.833">
+    <property name="length">00:00:07.875</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-12.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">a55b4567263dedd9e4f01d03d7d2d5e8</property>
+  </chain>
+  <chain id="chain12" out="00:00:06.083">
+    <property name="length">00:00:06.125</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-13.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">6a5b488c4394f9eb2875c08e7241f437</property>
+  </chain>
+  <chain id="chain13" out="00:00:03.417">
+    <property name="length">00:00:03.458</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-14.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">c079324f87521279f0b384004cf171af</property>
+  </chain>
+  <chain id="chain14" out="00:00:05.125">
+    <property name="length">00:00:05.167</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-15.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">b20900ec385647cd9ade36de1584ccf4</property>
+  </chain>
+  <chain id="chain15" out="00:00:04.500">
+    <property name="length">00:00:04.542</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-16.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">92e0b12a1dc269b145dfffb24543ccd5</property>
+  </chain>
+  <chain id="chain16" out="00:00:03.500">
+    <property name="length">00:00:03.542</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-17.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">c14e93ebb279d578997a1543797c8aa2</property>
+  </chain>
+  <chain id="chain17" out="00:00:03.333">
+    <property name="length">00:00:03.375</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-18.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">7f9f93785037cf5bd6386ba95d321349</property>
+  </chain>
+  <chain id="chain18" out="00:00:05.250">
+    <property name="length">00:00:05.292</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-19.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">7932739b9dfa3acd32d0d0dd713f9209</property>
+  </chain>
+  <chain id="chain19" out="00:00:03.042">
+    <property name="length">00:00:03.083</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-20.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">cc277cc742dbccee5313d7dcca41ce25</property>
+  </chain>
+  <chain id="chain20" out="00:00:01.792">
+    <property name="length">00:00:01.833</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-21.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">d13f2df89d7bd364e9135efa6f3a2a30</property>
+  </chain>
+  <chain id="chain21" out="00:00:01.917">
+    <property name="length">00:00:01.958</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-22.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">f2d12307838bb0c26975e7f30ea5dfd5</property>
+  </chain>
+  <chain id="chain22" out="00:00:07.708">
+    <property name="length">00:00:07.750</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-23.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">8e9abd8a65f219ed174ce6fa42fd729b</property>
+  </chain>
+  <playlist id="main_bin">
+    <property name="xml_retain">1</property>
+    <entry producer="chain0" in="00:00:00.000" out="00:00:04.833"/>
+    <entry producer="chain1" in="00:00:00.000" out="00:00:05.792"/>
+    <entry producer="chain2" in="00:00:00.000" out="00:00:03.958"/>
+    <entry producer="chain3" in="00:00:00.000" out="00:00:03.167"/>
+    <entry producer="chain4" in="00:00:00.000" out="00:00:04.875"/>
+    <entry producer="chain5" in="00:00:00.000" out="00:00:04.833"/>
+    <entry producer="chain6" in="00:00:00.000" out="00:00:03.333"/>
+    <entry producer="chain7" in="00:00:00.000" out="00:00:03.417"/>
+    <entry producer="chain8" in="00:00:00.000" out="00:00:07.333"/>
+    <entry producer="chain9" in="00:00:00.000" out="00:00:08.167"/>
+    <entry producer="chain10" in="00:00:00.000" out="00:00:04.750"/>
+    <entry producer="chain11" in="00:00:00.000" out="00:00:07.833"/>
+    <entry producer="chain12" in="00:00:00.000" out="00:00:06.083"/>
+    <entry producer="chain13" in="00:00:00.000" out="00:00:03.417"/>
+    <entry producer="chain14" in="00:00:00.000" out="00:00:05.125"/>
+    <entry producer="chain15" in="00:00:00.000" out="00:00:04.500"/>
+    <entry producer="chain16" in="00:00:00.000" out="00:00:03.500"/>
+    <entry producer="chain17" in="00:00:00.000" out="00:00:03.333"/>
+    <entry producer="chain18" in="00:00:00.000" out="00:00:05.250"/>
+    <entry producer="chain19" in="00:00:00.000" out="00:00:03.042"/>
+    <entry producer="chain20" in="00:00:00.000" out="00:00:01.792"/>
+    <entry producer="chain21" in="00:00:00.000" out="00:00:01.917"/>
+    <entry producer="chain22" in="00:00:00.000" out="00:00:07.708"/>
+  </playlist>
+  <producer id="black" in="00:00:00.000" out="00:02:00.958">
+    <property name="length">00:02:01.000</property>
+    <property name="eof">pause</property>
+    <property name="resource">0</property>
+    <property name="aspect_ratio">1</property>
+    <property name="mlt_service">color</property>
+    <property name="mlt_image_format">rgba</property>
+    <property name="set.test_audio">0</property>
+  </producer>
+  <playlist id="background">
+    <entry producer="black" in="00:00:00.000" out="00:02:00.958"/>
+  </playlist>
+  <chain id="chain23" out="00:00:04.833">
+    <property name="length">00:00:04.875</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-01.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="shotcut:hash">64d7673052d3043a0ce52ee3c977b8a1</property>
+    <property name="ignore_points">0</property>
+    <property name="creation_time">2025-12-11T19:22:36</property>
+    <property name="xml">was here</property>
+  </chain>
+  <chain id="chain24" out="00:00:05.792">
+    <property name="length">00:00:05.833</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-02.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">abcb7426b04cc7d3afea03dc612e85d0</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-02.mp3</property>
+  </chain>
+  <chain id="chain25" out="00:00:03.958">
+    <property name="length">00:00:04.000</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-03.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">3c90a31a5fd0663dadac8dd4ca01d774</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-03.mp3</property>
+  </chain>
+  <chain id="chain26" out="00:00:03.167">
+    <property name="length">00:00:03.208</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-04.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">a3014c4c4a18b133ecb94769f4a8dca9</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-04.mp3</property>
+  </chain>
+  <chain id="chain27" out="00:00:04.875">
+    <property name="length">00:00:04.917</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-05.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">22892185b5e52811db1abc971dafa150</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-05.mp3</property>
+  </chain>
+  <chain id="chain28" out="00:00:04.833">
+    <property name="length">00:00:04.875</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-06.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">c777163bc897dc0d0ec338ca5be04982</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-06.mp3</property>
+  </chain>
+  <chain id="chain29" out="00:00:03.333">
+    <property name="length">00:00:03.375</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-07.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">e198af63edc372282c2d861c5bc5fc79</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-07.mp3</property>
+  </chain>
+  <chain id="chain30" out="00:00:03.417">
+    <property name="length">00:00:03.458</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-08.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">ec8fb83ec46ef83e66e9cb966c175793</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-08.mp3</property>
+  </chain>
+  <chain id="chain31" out="00:00:07.333">
+    <property name="length">00:00:07.375</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-09.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">9a66af7a2154aa5b89d51a2ef1618e77</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-09.mp3</property>
+  </chain>
+  <chain id="chain32" out="00:00:08.167">
+    <property name="length">00:00:08.208</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-10.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">6583c869ad84a38994253dfe3c2cb1ce</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-10.mp3</property>
+  </chain>
+  <chain id="chain33" out="00:00:04.750">
+    <property name="length">00:00:04.792</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-11.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">dd2a2ae040ed02f3ee01705537d401e9</property>
+  </chain>
+  <chain id="chain34" out="00:00:07.833">
+    <property name="length">00:00:07.875</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-12.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">a55b4567263dedd9e4f01d03d7d2d5e8</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-12.mp3</property>
+  </chain>
+  <chain id="chain35" out="00:00:06.083">
+    <property name="length">00:00:06.125</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-13.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">6a5b488c4394f9eb2875c08e7241f437</property>
+  </chain>
+  <chain id="chain36" out="00:00:03.417">
+    <property name="length">00:00:03.458</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-14.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">c079324f87521279f0b384004cf171af</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-14.mp3</property>
+  </chain>
+  <chain id="chain37" out="00:00:05.125">
+    <property name="length">00:00:05.167</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-15.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">b20900ec385647cd9ade36de1584ccf4</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-15.mp3</property>
+  </chain>
+  <chain id="chain38" out="00:00:04.500">
+    <property name="length">00:00:04.542</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-16.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">92e0b12a1dc269b145dfffb24543ccd5</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-16.mp3</property>
+  </chain>
+  <chain id="chain39" out="00:00:03.500">
+    <property name="length">00:00:03.542</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-17.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">c14e93ebb279d578997a1543797c8aa2</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-17.mp3</property>
+  </chain>
+  <chain id="chain40" out="00:00:03.333">
+    <property name="length">00:00:03.375</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-18.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">7f9f93785037cf5bd6386ba95d321349</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-18.mp3</property>
+  </chain>
+  <chain id="chain41" out="00:00:05.250">
+    <property name="length">00:00:05.292</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-19.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">7932739b9dfa3acd32d0d0dd713f9209</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-19.mp3</property>
+  </chain>
+  <chain id="chain42" out="00:00:03.042">
+    <property name="length">00:00:03.083</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-20.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">cc277cc742dbccee5313d7dcca41ce25</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-20.mp3</property>
+  </chain>
+  <chain id="chain43" out="00:00:01.792">
+    <property name="length">00:00:01.833</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-21.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">d13f2df89d7bd364e9135efa6f3a2a30</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-21.mp3</property>
+  </chain>
+  <chain id="chain44" out="00:00:01.917">
+    <property name="length">00:00:01.958</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-22.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">f2d12307838bb0c26975e7f30ea5dfd5</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-22.mp3</property>
+  </chain>
+  <chain id="chain45" out="00:00:07.708">
+    <property name="length">00:00:07.750</property>
+    <property name="eof">pause</property>
+    <property name="resource">c:/Files/Dropbox/Develop/Shared/SvgTools/Media/CodeFirstMethodProblem/Audio/Output/CodeFirstMethodProblem-23.mp3</property>
+    <property name="mlt_service">avformat-novalidate</property>
+    <property name="seekable">1</property>
+    <property name="audio_index">0</property>
+    <property name="video_index">-1</property>
+    <property name="mute_on_pause">0</property>
+    <property name="xml">was here</property>
+    <property name="shotcut:hash">8e9abd8a65f219ed174ce6fa42fd729b</property>
+    <property name="shotcut:caption">CodeFirstMethodProblem-23.mp3</property>
+  </chain>
+  <playlist id="playlist0">
+    <property name="shotcut:audio">1</property>
+    <property name="shotcut:name">A1</property>
+    <entry producer="chain23" in="00:00:00.000" out="00:00:04.833"/>
+    <blank length="00:00:00.500"/>
+    <entry producer="chain24" in="00:00:00.000" out="00:00:05.792"/>
+    <blank length="00:00:00.250"/>
+    <entry producer="chain25" in="00:00:00.000" out="00:00:03.958"/>
+    <blank length="00:00:01.083"/>
+    <entry producer="chain26" in="00:00:00.000" out="00:00:03.167"/>
+    <blank length="00:00:00.417"/>
+    <entry producer="chain27" in="00:00:00.000" out="00:00:04.875"/>
+    <blank length="00:00:00.417"/>
+    <entry producer="chain28" in="00:00:00.000" out="00:00:04.833"/>
+    <blank length="00:00:00.792"/>
+    <entry producer="chain29" in="00:00:00.000" out="00:00:03.333"/>
+    <blank length="00:00:00.208"/>
+    <entry producer="chain30" in="00:00:00.000" out="00:00:03.417"/>
+    <blank length="00:00:00.542"/>
+    <entry producer="chain31" in="00:00:00.000" out="00:00:07.333"/>
+    <blank length="00:00:01.042"/>
+    <entry producer="chain32" in="00:00:00.000" out="00:00:08.167"/>
+    <entry producer="chain33" in="00:00:00.000" out="00:00:04.750"/>
+    <blank length="00:00:01.042"/>
+    <entry producer="chain34" in="00:00:00.000" out="00:00:07.833"/>
+    <entry producer="chain35" in="00:00:00.000" out="00:00:06.083"/>
+    <blank length="00:00:00.875"/>
+    <entry producer="chain36" in="00:00:00.000" out="00:00:03.417"/>
+    <blank length="00:00:00.417"/>
+    <entry producer="chain37" in="00:00:00.000" out="00:00:05.125"/>
+    <blank length="00:00:00.625"/>
+    <entry producer="chain38" in="00:00:00.000" out="00:00:04.500"/>
+    <blank length="00:00:00.833"/>
+    <entry producer="chain39" in="00:00:00.000" out="00:00:03.500"/>
+    <blank length="00:00:00.500"/>
+    <entry producer="chain40" in="00:00:00.000" out="00:00:03.333"/>
+    <blank length="00:00:00.458"/>
+    <entry producer="chain41" in="00:00:00.000" out="00:00:05.250"/>
+    <blank length="00:00:00.917"/>
+    <entry producer="chain42" in="00:00:00.000" out="00:00:03.042"/>
+    <blank length="00:00:00.292"/>
+    <entry producer="chain43" in="00:00:00.000" out="00:00:01.792"/>
+    <blank length="00:00:00.292"/>
+    <entry producer="chain44" in="00:00:00.000" out="00:00:01.917"/>
+    <blank length="00:00:00.583"/>
+    <entry producer="chain45" in="00:00:00.000" out="00:00:07.708"/>
+  </playlist>
+  <tractor id="tractor0" title="Shotcut version 22.06.23" in="00:00:00.000" out="00:02:00.958">
+    <property name="shotcut">1</property>
+    <property name="shotcut:projectAudioChannels">2</property>
+    <property name="shotcut:projectFolder">1</property>
+    <property name="shotcut:scaleFactor">1.91662</property>
+    <track producer="background"/>
+    <track producer="playlist0" hide="video"/>
+    <transition id="transition0">
+      <property name="a_track">0</property>
+      <property name="b_track">1</property>
+      <property name="mlt_service">mix</property>
+      <property name="always_active">1</property>
+      <property name="sum">1</property>
+    </transition>
+  </tractor>
+</mlt>
