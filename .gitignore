@@ -17,6 +17,7 @@ Logs/
 _Archive*
 
 # User-specific files
+*.blend1
 *.rsuser
 *.suo
 *.user
