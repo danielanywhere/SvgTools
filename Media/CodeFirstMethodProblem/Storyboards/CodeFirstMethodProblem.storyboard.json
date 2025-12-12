@@ -11,8 +11,12 @@
 			"Transition to modern devices with colorful GUIs.",
 			"Crowds of diverse people using phones and laptops."
 		],
-		"CameraDirections": "Wide establishing shots, slow zoom into faces.",
-		"Tone": "Inspirational, historical context.",
+		"VisualFilename":
+		[
+			"Images/OldStylePCMontage.png",
+			"Images/ModernDevicesWithColorfulGUIs.png",
+			"Images/GUIOfficeCrowd.png"
+		],
 		"ScriptReferenceAudio":
 		[
 			"CopyFirstMethodProblem-Brian-20251210172842.mp3",
@@ -28,12 +32,16 @@
 			"Art-first gave way to code-first, which eventually became code-only."
 		],
 		"VisualDescription": [
-			"Split screen: artist sketching on paper vs. developer typing code.",
-			"Sketch fades out, leaving only scrolling XML and CSS.",
+			"Split screen: artist sketching GUI form, buttons, labels, and textboxes on paper vs. developer typing code.",
+			"Sketch fades out, leaving only scrolling XAML.",
 			"Artist’s tools dissolve into lines of markup."
 		],
-		"CameraDirections": "Crossfade transitions, close-up on hands.",
-		"Tone": "Revealing, somber.",
+		"VisualFilename":
+		[
+			"Images/ArtistVsDeveloper.png",
+			"Animations/ScrollingXaml.mp4",
+			"Images/CodeOnlyArt.png"
+		],
 		"ScriptReferenceAudio":
 		[
 			"CopyFirstMethodProblem-Brian-20251210173150.mp3",
@@ -50,9 +58,13 @@
 			"instead of the visual canvas everyone had been promised."
 		],
 		"VisualDescription": [
-			"UI preview windows glitching and freezing.",
+			"Salesperson promising features that would never come.",
 			"Code scrolling endlessly in background.",
 			"Canvas locked behind glass, unreachable."
+		],
+		"VisualFilename":
+		[
+			"Images/ItsComingSoonIPromise.png"
 		],
 		"CameraDirections": "Fast cuts, glitch effects, overlay of broken previews.",
 		"Tone": "Critical, exposing flaws.",
