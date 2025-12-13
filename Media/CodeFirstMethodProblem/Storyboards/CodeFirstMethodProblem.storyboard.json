@@ -8,6 +8,11 @@
 	[
 		{
 			"SceneIndex": 1,
+			"AudioStartFrame": "00:00:00+00",
+			"AudioEndFrame": "00:00:15+10",
+			"VideoLeadIn": "00",
+			"VideoStartFrame": "00:00:00+00",
+			"VideoEndFrame": "00:00:16+13",
 			"Script": [
 				"For decades, software had been defined by its graphical user interface.",
 				"The GUI transformed computing from a niche skill into a globally accessible resource.",
@@ -37,6 +42,11 @@
 		},
 		{
 			"SceneIndex": 2,
+			"AudioStartFrame": "00:00:16+13",
+			"AudioEndFrame": "00:00:30+08",
+			"VideoLeadIn": "00",
+			"VideoStartFrame": "00:00:16+13",
+			"VideoEndFrame": "00:00:30+09",
 			"Script": [
 				"Meanwhile, behind the scenes, a quiet shift was occurring.",
 				"Graphic artists, once central to design, were pushed aside.",
@@ -66,6 +76,11 @@
 		},
 		{
 			"SceneIndex": 3,
+			"AudioStartFrame": "00:00:31+04",
+			"AudioEndFrame": "00:00:46+02",
+			"VideoLeadIn": "20",
+			"VideoStartFrame": "00:00:30+09",
+			"VideoEndFrame": "00:00:47+04",
 			"Script": [
 				"Framework publishers promised visual editors would come...",
 				"But previews lagged, broke, or misled the public.",
@@ -94,6 +109,11 @@
 		},
 		{
 			"SceneIndex": 4,
+			"AudioStartFrame": "00:00:47+04",
+			"AudioEndFrame": "00:01:00+03",
+			"VideoLeadIn": "00",
+			"VideoStartFrame": "00:00:47+04",
+			"VideoEndFrame": "00:01:01+05",
 			"Script": [
 				"Today, even when visual editing is offered in tiny, specialized ",
 				"enclaves, it remains chained to rigid structures.",
@@ -119,6 +139,11 @@
 		},
 		{
 			"SceneIndex": 5,
+			"AudioStartFrame": "00:01:01+05",
+			"AudioEndFrame": "00:01:15+04",
+			"VideoLeadIn": "00",
+			"VideoStartFrame": "00:01:01+05",
+			"VideoEndFrame": "00:01:16+02",
 			"Script": [
 				"This inversion disqualifies true graphic designers, ",
 				"completely replacing visual composition with textual coding.",
@@ -144,6 +169,11 @@
 		},
 		{
 			"SceneIndex": 6,
+			"AudioStartFrame": "00:01:16+02",
+			"AudioEndFrame": "00:01:30+06",
+			"VideoLeadIn": "00",
+			"VideoStartFrame": "00:01:16+02",
+			"VideoEndFrame": "00:01:31+03",
 			"Script": [
 				"Visual liberation means returning power to artists.",
 				"It means starting and working with a blank visual canvas, instead of a data tree.",
@@ -170,6 +200,11 @@
 		},
 		{
 			"SceneIndex": 7,
+			"AudioStartFrame": "00:01:31+03",
+			"AudioEndFrame": "00:01:44+06",
+			"VideoLeadIn": "00",
+			"VideoStartFrame": "00:01:31+03",
+			"VideoEndFrame": "00:01:45+05",
 			"Script": [
 				"Small developers deserve tools that respect artistry.",
 				"And graphic artists deserve the freedom to create visually.",
@@ -196,6 +231,11 @@
 		},
 		{
 			"SceneIndex": 8,
+			"AudioStartFrame": "00:01:45+05",
+			"AudioEndFrame": "00:02:00+23",
+			"VideoLeadIn": "00",
+			"VideoStartFrame": "00:01:45+05",
+			"VideoEndFrame": "00:02:01+00",
 			"Script": [
 				"The future of software is not code-only.",
 				"It is visual liberation.",
