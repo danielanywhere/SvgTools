@@ -1,5 +1,9 @@
 {
 	"FrameRate": 24,
+	"BackingOutputAudio":
+	[
+		"A_New_Perspective_1.mp3"
+	],
 	"Scenes":
 	[
 		{
@@ -14,7 +18,7 @@
 				"Transition to modern devices with colorful GUIs.",
 				"Crowds of diverse people using phones and laptops."
 			],
-			"VisualFilename": [
+			"VisualClip": [
 				"Images/OldStylePCMontage.png",
 				"Images/ModernDevicesWithColorfulGUIs.png",
 				"Images/GUIOfficeCrowd.png"
@@ -24,7 +28,7 @@
 				"CopyFirstMethodProblem-Brian-20251210173011.mp3",
 				"CopyFirstMethodProblem-Brian-20251210173057.mp3"
 			],
-			"ScriptOutputAudio":
+			"ScriptAudio":
 			[
 				"CodeFirstMethodProblem-01.mp3",
 				"CodeFirstMethodProblem-02.mp3",
@@ -43,7 +47,7 @@
 				"Sketch fades out, leaving only scrolling XAML.",
 				"Artist’s tools dissolve into lines of markup."
 			],
-			"VisualFilename": [
+			"VisualClip": [
 				"Images/ArtistVsDeveloper.png",
 				"Animations/ScrollingXaml.mp4",
 				"Images/CodeOnlyArt.png"
@@ -53,7 +57,7 @@
 				"CopyFirstMethodProblem-Brian-20251210173517.mp3",
 				"CopyFirstMethodProblem-Brian-20251210173728.mp3"
 			],
-			"ScriptOutputAudio":
+			"ScriptAudio":
 			[
 				"CodeFirstMethodProblem-04.mp3",
 				"CodeFirstMethodProblem-05.mp3",
@@ -73,17 +77,15 @@
 				"Code scrolling endlessly in background.",
 				"Canvas locked behind glass, unreachable."
 			],
-			"VisualFilename": [
-				"Images/ItsComingSoonIPromise.png"
+			"VisualClip": [
+				"FeaturesPromised.mp4"
 			],
-			"CameraDirections": "Fast cuts, glitch effects, overlay of broken previews.",
-			"Tone": "Critical, exposing flaws.",
 			"ScriptReferenceAudio": [
 				"CopyFirstMethodProblem-Brian-20251210173832.mp3",
 				"CopyFirstMethodProblem-Brian-20251210173943.mp3",
 				"CopyFirstMethodProblem-Brian-20251210174119.mp3"
 			],
-			"ScriptOutputAudio":
+			"ScriptAudio":
 			[
 				"CodeFirstMethodProblem-07.mp3",
 				"CodeFirstMethodProblem-08.mp3",
@@ -102,13 +104,14 @@
 				"Shapes snap back into rigid boxes.",
 				"Chains wrap around the canvas, symbolizing constraint."
 			],
-			"CameraDirections": "Symbolic animation, medium shots of canvas.",
-			"Tone": "Metaphorical, dramatic.",
+			"VisualClip": [
+				"PredeterminedShape.mp4"
+			],
 			"ScriptReferenceAudio": [
 				"CopyFirstMethodProblem-Brian-20251210174421.mp3",
 				"CopyFirstMethodProblem-Brian-20251210174539.mp3"
 			],
-			"ScriptOutputAudio":
+			"ScriptAudio":
 			[
 				"CodeFirstMethodProblem-10.mp3",
 				"CodeFirstMethodProblem-11.mp3"
@@ -133,7 +136,7 @@
 				"CopyFirstMethodProblem-Brian-20251210174742.mp3",
 				"CopyFirstMethodProblem-Brian-20251210174858.mp3"
 			],
-			"ScriptOutputAudio":
+			"ScriptAudio":
 			[
 				"CodeFirstMethodProblem-12.mp3",
 				"CodeFirstMethodProblem-13.mp3"
@@ -158,7 +161,7 @@
 				"CopyFirstMethodProblem-Brian-20251210175140.mp3",
 				"CopyFirstMethodProblem-Brian-20251210175230.mp3"
 			],
-			"ScriptOutputAudio":
+			"ScriptAudio":
 			[
 				"CodeFirstMethodProblem-14.mp3",
 				"CodeFirstMethodProblem-15.mp3",
@@ -184,7 +187,7 @@
 				"CopyFirstMethodProblem-Brian-20251210175448.mp3",
 				"CopyFirstMethodProblem-Brian-20251210175552.mp3"
 			],
-			"ScriptOutputAudio":
+			"ScriptAudio":
 			[
 				"CodeFirstMethodProblem-17.mp3",
 				"CodeFirstMethodProblem-18.mp3",
@@ -213,7 +216,7 @@
 				"CopyFirstMethodProblem-Brian-20251210175815.mp3",
 				"CopyFirstMethodProblem-Brian-20251210175916.mp3"
 			],
-			"ScriptOutputAudio":
+			"ScriptAudio":
 			[
 				"CodeFirstMethodProblem-20.mp3",
 				"CodeFirstMethodProblem-21.mp3",
