@@ -13,6 +13,7 @@
 			"VideoLeadIn": "00",
 			"VideoStartFrame": "00:00:00+00",
 			"VideoEndFrame": "00:00:16+13",
+			"VideoLength": 16.54,
 			"Script": [
 				"For decades, software had been defined by its graphical user interface.",
 				"The GUI transformed computing from a niche skill into a globally accessible resource.",
@@ -47,6 +48,7 @@
 			"VideoLeadIn": "00",
 			"VideoStartFrame": "00:00:16+13",
 			"VideoEndFrame": "00:00:30+09",
+			"VideoLength": 13.83,
 			"Script": [
 				"Meanwhile, behind the scenes, a quiet shift was occurring.",
 				"Graphic artists, once central to design, were pushed aside.",
@@ -81,6 +83,7 @@
 			"VideoLeadIn": "20",
 			"VideoStartFrame": "00:00:30+09",
 			"VideoEndFrame": "00:00:47+04",
+			"VideoLength": 16.79,
 			"Script": [
 				"Framework publishers promised visual editors would come...",
 				"But previews lagged, broke, or misled the public.",
@@ -114,6 +117,7 @@
 			"VideoLeadIn": "00",
 			"VideoStartFrame": "00:00:47+04",
 			"VideoEndFrame": "00:01:01+05",
+			"VideoLength": 14.04,
 			"Script": [
 				"Today, even when visual editing is offered in tiny, specialized ",
 				"enclaves, it remains chained to rigid structures.",
@@ -144,6 +148,7 @@
 			"VideoLeadIn": "00",
 			"VideoStartFrame": "00:01:01+05",
 			"VideoEndFrame": "00:01:16+02",
+			"VideoLength": 14.88,
 			"Script": [
 				"This inversion disqualifies true graphic designers, ",
 				"completely replacing visual composition with textual coding.",
@@ -174,6 +179,7 @@
 			"VideoLeadIn": "00",
 			"VideoStartFrame": "00:01:16+02",
 			"VideoEndFrame": "00:01:31+03",
+			"VideoLength": 15.04,
 			"Script": [
 				"Visual liberation means returning power to artists.",
 				"It means starting and working with a blank visual canvas, instead of a data tree.",
@@ -205,6 +211,7 @@
 			"VideoLeadIn": "00",
 			"VideoStartFrame": "00:01:31+03",
 			"VideoEndFrame": "00:01:45+05",
+			"VideoLength": 14.08,
 			"Script": [
 				"Small developers deserve tools that respect artistry.",
 				"And graphic artists deserve the freedom to create visually.",
@@ -236,6 +243,7 @@
 			"VideoLeadIn": "00",
 			"VideoStartFrame": "00:01:45+05",
 			"VideoEndFrame": "00:02:01+00",
+			"VideoLength": 15.79,
 			"Script": [
 				"The future of software is not code-only.",
 				"It is visual liberation.",
