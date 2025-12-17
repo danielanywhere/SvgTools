@@ -35,6 +35,10 @@ namespace SvgToolsLib
 		/// </summary>
 		None = 0,
 		/// <summary>
+		/// Animate an SVG from the provided timeline.
+		/// </summary>
+		AnimateTimeline,
+		/// <summary>
 		/// Apply all appropriate transformations in the document.
 		/// </summary>
 		ApplyTransforms,

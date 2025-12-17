@@ -232,6 +232,13 @@ namespace SvgToolsApp
 					prg.ActionItem.ConfigFilename = arg.Substring(keyLength);
 					continue;
 				}
+				key = "datafile:";
+				keyLength = AgnosticArgStart(lowerArg, key);
+				if(keyLength > 0)
+				{
+					prg.ActionItem.DataNames.Add(arg.Substring(keyLength));
+					continue;
+				}
 				key = "infile:";
 				keyLength = AgnosticArgStart(lowerArg, key);
 				if(keyLength > 0)

@@ -32,6 +32,7 @@ using Flee;
 using Flee.PublicTypes;
 using Geometry;
 using Html;
+using LibreOfficeODS;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using SkiaSharp;
@@ -116,6 +117,80 @@ namespace SvgToolsLib
 			if(mParent != null)
 			{
 				result = mParent.CurrentFile;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetDataFilename																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the DataFilename property from the parent entity.
+		/// </summary>
+		/// <returns>
+		/// Value of the DataFilename property on the parent entity, if found.
+		/// Otherwise, an empty string.
+		/// </returns>
+		public string GetDataFilename()
+		{
+			string result = "";
+
+			if(mParent != null)
+			{
+				result = mParent.DataFilename;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetDataFiles																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a reference to the collection of file information used as
+		/// reference data in this session.
+		/// </summary>
+		/// <returns>
+		/// A reference to the parent's DataFiles collection, if found. Otherwise,
+		/// an empty collection.
+		/// </returns>
+		public List<FileInfo> GetDataFiles()
+		{
+			List<FileInfo> result = null;
+
+			if(mParent != null)
+			{
+				result = mParent.DataFiles;
+			}
+			else
+			{
+				result = new List<FileInfo>();
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetDataNames																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Get a reference to the list of filenames or foldernames with
+		/// or without wildcards. This parameter can be specified multiple times
+		/// on the command line with different values to load multiple input files.
+		/// </summary>
+		public List<string> GetDataNames()
+		{
+			List<string> result = null;
+
+			if(mParent != null)
+			{
+				//	If this item is not overridden, then default to the parent.
+				result = mParent.DataNames;
+			}
+			else
+			{
+				result = new List<string>();
 			}
 			return result;
 		}
@@ -577,6 +652,117 @@ namespace SvgToolsLib
 		private static string mWorkingPathLast = "";
 
 		//*-----------------------------------------------------------------------*
+		//* AnimateTimeline																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Animate an SVG from the provided timeline.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the action that specifies the document to update.
+		/// </param>
+		private static void AnimateTimeline(SvgActionItem item)
+		{
+			ControlAreaCollection areas = null;
+			HtmlNodeItem baseNode = null;
+			string css = "";
+			string content = "";
+			DataSet data = null;
+			FileInfo dataFile = null;
+			HtmlDocument doc = null;
+			HtmlNodeItem node = null;
+			HtmlNodeItem originalDoc = null;
+			NameValueItem property = null;
+			string sheetName = "";
+			FileInfo sourceFile = null;
+			FileInfo targetFile = null;
+
+			if(item != null)
+			{
+				if(CheckElements(item,
+					ActionElementEnum.InputFilename |
+					ActionElementEnum.DataFilename))
+				{
+					//	If the output name isn't specified,
+					//	the result is written to the input file.
+					//	Load the document if the filename was specified.
+					dataFile = item.DataFiles[0];
+					sourceFile = item.InputFiles[0];
+					if(item.OutputFile != null)
+					{
+						targetFile = item.OutputFile;
+					}
+					else
+					{
+						targetFile = sourceFile;
+					}
+					property = item.mProperties.FirstOrDefault(x =>
+						x.Name.ToLower() == "sheetname");
+					if(property != null)
+					{
+						sheetName = property.Value;
+					}
+					Trace.WriteLine($" Source document: {sourceFile.Name}",
+						$"{MessageImportanceEnum.Info}");
+					Trace.WriteLine($" Target document: {targetFile.Name}",
+						$"{MessageImportanceEnum.Info}");
+					Trace.WriteLine($" Data file:       {dataFile.Name}",
+						$"{MessageImportanceEnum.Info}");
+					if(sheetName.Length > 0)
+					{
+						Trace.WriteLine($" Sheet name: {sheetName}",
+							$"{MessageImportanceEnum.Info}");
+					}
+					else
+					{
+						Trace.WriteLine("  First sheet in file will be loaded...",
+							$"{MessageImportanceEnum.Info}");
+					}
+
+					data = OdsReader.ReadOds(dataFile.FullName);
+
+					content = File.ReadAllText(sourceFile.FullName);
+					doc = new HtmlDocument(content);
+					originalDoc = new HtmlDocument(content);
+
+					HtmlDocument.RecalculateAbsoluteIndex(doc);
+					SvgToolsUtil.ApplyTransforms(doc);
+					SvgToolsUtil.RoundAllValues(doc, 0);
+
+					item.mWorkingSvg = new SvgDocumentItem(doc);
+
+					css = SvgTimelineAnimation.GenerateAnimationCss(doc, data,
+						sheetName);
+					if(css.Length > 0)
+					{
+						node = originalDoc.Nodes.FindMatch(x =>
+							x.Id == "SvgToolsAnimateTimeline");
+						if(node == null)
+						{
+							baseNode = originalDoc.Nodes.FindMatch(x => x.NodeType == "svg");
+							if(baseNode != null)
+							{
+								node = new HtmlNodeItem();
+								node.NodeType = "style";
+								node.Attributes.SetAttribute("id", "SvgToolsAnimateTimeline");
+								node.Attributes.SetAttribute("type", "text/css");
+								baseNode.Nodes.Insert(0, node);
+							}
+						}
+						if(node != null)
+						{
+							node.Text = @"\r\n{css}";
+						}
+						content = originalDoc.Html;
+						File.WriteAllText(targetFile.FullName, content);
+						Trace.WriteLine(" Target file written...",
+							$"{MessageImportanceEnum.Info}");
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ApplyTransforms																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -947,6 +1133,7 @@ namespace SvgToolsLib
 			bool sendMessages = !quiet;
 			string vBase = "";
 			float vCount = 0f;
+			List<FileInfo> vDataFiles = null;
 			DateTime vDateTime = DateTime.MinValue;
 			string vInputFilename = "";
 			List<FileInfo> vInputFiles = null;
@@ -1019,6 +1206,36 @@ namespace SvgToolsLib
 						if(sendMessages)
 						{
 							Trace.WriteLine(" Error: A value is required for Digits.",
+								$"{MessageImportanceEnum.Err}");
+						}
+						result = false;
+					}
+				}
+				if((element & ActionElementEnum.DataFilename) !=
+					ActionElementEnum.None)
+				{
+					//	In this version, when DataFilename is expressed, only files
+					//	are specified in the DataFiles collection.
+					vDataFiles = (includeInherited ?
+						item.DataFiles : item.mDataFiles);
+					count = vDataFiles.Count;
+					for(index = 0; index < count; index++)
+					{
+						file = vDataFiles[index];
+						if((file.Attributes & FileAttributes.Directory) !=
+							(FileAttributes)0)
+						{
+							//	This item is a directory. Remove it.
+							vDataFiles.RemoveAt(index);
+							index--;  //	Deindex.
+							count--;  //	Decount.
+						}
+					}
+					if(vDataFiles.Count == 0)
+					{
+						if(sendMessages)
+						{
+							Trace.WriteLine(" Error: No data files were specified.",
 								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
@@ -1362,6 +1579,25 @@ namespace SvgToolsLib
 					Trace.WriteLine($" Error: Input files were not specified.",
 						$"{MessageImportanceEnum.Err}");
 				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ClearDataFiles																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Clear the local DataFiles collection for the immediate parent item.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the action item calling for the DataFiles collection to
+		/// be cleared.
+		/// </param>
+		private static void ClearDataFiles(SvgActionItem item)
+		{
+			if(item != null && item.mParent != null && item.mParent.Parent != null)
+			{
+				item.mParent.Parent.mDataFiles.Clear();
 			}
 		}
 		//*-----------------------------------------------------------------------*
@@ -1842,6 +2078,104 @@ namespace SvgToolsLib
 				}
 			}
 			return precision;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* IdentifyDataFiles																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Identify the data files at the current level for the specified item.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the item being fulfilled.
+		/// </param>
+		/// <remarks>
+		/// <para>
+		/// When this method is called, make sure that the InitializeLevels
+		/// method has already been called.
+		/// </para>
+		/// <para>
+		/// Only call CheckElements after first calling IdentifyFiles. That
+		/// method relies on the file objects in this version.
+		/// </para>
+		/// <para>
+		/// In this version, only the local DataFiles group is resolved. If you
+		/// want to use a globally resolvable template, implement a user property
+		/// containing that template name and set the DataFilename, etc., property
+		/// at the site with a reference to that custom property.
+		/// </para>
+		/// </remarks>
+		private static void IdentifyDataFiles(SvgActionItem item)
+		{
+			DirectoryInfo dir = null;
+			FileInfo file = null;
+			string filename = "";
+			bool result = true;
+
+			if(item != null && item.mDataNames.Count > 0)
+			{
+				//	Working path.
+				if(item.WorkingPath.Length > 0)
+				{
+					dir = new DirectoryInfo(
+						GetPropertyByName(item, nameof(WorkingPath)));
+					if(!dir.Exists)
+					{
+						Trace.WriteLine(" Error: Working path does not exist.",
+							$"{MessageImportanceEnum.Err}");
+						result = false;
+					}
+					else if((dir.Attributes & FileAttributes.Directory) !=
+						FileAttributes.Directory)
+					{
+						Trace.WriteLine(
+							" Error: A file was specified as the working directory.",
+							$"{MessageImportanceEnum.Err}");
+						result = false;
+					}
+				}
+
+				//	Input.
+				item.mDataDir = null;
+				item.mDataFiles.Clear();
+
+				if(result)
+				{
+					if(item.mDataNames.Count > 0)
+					{
+						//	Data files are present.
+						foreach(string filenameItem in item.mDataNames)
+						{
+							filename = AbsolutePath(
+								GetPropertyByName(item, nameof(WorkingPath)),
+								NormalizeValue(item, filenameItem));
+							if(filename.Length > 0)
+							{
+								//	A filename has been retrieved.
+								//	Check for wildcards and resolve variables.
+								item.mDataFiles.AddRange(
+									ResolveFilename(filename, false));
+							}
+						}
+						if(item.mDataFiles.Count > 0)
+						{
+							file = item.mDataFiles[0];
+							if((file.Attributes & FileAttributes.Directory) ==
+								(FileAttributes)0)
+							{
+								//	This item is a file.
+								item.mDataDir = new DirectoryInfo(file.Directory.FullName);
+							}
+							else
+							{
+								//	This item is a directory.
+								item.mDataDir = new DirectoryInfo(file.FullName);
+							}
+						}
+					}
+				}
+			}
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -2403,6 +2737,22 @@ namespace SvgToolsLib
 						//	directory deletion routine.
 						//	Be aware this may need to be uncommented.
 						//item.mInputFolderName = "";
+					}
+				}
+				//	Data filenames.
+				if(item.mDataNames.Count == 0 &&
+					item.mDataFilename?.Length > 0)
+				{
+					//	The data names collection was not specified, but either a
+					//	filename or foldername were provided.
+					if(item.mDataFilename?.Length > 0)
+					{
+						//	An data filename was provided at this level.
+						item.mDataNames.AddRange(
+							ResolveWildcards(
+								GetPropertyByName(item,
+									nameof(WorkingPath)), item.mDataFilename));
+						item.mDataFilename = "";
 					}
 				}
 				//	Output filenames.
@@ -3419,6 +3769,124 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	DataDir																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="DataDir">DataDir</see>.
+		/// </summary>
+		private DirectoryInfo mDataDir = null;
+		/// <summary>
+		/// Get/Set the internal, calculated data directory.
+		/// </summary>
+		/// <remarks>
+		/// This property is non-inerhitable.
+		/// </remarks>
+		[JsonIgnore]
+		public DirectoryInfo DataDir
+		{
+			get { return mDataDir; }
+			set { mDataDir = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	DataFilename																													*
+		//*-----------------------------------------------------------------------*
+		private string mDataFilename = null;
+		/// <summary>
+		/// Get/Set the path and filename of the reference data file.
+		/// </summary>
+		/// <remarks>
+		/// <para>This property is inheritable.</para>
+		/// <para>Corresponds with the command-line parameter 'DataFile'.</para>
+		/// </remarks>
+		public string DataFilename
+		{
+			get
+			{
+				string result = mDataFilename;
+
+				if(result == null)
+				{
+					if(mParent != null)
+					{
+						result = mParent.GetDataFilename();
+					}
+					else
+					{
+						result = "";
+					}
+				}
+				return result;
+			}
+			set { mDataFilename = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	DataFiles																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="DataFiles">DataFiles</see>.
+		/// </summary>
+		private List<FileInfo> mDataFiles = new List<FileInfo>();
+		/// <summary>
+		/// Get a reference to the collection of file information used as reference
+		/// data in this session.
+		/// </summary>
+		/// <remarks>
+		/// This property is inheritable.
+		/// </remarks>
+		[JsonIgnore]
+		public List<FileInfo> DataFiles
+		{
+			get
+			{
+				List<FileInfo> result = mDataFiles;
+
+				if(result.Count == 0 && mParent != null)
+				{
+					result = mParent.GetDataFiles();
+				}
+				return result;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	DataNames																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="DataNames">DataNames</see>.
+		/// </summary>
+		private List<string> mDataNames = new List<string>();
+		/// <summary>
+		/// Get a reference to the list of filenames or foldernames with
+		/// or without wildcards. This parameter can be specified multiple times
+		/// on the command line with different values to load multiple input files.
+		/// </summary>
+		/// <remarks>
+		/// <para>This property is inheritable.</para>
+		/// <para>Corresponds with the command-line parameter 'DataFiles'.</para>
+		/// </remarks>
+		public List<string> DataNames
+		{
+			get
+			{
+				List<string> result = mDataNames;
+
+				if(result.Count == 0 && mParent != null)
+				{
+					//	If the local list is not overridden, then default to the
+					//	parent.
+					result = mParent.GetDataNames();
+				}
+				return result;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	DateTimeValue																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -4354,6 +4822,7 @@ namespace SvgToolsLib
 			//	//	for the action.
 			//	In this version, input files can be defined at any level.
 			IdentifyInputFiles(this);
+			IdentifyDataFiles(this);
 			//}
 			IdentifyOutputFiles(this);
 			switch(mAction)
@@ -4374,6 +4843,11 @@ namespace SvgToolsLib
 				//case ActionTypeEnum.AlphaMask:
 				//	AlphaMask(this);
 				//	break;
+				#endregion
+				case SvgActionTypeEnum.AnimateTimeline:
+					AnimateTimeline(this);
+					break;
+				#region Removed
 				//case ActionTypeEnum.AntiAliasTransparency:
 				//	//	Smooth the alpha borders between transparent and non-transparent
 				//	//	areas.

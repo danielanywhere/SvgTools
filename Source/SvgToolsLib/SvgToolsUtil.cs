@@ -31,6 +31,7 @@ using SkiaSharp;
 using Html;
 using Geometry;
 using System.Net.NetworkInformation;
+using ConversionCalc;
 
 namespace SvgToolsLib
 {
@@ -1366,6 +1367,95 @@ namespace SvgToolsLib
 						}
 					}
 				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	CConverter																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="CConverter">CConverter</see>.
+		/// </summary>
+		private static ConversionCalc.Converter mCConverter =
+			new ConversionCalc.Converter();
+		/// <summary>
+		/// Value indicating whether converter customization has been initialized.
+		/// </summary>
+		private static bool mConverterInitialized = false;
+		/// <summary>
+		/// Get a reference to the conversion calculator for this instance.
+		/// </summary>
+		public static ConversionCalc.Converter CConverter
+		{
+			get
+			{
+				ConversionDomainItem domain = null;
+
+				if(!mConverterInitialized)
+				{
+					//	Add relative Css Units to the Distance domain.
+					domain = mCConverter.Data.Domains.FirstOrDefault(x =>
+						x.DomainName == "Distance");
+					if(domain != null)
+					{
+						//	All of the CSS relative conversions in this example are
+						//	based in pixels.
+						domain.Conversions.AddRange(new ConversionDefinitionItem[]
+						{
+							new ConversionDefinitionItem()
+							{
+								EntryType = ConversionDefinitionEntryType.External,
+								Name = "ch",
+								Value = 0.002645833d
+							},
+							new ConversionDefinitionItem()
+							{
+								EntryType = ConversionDefinitionEntryType.External,
+								Name = "em",
+								Value = 0.002645833d
+							},
+							new ConversionDefinitionItem()
+							{
+								EntryType = ConversionDefinitionEntryType.External,
+								Name = "ex",
+								Value = 0.002645833d
+							},
+							new ConversionDefinitionItem()
+							{
+								EntryType = ConversionDefinitionEntryType.External,
+								Name = "rem",
+								Value = 0.002645833d
+							},
+							new ConversionDefinitionItem()
+							{
+								EntryType = ConversionDefinitionEntryType.External,
+								Name = "vh",
+								Value = 0.002645833d
+							},
+							new ConversionDefinitionItem()
+							{
+								EntryType = ConversionDefinitionEntryType.External,
+								Name = "vmax",
+								Value = 0.002645833d
+							},
+							new ConversionDefinitionItem()
+							{
+								EntryType = ConversionDefinitionEntryType.External,
+								Name = "vmin",
+								Value = 0.002645833d
+							},
+							new ConversionDefinitionItem()
+							{
+								EntryType = ConversionDefinitionEntryType.External,
+								Name = "vw",
+								Value = 0.002645833d
+							}
+						});
+					}
+					mConverterInitialized = true;
+				}
+				return mCConverter;
 			}
 		}
 		//*-----------------------------------------------------------------------*
@@ -2841,6 +2931,35 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetHeight																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the height of the specified node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to check.
+		/// </param>
+		/// <returns>
+		/// The height of the specified node.
+		/// </returns>
+		public static float GetHeight(HtmlNodeItem node)
+		{
+			BoundingObjectItem bounds = null;
+			float result = 0f;
+
+			if(node != null)
+			{
+				bounds = CalcBounds(node);
+				if(bounds != null)
+				{
+					result = bounds.GetHeight();
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetIndexValue																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2994,6 +3113,31 @@ namespace SvgToolsLib
 				{
 					result = node;
 				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetNumeric																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return only the numeric floating point portion of the string.
+		/// </summary>
+		/// <param name="numericText">
+		/// String that might contain one or more numeric elements.
+		/// </param>
+		/// <returns>
+		/// The first numeric string found in the caller's text, if found.
+		/// Otherwise, an empty string.
+		/// </returns>
+		public static string GetNumeric(string numericText)
+		{
+			string result = "";
+
+			if(numericText?.Length > 0)
+			{
+				result = GetValue(numericText, ResourceMain.rxNumeric, "pattern");
 			}
 			return result;
 		}
@@ -3181,6 +3325,163 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetWidth																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the width of the specified node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to check.
+		/// </param>
+		/// <returns>
+		/// The width of the specified node.
+		/// </returns>
+		public static float GetWidth(HtmlNodeItem node)
+		{
+			BoundingObjectItem bounds = null;
+			float result = 0f;
+
+			if(node != null)
+			{
+				bounds = CalcBounds(node);
+				if(bounds != null)
+				{
+					result = bounds.GetWidth();
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetX																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the X coordinate of the specified node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to check.
+		/// </param>
+		/// <returns>
+		/// The X coordinate of the specified node.
+		/// </returns>
+		public static float GetX(HtmlNodeItem node)
+		{
+			HtmlAttributeItem attribute = null;
+			BoundingObjectItem bounds = null;
+			string nodeType = "";
+			float result = 0f;
+			HtmlNodeItem span = null;
+			List<HtmlNodeItem> spans = null;
+
+			if(node != null)
+			{
+				nodeType = node.NodeType.ToLower();
+				switch(nodeType)
+				{
+					case "g":
+						bounds = CalcBounds(node);
+						if(bounds != null)
+						{
+							result = bounds.MinX;
+						}
+						break;
+					case "text":
+						spans = node.Nodes.FindMatches(x =>
+							x.NodeType.ToLower() == "tspan" &&
+							x.Attributes.Exists(y => y.Name.ToLower() == "x"));
+						if(spans.Count > 0)
+						{
+							span = spans[0];
+							bounds = CalcBounds(span);
+							result = bounds.MinX;
+						}
+						break;
+					case "tspan":
+						span = node;
+						bounds = CalcBounds(span);
+						result = bounds.MinX;
+						break;
+					default:
+						attribute = node.Attributes["x"];
+						if(attribute != null)
+						{
+							result = (float)ToInt(attribute.Value);
+						}
+						break;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* GetY																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the Y coordinate of the specified node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to check.
+		/// </param>
+		/// <returns>
+		/// The Y coordinate of the specified node.
+		/// </returns>
+		public static float GetY(HtmlNodeItem node)
+		{
+			HtmlAttributeItem attribute = null;
+			BoundingObjectItem bounds = null;
+			string nodeType = "";
+			float result = 0f;
+			HtmlNodeItem span = null;
+			List<HtmlNodeItem> spans = null;
+
+			if(node != null)
+			{
+				//if(node.Id == "text58")
+				//{
+				//	Trace.WriteLine("ImpliedFormDesign.GetY: Break here...");
+				//}
+				nodeType = node.NodeType.ToLower();
+				switch(nodeType)
+				{
+					case "g":
+						bounds = CalcBounds(node);
+						if(bounds != null)
+						{
+							result = bounds.MinY;
+						}
+						break;
+					case "text":
+						spans = node.Nodes.FindMatches(x =>
+							x.NodeType.ToLower() == "tspan" &&
+							x.Attributes.Exists(y => y.Name.ToLower() == "y"));
+						if(spans.Count > 0)
+						{
+							span = spans[0];
+							bounds = CalcBounds(span);
+							result = bounds.MinY;
+						}
+						break;
+					case "tspan":
+						span = node;
+						bounds = CalcBounds(span);
+						result = bounds.MinY;
+						break;
+					default:
+						attribute = node.Attributes["y"];
+						if(attribute != null)
+						{
+							result = (float)ToInt(attribute.Value);
+						}
+						break;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* HasAncestorStyle																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -3236,6 +3537,72 @@ namespace SvgToolsLib
 				node.Attributes.HasAttribute("y")))
 			{
 				result = true;
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* HasNumeric																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the caller's measurement has a
+		/// numeric value.
+		/// </summary>
+		/// <param name="measurement">
+		/// The measurement to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the measurement begins with a numeric value. Otherwise, false.
+		/// </returns>
+		public static bool HasNumeric(string measurement)
+		{
+			Group group = null;
+			Match match = null;
+			bool result = false;
+
+			if(measurement?.Length > 0)
+			{
+				match = Regex.Match(measurement.Trim(),
+					ResourceMain.rxCssNumberWithMeasure);
+				if(match.Success)
+				{
+					group = match.Groups["number"];
+					if(group?.Value != null && group.Index == match.Index)
+					{
+						result = true;
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* HasUnit																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the caller's measurement has a
+		/// unit of measure.
+		/// </summary>
+		/// <param name="measurement">
+		/// The measurement to inspect.
+		/// </param>
+		/// <returns>
+		/// True if the measurement has a unit. Otherwise, false.
+		/// </returns>
+		public static bool HasUnit(string measurement)
+		{
+			Match match = null;
+			bool result = false;
+
+			if(measurement?.Length > 0)
+			{
+				match = Regex.Match(measurement, ResourceMain.rxCssNumberWithMeasure);
+				if(match.Success)
+				{
+					result = (GetValue(match, "measure").Length > 0);
+				}
 			}
 			return result;
 		}
@@ -3538,6 +3905,69 @@ namespace SvgToolsLib
 						c = 0;
 					}
 				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* MeasurementWithUnit																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Prepare the caller's measurement, assuring that a unit is appended to
+		/// the numeric value.
+		/// </summary>
+		/// <param name="measurement">
+		/// The measurement to prepare. 0 if empty or null.
+		/// </param>
+		/// <param name="defaultUnit">
+		/// Optional. The default unit to append to the measurement if not found.
+		/// Default = 'px'.
+		/// </param>
+		/// <returns>
+		/// A valid {number}{unit} measurement.
+		/// </returns>
+		public static string MeasurementWithUnit(string measurement,
+			string defaultUnit = "px")
+		{
+			string defaultLocal = "px";
+			Match match = null;
+			string numeric = "";
+			string result = "";
+			string unit = "";
+
+			if(defaultUnit?.Length > 0)
+			{
+				defaultLocal = defaultUnit;
+			}
+			if(measurement?.Length > 0)
+			{
+				match = Regex.Match(measurement,
+					ResourceMain.rxCssNumberWithMeasure);
+				if(match.Success)
+				{
+					//	A leading number was provided.
+					numeric = GetValue(match, "number");
+					if(numeric.Length == 0)
+					{
+						numeric = "0";
+					}
+					unit = GetValue(match, "measure");
+					if(unit.Length == 0)
+					{
+						unit = defaultLocal;
+					}
+					result = $"{numeric}{unit}";
+				}
+				else
+				{
+					//	The measurement was units only.
+					result = $"0{measurement}";
+				}
+			}
+			else
+			{
+				result = $"0{defaultLocal}";
 			}
 			return result;
 		}
@@ -4456,10 +4886,7 @@ namespace SvgToolsLib
 
 			if(value?.Length > 0)
 			{
-				if(!bool.TryParse(value, out result))
-				{
-					Trace.WriteLine($"Error on ToBool");
-				}
+				result = Regex.IsMatch(value, ResourceMain.rxBoolTrue);
 			}
 			else
 			{
@@ -4680,6 +5107,55 @@ namespace SvgToolsLib
 				result = int.Parse(value);
 			}
 			catch { }
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToPixels																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the pixel representation of the specified measurement.
+		/// </summary>
+		/// <param name="measurement">
+		/// The CSS unit measurement to convert.
+		/// </param>
+		/// <returns>
+		/// The specific number of pixels represented by the supplied measurement,
+		/// if valid. Otheriwse, 0.
+		/// </returns>
+		public static float ToPixels(string measurement)
+		{
+			Match match = null;
+			string measure = "";
+			string number = "";
+			float result = 0f;
+			double value = 0d;
+
+			if(measurement?.Length > 0)
+			{
+				match = Regex.Match(measurement,
+					ResourceMain.rxCssNumberWithMeasure);
+				if(match.Success)
+				{
+					number = GetValue(match, "number");
+					measure = GetValue(match, "measure");
+					if(number.Length > 0)
+					{
+						if(measure.Length > 0 && measure.ToLower() != "px")
+						{
+							value = CConverter.Convert("Distance", ToDouble(number),
+								measure, "px");
+							result = ToFloat($"{value:0.###}");
+						}
+						else
+						{
+							//	Value is already in pixels.
+							result = ToFloat($"{number:0.###}");
+						}
+					}
+				}
+			}
 			return result;
 		}
 		//*-----------------------------------------------------------------------*

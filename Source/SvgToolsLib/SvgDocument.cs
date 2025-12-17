@@ -76,6 +76,20 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Create a new instance of the SvgDocumentItem item.
 		/// </summary>
+		/// <param name="htmlDocument">
+		/// HTML document with which to initialize the SVG document.
+		/// </param>
+		public SvgDocumentItem(HtmlDocument htmlDocument)
+		{
+			if(htmlDocument != null)
+			{
+				mDocument = htmlDocument;
+			}
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Create a new instance of the SvgDocumentItem item.
+		/// </summary>
 		/// <param name="htmlContent">
 		/// HTML content with which to initialize the document.
 		/// </param>

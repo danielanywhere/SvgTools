@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -198,19 +199,26 @@ namespace LibreOfficeODS
 			ZipArchiveEntry entry = null;
 			string result = "";
 
-			using(ZipArchive archive = ZipFile.OpenRead(filePath))
+			try
 			{
-				entry = archive.GetEntry("content.xml");
-				if(entry != null)
+				using(ZipArchive archive = ZipFile.OpenRead(filePath))
 				{
-					using(Stream stream = entry.Open())
+					entry = archive.GetEntry("content.xml");
+					if(entry != null)
 					{
-						using(StreamReader reader = new StreamReader(stream))
+						using(Stream stream = entry.Open())
 						{
-							result = reader.ReadToEnd();
+							using(StreamReader reader = new StreamReader(stream))
+							{
+								result = reader.ReadToEnd();
+							}
 						}
 					}
 				}
+			}
+			catch(Exception ex)
+			{
+				Trace.WriteLine($"Err: {ex.Message}");
 			}
 			return result;
 		}
@@ -290,17 +298,20 @@ namespace LibreOfficeODS
 			XNamespace tableNs = "urn:oasis:names:tc:opendocument:xmlns:table:1.0";
 
 			content = GetContent(filename);
-			document = XDocument.Parse(content);
-			tableElements = document.Descendants(tableNs + "table");
-			index = 1;
-			foreach(XElement tableElement in tableElements)
+			if(content?.Length > 0)
 			{
-				table = CreateTableFromSheet(tableElement, tableNs, index);
-				if(table != null)
+				document = XDocument.Parse(content);
+				tableElements = document.Descendants(tableNs + "table");
+				index = 1;
+				foreach(XElement tableElement in tableElements)
 				{
-					data.Tables.Add(table);
+					table = CreateTableFromSheet(tableElement, tableNs, index);
+					if(table != null)
+					{
+						data.Tables.Add(table);
+					}
+					index++;
 				}
-				index++;
 			}
 			return data;
 		}

@@ -2,7 +2,7 @@
   "profiles": {
     "SvgTools": {
       "commandName": "Project",
-      "commandLineArgs": "svgtools /wait /action:XamlManifest /infile:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizard.axaml /outfile:C:/Temp/XAMLManifest-frmImpliedFormDesignWizard.txt \"/properties:[{'name':'IncludeProperties','value':'True'}]\""
+      "commandLineArgs": "svgtools /wait /action:AnimateTimeline /infile:GUIscape.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/GUIscape.svg \"/properties:[{'Name':'SheetName','Value':'GUIscapeSvgTimeline'}]\" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings"
     },
     "WSL": {
       "commandName": "WSL",

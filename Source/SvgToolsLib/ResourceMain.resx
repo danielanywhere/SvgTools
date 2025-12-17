@@ -121,6 +121,10 @@
     <value>(?i:(?&lt;=\W|^)(?&lt;anchorEdge&gt;top|left|bottom|right)(?=\W|$))</value>
     <comment>Regular expression to find the edges to which a shape can anchor.</comment>
   </data>
+  <data name="rxBoolTrue" xml:space="preserve">
+    <value>(?i:(?&lt;bool&gt;1|True|Yes|^OK|Up|Good|Fine))</value>
+    <comment>Regular expression to match when a true boolean value is found.</comment>
+  </data>
   <data name="rxControlStyleName" xml:space="preserve">
     <value>(?i:(?&lt;pattern&gt;controlstyle(-\d+){0,1}))</value>
     <comment>Regular expression pattern to identify user control style name variations.</comment>

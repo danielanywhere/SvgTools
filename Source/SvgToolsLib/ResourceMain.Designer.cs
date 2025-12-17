@@ -70,6 +70,15 @@ namespace SvgToolsLib {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (?i:(?&lt;bool&gt;1|True|Yes|^OK|Up|Good|Fine)).
+        /// </summary>
+        internal static string rxBoolTrue {
+            get {
+                return ResourceManager.GetString("rxBoolTrue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (?i:(?&lt;pattern&gt;controlstyle(-\d+){0,1})).
         /// </summary>
         internal static string rxControlStyleName {

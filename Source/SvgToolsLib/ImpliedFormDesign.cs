@@ -766,72 +766,72 @@ namespace SvgToolsLib
 		/// </summary>
 		public ImpliedFormDesign()
 		{
-			ConversionDomainItem domain = null;
+			//ConversionDomainItem domain = null;
 
-			mConverter = new ConversionCalc.Converter();
+			//mConverter = new ConversionCalc.Converter();
 
-			mConverter.ResolveBaseToValue += mConverter_ResolveBaseToValue;
-			mConverter.ResolveValueToBase += mConverter_ResolveValueToBase;
+			CConverter.ResolveBaseToValue += mConverter_ResolveBaseToValue;
+			CConverter.ResolveValueToBase += mConverter_ResolveValueToBase;
 
-			//	Add relative Css Units to the Distance domain.
-			domain = mConverter.Data.Domains.FirstOrDefault(x =>
-				x.DomainName == "Distance");
-			if(domain != null)
-			{
-				//	All of the CSS relative conversions in this example are
-				//	based in pixels.
-				domain.Conversions.AddRange(new ConversionDefinitionItem[]
-				{
-					new ConversionDefinitionItem()
-					{
-						EntryType = ConversionDefinitionEntryType.External,
-						Name = "ch",
-						Value = 0.002645833d
-					},
-					new ConversionDefinitionItem()
-					{
-						EntryType = ConversionDefinitionEntryType.External,
-						Name = "em",
-						Value = 0.002645833d
-					},
-					new ConversionDefinitionItem()
-					{
-						EntryType = ConversionDefinitionEntryType.External,
-						Name = "ex",
-						Value = 0.002645833d
-					},
-					new ConversionDefinitionItem()
-					{
-						EntryType = ConversionDefinitionEntryType.External,
-						Name = "rem",
-						Value = 0.002645833d
-					},
-					new ConversionDefinitionItem()
-					{
-						EntryType = ConversionDefinitionEntryType.External,
-						Name = "vh",
-						Value = 0.002645833d
-					},
-					new ConversionDefinitionItem()
-					{
-						EntryType = ConversionDefinitionEntryType.External,
-						Name = "vmax",
-						Value = 0.002645833d
-					},
-					new ConversionDefinitionItem()
-					{
-						EntryType = ConversionDefinitionEntryType.External,
-						Name = "vmin",
-						Value = 0.002645833d
-					},
-					new ConversionDefinitionItem()
-					{
-						EntryType = ConversionDefinitionEntryType.External,
-						Name = "vw",
-						Value = 0.002645833d
-					}
-				});
-			}
+			////	Add relative Css Units to the Distance domain.
+			//domain = mConverter.Data.Domains.FirstOrDefault(x =>
+			//	x.DomainName == "Distance");
+			//if(domain != null)
+			//{
+			//	//	All of the CSS relative conversions in this example are
+			//	//	based in pixels.
+			//	domain.Conversions.AddRange(new ConversionDefinitionItem[]
+			//	{
+			//		new ConversionDefinitionItem()
+			//		{
+			//			EntryType = ConversionDefinitionEntryType.External,
+			//			Name = "ch",
+			//			Value = 0.002645833d
+			//		},
+			//		new ConversionDefinitionItem()
+			//		{
+			//			EntryType = ConversionDefinitionEntryType.External,
+			//			Name = "em",
+			//			Value = 0.002645833d
+			//		},
+			//		new ConversionDefinitionItem()
+			//		{
+			//			EntryType = ConversionDefinitionEntryType.External,
+			//			Name = "ex",
+			//			Value = 0.002645833d
+			//		},
+			//		new ConversionDefinitionItem()
+			//		{
+			//			EntryType = ConversionDefinitionEntryType.External,
+			//			Name = "rem",
+			//			Value = 0.002645833d
+			//		},
+			//		new ConversionDefinitionItem()
+			//		{
+			//			EntryType = ConversionDefinitionEntryType.External,
+			//			Name = "vh",
+			//			Value = 0.002645833d
+			//		},
+			//		new ConversionDefinitionItem()
+			//		{
+			//			EntryType = ConversionDefinitionEntryType.External,
+			//			Name = "vmax",
+			//			Value = 0.002645833d
+			//		},
+			//		new ConversionDefinitionItem()
+			//		{
+			//			EntryType = ConversionDefinitionEntryType.External,
+			//			Name = "vmin",
+			//			Value = 0.002645833d
+			//		},
+			//		new ConversionDefinitionItem()
+			//		{
+			//			EntryType = ConversionDefinitionEntryType.External,
+			//			Name = "vw",
+			//			Value = 0.002645833d
+			//		}
+			//	});
+			//}
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
@@ -983,22 +983,22 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//*	Converter																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="Converter">Converter</see>.
-		/// </summary>
-		protected ConversionCalc.Converter mConverter =
-			new ConversionCalc.Converter();
-		/// <summary>
-		/// Get a reference to the conversion calculator for this instance.
-		/// </summary>
-		public ConversionCalc.Converter Converter
-		{
-			get { return mConverter; }
-		}
-		//*-----------------------------------------------------------------------*
+		// //*-----------------------------------------------------------------------*
+		// //*	Converter																															*
+		// //*-----------------------------------------------------------------------*
+		// /// <summary>
+		// /// Private member for <see cref="Converter">Converter</see>.
+		// /// </summary>
+		// protected ConversionCalc.Converter mConverter =
+		// 	new ConversionCalc.Converter();
+		// /// <summary>
+		// /// Get a reference to the conversion calculator for this instance.
+		// /// </summary>
+		// public ConversionCalc.Converter Converter
+		// {
+		// 	get { return mConverter; }
+		// }
+		// //*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
 		//*	CreateBackingFile																											*
@@ -1576,34 +1576,34 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* GetHeight																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the height of the specified node.
-		/// </summary>
-		/// <param name="node">
-		/// Reference to the node to check.
-		/// </param>
-		/// <returns>
-		/// The height of the specified node.
-		/// </returns>
-		public static float GetHeight(HtmlNodeItem node)
-		{
-			BoundingObjectItem bounds = null;
-			float result = 0f;
+		// //*-----------------------------------------------------------------------*
+		// //* GetHeight																															*
+		// //*-----------------------------------------------------------------------*
+		// /// <summary>
+		// /// Return the height of the specified node.
+		// /// </summary>
+		// /// <param name="node">
+		// /// Reference to the node to check.
+		// /// </param>
+		// /// <returns>
+		// /// The height of the specified node.
+		// /// </returns>
+		// public static float GetHeight(HtmlNodeItem node)
+		// {
+		// 	BoundingObjectItem bounds = null;
+		// 	float result = 0f;
 
-			if(node != null)
-			{
-				bounds = CalcBounds(node);
-				if(bounds != null)
-				{
-					result = bounds.GetHeight();
-				}
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		// 	if(node != null)
+		// 	{
+		// 		bounds = CalcBounds(node);
+		// 		if(bounds != null)
+		// 		{
+		// 			result = bounds.GetHeight();
+		// 		}
+		// 	}
+		// 	return result;
+		// }
+		// //*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
 		//* GetImageArea																													*
@@ -2376,162 +2376,162 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* GetWidth																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the width of the specified node.
-		/// </summary>
-		/// <param name="node">
-		/// Reference to the node to check.
-		/// </param>
-		/// <returns>
-		/// The width of the specified node.
-		/// </returns>
-		public static float GetWidth(HtmlNodeItem node)
-		{
-			BoundingObjectItem bounds = null;
-			float result = 0f;
+		////*-----------------------------------------------------------------------*
+		////* GetWidth																															*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return the width of the specified node.
+		///// </summary>
+		///// <param name="node">
+		///// Reference to the node to check.
+		///// </param>
+		///// <returns>
+		///// The width of the specified node.
+		///// </returns>
+		//public static float GetWidth(HtmlNodeItem node)
+		//{
+		//	BoundingObjectItem bounds = null;
+		//	float result = 0f;
 
-			if(node != null)
-			{
-				bounds = CalcBounds(node);
-				if(bounds != null)
-				{
-					result = bounds.GetWidth();
-				}
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		//	if(node != null)
+		//	{
+		//		bounds = CalcBounds(node);
+		//		if(bounds != null)
+		//		{
+		//			result = bounds.GetWidth();
+		//		}
+		//	}
+		//	return result;
+		//}
+		////*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* GetX																																	*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the X coordinate of the specified node.
-		/// </summary>
-		/// <param name="node">
-		/// Reference to the node to check.
-		/// </param>
-		/// <returns>
-		/// The X coordinate of the specified node.
-		/// </returns>
-		public static float GetX(HtmlNodeItem node)
-		{
-			HtmlAttributeItem attribute = null;
-			BoundingObjectItem bounds = null;
-			string nodeType = "";
-			float result = 0f;
-			HtmlNodeItem span = null;
-			List<HtmlNodeItem> spans = null;
+		////*-----------------------------------------------------------------------*
+		////* GetX																																	*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return the X coordinate of the specified node.
+		///// </summary>
+		///// <param name="node">
+		///// Reference to the node to check.
+		///// </param>
+		///// <returns>
+		///// The X coordinate of the specified node.
+		///// </returns>
+		//public static float GetX(HtmlNodeItem node)
+		//{
+		//	HtmlAttributeItem attribute = null;
+		//	BoundingObjectItem bounds = null;
+		//	string nodeType = "";
+		//	float result = 0f;
+		//	HtmlNodeItem span = null;
+		//	List<HtmlNodeItem> spans = null;
 
-			if(node != null)
-			{
-				nodeType = node.NodeType.ToLower();
-				switch(nodeType)
-				{
-					case "g":
-						bounds = CalcBounds(node);
-						if(bounds != null)
-						{
-							result = bounds.MinX;
-						}
-						break;
-					case "text":
-						spans = node.Nodes.FindMatches(x =>
-							x.NodeType.ToLower() == "tspan" &&
-							x.Attributes.Exists(y => y.Name.ToLower() == "x"));
-						if(spans.Count > 0)
-						{
-							span = spans[0];
-							bounds = CalcBounds(span);
-							result = bounds.MinX;
-						}
-						break;
-					case "tspan":
-						span = node;
-						bounds = CalcBounds(span);
-						result = bounds.MinX;
-						break;
-					default:
-						attribute = node.Attributes["x"];
-						if(attribute != null)
-						{
-							result = (float)ToInt(attribute.Value);
-						}
-						break;
-				}
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		//	if(node != null)
+		//	{
+		//		nodeType = node.NodeType.ToLower();
+		//		switch(nodeType)
+		//		{
+		//			case "g":
+		//				bounds = CalcBounds(node);
+		//				if(bounds != null)
+		//				{
+		//					result = bounds.MinX;
+		//				}
+		//				break;
+		//			case "text":
+		//				spans = node.Nodes.FindMatches(x =>
+		//					x.NodeType.ToLower() == "tspan" &&
+		//					x.Attributes.Exists(y => y.Name.ToLower() == "x"));
+		//				if(spans.Count > 0)
+		//				{
+		//					span = spans[0];
+		//					bounds = CalcBounds(span);
+		//					result = bounds.MinX;
+		//				}
+		//				break;
+		//			case "tspan":
+		//				span = node;
+		//				bounds = CalcBounds(span);
+		//				result = bounds.MinX;
+		//				break;
+		//			default:
+		//				attribute = node.Attributes["x"];
+		//				if(attribute != null)
+		//				{
+		//					result = (float)ToInt(attribute.Value);
+		//				}
+		//				break;
+		//		}
+		//	}
+		//	return result;
+		//}
+		////*-----------------------------------------------------------------------*
 
-		//*-----------------------------------------------------------------------*
-		//* GetY																																	*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Return the Y coordinate of the specified node.
-		/// </summary>
-		/// <param name="node">
-		/// Reference to the node to check.
-		/// </param>
-		/// <returns>
-		/// The Y coordinate of the specified node.
-		/// </returns>
-		public static float GetY(HtmlNodeItem node)
-		{
-			HtmlAttributeItem attribute = null;
-			BoundingObjectItem bounds = null;
-			string nodeType = "";
-			float result = 0f;
-			HtmlNodeItem span = null;
-			List<HtmlNodeItem> spans = null;
+		////*-----------------------------------------------------------------------*
+		////* GetY																																	*
+		////*-----------------------------------------------------------------------*
+		///// <summary>
+		///// Return the Y coordinate of the specified node.
+		///// </summary>
+		///// <param name="node">
+		///// Reference to the node to check.
+		///// </param>
+		///// <returns>
+		///// The Y coordinate of the specified node.
+		///// </returns>
+		//public static float GetY(HtmlNodeItem node)
+		//{
+		//	HtmlAttributeItem attribute = null;
+		//	BoundingObjectItem bounds = null;
+		//	string nodeType = "";
+		//	float result = 0f;
+		//	HtmlNodeItem span = null;
+		//	List<HtmlNodeItem> spans = null;
 
-			if(node != null)
-			{
-				//if(node.Id == "text58")
-				//{
-				//	Trace.WriteLine("ImpliedFormDesign.GetY: Break here...");
-				//}
-				nodeType = node.NodeType.ToLower();
-				switch(nodeType)
-				{
-					case "g":
-						bounds = CalcBounds(node);
-						if(bounds != null)
-						{
-							result = bounds.MinY;
-						}
-						break;
-					case "text":
-						spans = node.Nodes.FindMatches(x =>
-							x.NodeType.ToLower() == "tspan" &&
-							x.Attributes.Exists(y => y.Name.ToLower() == "y"));
-						if(spans.Count > 0)
-						{
-							span = spans[0];
-							bounds = CalcBounds(span);
-							result = bounds.MinY;
-						}
-						break;
-					case "tspan":
-						span = node;
-						bounds = CalcBounds(span);
-						result = bounds.MinY;
-						break;
-					default:
-						attribute = node.Attributes["y"];
-						if(attribute != null)
-						{
-							result = (float)ToInt(attribute.Value);
-						}
-						break;
-				}
-			}
-			return result;
-		}
-		//*-----------------------------------------------------------------------*
+		//	if(node != null)
+		//	{
+		//		//if(node.Id == "text58")
+		//		//{
+		//		//	Trace.WriteLine("ImpliedFormDesign.GetY: Break here...");
+		//		//}
+		//		nodeType = node.NodeType.ToLower();
+		//		switch(nodeType)
+		//		{
+		//			case "g":
+		//				bounds = CalcBounds(node);
+		//				if(bounds != null)
+		//				{
+		//					result = bounds.MinY;
+		//				}
+		//				break;
+		//			case "text":
+		//				spans = node.Nodes.FindMatches(x =>
+		//					x.NodeType.ToLower() == "tspan" &&
+		//					x.Attributes.Exists(y => y.Name.ToLower() == "y"));
+		//				if(spans.Count > 0)
+		//				{
+		//					span = spans[0];
+		//					bounds = CalcBounds(span);
+		//					result = bounds.MinY;
+		//				}
+		//				break;
+		//			case "tspan":
+		//				span = node;
+		//				bounds = CalcBounds(span);
+		//				result = bounds.MinY;
+		//				break;
+		//			default:
+		//				attribute = node.Attributes["y"];
+		//				if(attribute != null)
+		//				{
+		//					result = (float)ToInt(attribute.Value);
+		//				}
+		//				break;
+		//		}
+		//	}
+		//	return result;
+		//}
+		////*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
 		//* HasImages																															*
@@ -3332,7 +3332,7 @@ namespace SvgToolsLib
 							if(measure.Length > 0 && measure.ToLower() != "px")
 							{
 								targetValue =
-									mConverter.Convert("Distance", ToDouble(number),
+									CConverter.Convert("Distance", ToDouble(number),
 										measure, "px").ToString("0.###");
 							}
 							else

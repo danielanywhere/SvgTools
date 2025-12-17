@@ -103,3 +103,12 @@ Output a list of objects, and optionally properties, found in the specified XAML
 ```
 svgtools /wait /action:XamlManifest /infile:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizard.axaml /outfile:C:/Temp/XAMLManifest-frmImpliedFormDesignWizard.txt "/properties:[{'name':'IncludeProperties','value':'True'}]"
 ```
+
+### Timeline Animation to CSS Animation
+
+Convert freeform timeline animation in a spreadsheet to CSS animation in the SVG file.
+
+```
+svgtools /wait /action:AnimateTimeline /infile:GUIscape.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/GUIscape.svg "/properties:[{'Name':'SheetName','Value':'GUIscapeSvgTimeline'}]" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+```
+
