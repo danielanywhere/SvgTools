@@ -28,7 +28,8 @@ All parameters can be prefixed with either '/' or '--'.
                         Properties:
                             SheetName - Name of the sheet to load from the
                                 data file, if a spreadsheet file was
-                                specified.
+                                specified. If no sheet name is specified,
+                                the first sheet in the workbook is loaded.
                     ApplyTransforms - Apply transformations on the
                         specified SVG document.
                         {/infile[ /outfile]|(working SVG)}
