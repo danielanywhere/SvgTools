@@ -5,6 +5,7 @@ Syntax:
 SvgTools.exe /action:{ActionName}
     [/configfile:{Filename}]
     [/infile:{Filename}] [/outfile:{Filename}]
+    [/datafile:{Filename}]
     [/option:{OptionName[,OptionValue]}]
     [/properties:{NameValueArray}]
     [/styleworksheet:{Filename}]
@@ -20,6 +21,14 @@ All parameters can be prefixed with either '/' or '--'.
     /action     -   Describes the action to be made. Following are the
                     recognized actions, with associated parameter names.
                     Starred names ('*') are only available in a batch.
+                    AnimateTimeline - Animate an SVG from the provided
+                        timeline. If output filename is omitted, the
+                        result is written to the input file.
+                        /infile /datafile[ /outfile]
+                        Properties:
+                            SheetName - Name of the sheet to load from the
+                                data file, if a spreadsheet file was
+                                specified.
                     ApplyTransforms - Apply transformations on the
                         specified SVG document.
                         {/infile[ /outfile]|(working SVG)}
@@ -60,6 +69,7 @@ All parameters can be prefixed with either '/' or '--'.
                         files, producing a single output file.
                         Properties: CreateBackingFile (bool, optional,
                                                         default = false)
+    /datafile   -   Data file path and filename.
     /infile     -   Input path and filename only. Wherever infile and outfile
                         are both specified options and the outfile parameter
                         has not been supplied, the value of outfile is assumed
@@ -107,6 +117,7 @@ Batch config file variables.
 | Action | /action | SvgActionTypeEnum | The action to be made on the file. |
 | Actions | (none) | List<SvgActionItem> | Collection of actions to run as a part of
 this action. |
+| DataFilename | /datafile | string | The path and filename of a reference data file. |
 | InputFilename | /infile | string | The path and filename of the input file. |
 | OutputFilename | /outfile | string | The output path and filename for the operation. |
 | Properties | List<NameValueItem> | Collection of properties for action. |
