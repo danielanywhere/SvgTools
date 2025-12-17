@@ -676,6 +676,8 @@ namespace SvgToolsLib
 			FileInfo sourceFile = null;
 			FileInfo targetFile = null;
 
+			//	TODO: !1 - Stopped here...
+			//	TODO: Check to see why CursorIcon isn't registered as an object.
 			if(item != null)
 			{
 				if(CheckElements(item,
@@ -750,7 +752,7 @@ namespace SvgToolsLib
 						}
 						if(node != null)
 						{
-							node.Text = @"\r\n{css}";
+							node.Text = $"\r\n{css}";
 						}
 						content = originalDoc.Html;
 						File.WriteAllText(targetFile.FullName, content);
