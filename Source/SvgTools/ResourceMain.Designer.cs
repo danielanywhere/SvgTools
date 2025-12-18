@@ -68,8 +68,10 @@ namespace SvgToolsApp {
         ///SvgTools.exe /action:{ActionName}
         ///    [/configfile:{Filename}]
         ///    [/infile:{Filename}] [/outfile:{Filename}]
+        ///    [/datafile:{Filename}]
         ///    [/option:{OptionName[,OptionValue]}]
         ///    [/properties:{NameValueArray}]
+        ///    [/styleworksheet:{Filename}]
         ///    [/workingpath:{FolderName}]
         ///    [/wait]
         ///    [/?]
@@ -77,9 +79,7 @@ namespace SvgToolsApp {
         ///All parameters can be prefixed with either &apos;/&apos; or &apos;--&apos;.
         ///
         /// * -    Actions marked with an asterisk are only supported within a
-        ///        configuration file.
-        ///
-        ///    /action     -   Describes the acti [rest of string was truncated]&quot;;.
+        ///        [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Syntax {
             get {

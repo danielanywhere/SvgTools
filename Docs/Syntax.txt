@@ -22,8 +22,8 @@ All parameters can be prefixed with either '/' or '--'.
                     recognized actions, with associated parameter names.
                     Starred names ('*') are only available in a batch.
                     AnimateTimeline - Animate an SVG from the provided
-                        timeline. If output filename is omitted, the
-                        result is written to the input file.
+                        freeform timeline file. If output filename is
+                        omitted, the result is written to the input file.
                         /infile /datafile[ /outfile]
                         Properties:
                             SheetName - Name of the sheet to load from the

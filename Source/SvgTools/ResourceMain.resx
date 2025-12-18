@@ -125,8 +125,10 @@ Syntax:
 SvgTools.exe /action:{ActionName}
     [/configfile:{Filename}]
     [/infile:{Filename}] [/outfile:{Filename}]
+    [/datafile:{Filename}]
     [/option:{OptionName[,OptionValue]}]
     [/properties:{NameValueArray}]
+    [/styleworksheet:{Filename}]
     [/workingpath:{FolderName}]
     [/wait]
     [/?]
@@ -139,6 +141,15 @@ All parameters can be prefixed with either '/' or '--'.
     /action     -   Describes the action to be made. Following are the
                     recognized actions, with associated parameter names.
                     Starred names ('*') are only available in a batch.
+                    AnimateTimeline - Animate an SVG from the provided
+                        freeform timeline file. If output filename is
+                        omitted, the result is written to the input file.
+                        /infile /datafile[ /outfile]
+                        Properties:
+                            SheetName - Name of the sheet to load from the
+                                data file, if a spreadsheet file was
+                                specified. If no sheet name is specified,
+                                the first sheet in the workbook is loaded.
                     ApplyTransforms - Apply transformations on the
                         specified SVG document.
                         {/infile[ /outfile]|(working SVG)}
@@ -175,6 +186,11 @@ All parameters can be prefixed with either '/' or '--'.
                     SaveWorkingSvg * - Save the current working SVG to
                         the specified output filename.
                         OutputFilename
+                    XamlMergeContents - Merge the contents of two or more XAML
+                        files, producing a single output file.
+                        Properties: CreateBackingFile (bool, optional,
+                                                        default = false)
+    /datafile   -   Data file path and filename.
     /infile     -   Input path and filename only. Wherever infile and outfile
                         are both specified options and the outfile parameter
                         has not been supplied, the value of outfile is assumed
@@ -184,6 +200,9 @@ All parameters can be prefixed with either '/' or '--'.
                         Options are specific to the action context in which
                         they are specified.
     /outfile    -   Output path and filename only.
+    /styleworksheet -   Specify the name of a style extension worksheet to
+                        include in the process. Currently only used for
+                        ImpliedDesignTo{TargetName} actions.
     /workingpath-   Set the working path and foldername. When this parameter
                         is specified, all of the other parameters can use
                         relative naming.
@@ -191,6 +210,9 @@ All parameters can be prefixed with either '/' or '--'.
 {ActionName}    -   Name of the action to execute.
 {Filename}      -   Fully qualified path and filename.
 {Foldername}    -   Fully qualified path.
+{TargetName}    -   Implied Design conversion target. Following are the
+                        currently recognized values.
+                        AvaloniaXaml
 
 Options:
 Following are the available options.
@@ -216,9 +238,11 @@ Batch config file variables.
 | Action | /action | SvgActionTypeEnum | The action to be made on the file. |
 | Actions | (none) | List&lt;SvgActionItem&gt; | Collection of actions to run as a part of
 this action. |
+| DataFilename | /datafile | string | The path and filename of a reference data file. |
 | InputFilename | /infile | string | The path and filename of the input file. |
 | OutputFilename | /outfile | string | The output path and filename for the operation. |
 | Properties | List&lt;NameValueItem&gt; | Collection of properties for action. |
+| StyleWorksheets | /styleworksheet | List&lt;string&gt; | Collection of style extension worksheet filenames. |
 | WorkingPath | /workingpath | string | Working path for current operation. |</value>
     <comment>Command line syntax and instructions.</comment>
   </data>
