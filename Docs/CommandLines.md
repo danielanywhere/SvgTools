@@ -112,3 +112,8 @@ Convert freeform timeline animation in a spreadsheet to CSS animation in the SVG
 svgtools /wait /action:AnimateTimeline /infile:GUIscape.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/GUIscape.svg "/properties:[{'Name':'SheetName','Value':'GUIscapeSvgTimeline'}]" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
 ```
 
+Example #2.
+
+```
+svgtools /wait /action:AnimateTimeline /infile:QuietShift.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/QuietShift.svg "/properties:[{'Name':'SheetName','Value':'QuietShift'}]" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+```
