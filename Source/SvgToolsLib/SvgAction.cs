@@ -665,19 +665,21 @@ namespace SvgToolsLib
 			ControlAreaCollection areas = null;
 			HtmlNodeItem baseNode = null;
 			string css = "";
+			HtmlNodeItem childNode = null;
 			string content = "";
 			DataSet data = null;
 			FileInfo dataFile = null;
 			HtmlDocument doc = null;
+			int index = 0;
+			List<string> names = null;
 			HtmlNodeItem node = null;
 			HtmlNodeItem originalDoc = null;
+			HtmlNodeCollection parent = null;
 			NameValueItem property = null;
 			string sheetName = "";
 			FileInfo sourceFile = null;
 			FileInfo targetFile = null;
 
-			//	TODO: !1 - Stopped here...
-			//	TODO: Check to see why CursorIcon isn't registered as an object.
 			if(item != null)
 			{
 				if(CheckElements(item,
@@ -736,6 +738,30 @@ namespace SvgToolsLib
 						sheetName);
 					if(css.Length > 0)
 					{
+						//	Abstract the explicit transforms on any referenced node, so
+						//	relative movement from starting location is honored.
+						names = SvgTimelineAnimation.GetObjectNames(data, sheetName);
+						foreach(string nameItem in names)
+						{
+							node = originalDoc.Nodes.FindMatch(x =>
+								StringComparer.OrdinalIgnoreCase.Equals(x.Id, nameItem) &&
+								(x.Attributes.Exists(y => y.Name.ToLower() == "transform") ||
+								x.Attributes.GetStyle("transform").Length > 0));
+							if(node != null)
+							{
+								//	Create a shell around the original node and transfer the
+								//	name.
+								parent = node.Parent;
+								index = parent.IndexOf(node);
+								childNode = node;
+								parent.Remove(node);
+								node = new HtmlNodeItem("g");
+								node.Attributes.SetAttribute("id", childNode.Id);
+								childNode.Attributes.Remove("id");
+								node.Nodes.Add(childNode);
+								parent.Insert(index, node);
+							}
+						}
 						node = originalDoc.Nodes.FindMatch(x =>
 							x.Id == "SvgToolsAnimateTimeline");
 						if(node == null)

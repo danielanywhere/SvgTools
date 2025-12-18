@@ -130,23 +130,53 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
-		////*-----------------------------------------------------------------------*
-		////*	Timelines																															*
-		////*-----------------------------------------------------------------------*
-		///// <summary>
-		///// Private member for <see cref="Timelines">Timelines</see>.
-		///// </summary>
-		//private SvgTimelineCollection mTimelines = new SvgTimelineCollection();
-		///// <summary>
-		///// Get a reference to the collection of separate timelines present on this
-		///// instance.
-		///// </summary>
-		//public SvgTimelineCollection Timelines
-		//{
-		//	get { return mTimelines; }
-		//}
-		////*-----------------------------------------------------------------------*
+		//*-----------------------------------------------------------------------*
+		//* GetObjectNames																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a list of object names found in the provided timeline animation
+		/// data.
+		/// </summary>
+		/// <param name="data">
+		/// Reference to the dataset containing freeform timeline keyframes.
+		/// </param>
+		/// <param name="tableName">
+		/// Optional. Name of the table to load.
+		/// </param>
+		/// <returns>
+		/// Distinct list of object names listed in the supplied animation data.
+		/// </returns>
+		public static List<string> GetObjectNames(DataSet data,
+			string tableName = "")
+		{
+			SvgTimelineKeyframeCollection keyframes = null;
+			List<string> names = null;
 
+			if(data?.Tables.Count > 0)
+			{
+				if(string.IsNullOrEmpty(tableName) ||
+					!data.Tables.Contains(tableName))
+				{
+					keyframes =
+						new SvgTimelineKeyframeCollection(data.Tables[0]);
+				}
+				else
+				{
+					keyframes =
+						new SvgTimelineKeyframeCollection(data.Tables[tableName]);
+				}
+				names = keyframes
+					.Select(k => k.ObjectName)
+					.Distinct(StringComparer.OrdinalIgnoreCase)
+					.ToList();
+			}
+			if(names == null)
+			{
+				names = new List<string>();
+			}
+			return names;
+		}
+		//*-----------------------------------------------------------------------*
 
 	}
 	//*-------------------------------------------------------------------------*
