@@ -2,10 +2,40 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <Nullable>disable</Nullable>
-  </PropertyGroup>
+		<PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+		<Nullable>disable</Nullable>
+		<UserSecretsId>5b32910b-66c1-487b-8f83-360d19ca955d</UserSecretsId>
+		<RootNamespace>SvgToolsLib</RootNamespace>
+		<Platforms>AnyCPU;x64</Platforms>
+		<PackageId>Dans.SvgTools.Library</PackageId>
+		<Title>Dan's SvgTools Library</Title>
+		<Version>25.3218.4612</Version>
+		<Description>Dan's SvgTools Library.</Description>
+		<Copyright>Copyright(c) 2025. Daniel Patterson, MCSD (danielanywhere)</Copyright>
+		<PackageProjectUrl>https://github.com/danielanywhere/SvgTools</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>svg;svg-to-xaml;svg-animation</PackageTags>
+		<Authors>Daniel Patterson, MCSD (danielanywhere)</Authors>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+		<SignAssembly>False</SignAssembly>
+	</PropertyGroup>
 
-  <ItemGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\NuGet\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
     <PackageReference Include="Dans.ConversionCalc.Library" Version="25.3016.3818" />
     <PackageReference Include="Dans.Geometry.Library" Version="25.3011.3729" />
     <PackageReference Include="Dans.Html.Library" Version="25.3112.4353" />

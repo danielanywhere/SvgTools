@@ -3513,6 +3513,10 @@ namespace SvgToolsLib
 		/// <param name="renderToken">
 		/// Reference to the rendering state token provided by the parent.
 		/// </param>
+		/// <param name="childToken">
+		/// Reference to the child render token to be used when creating child
+		/// entries.
+		/// </param>
 		/// <returns>
 		/// XAML node representing the TreeView control.
 		/// </returns>
@@ -3878,6 +3882,10 @@ namespace SvgToolsLib
 		/// </param>
 		/// <param name="renderToken">
 		/// Reference to the rendering state token provided by the parent.
+		/// </param>
+		/// <param name="childToken">
+		/// Reference to the child render token to be used when creating child
+		/// entries.
 		/// </param>
 		/// <returns>
 		/// XAML node representing the ToolBar control.
@@ -4861,10 +4869,6 @@ namespace SvgToolsLib
 		/// Translate the current control area content to Avalonia XAML and return
 		/// the result to the caller.
 		/// </summary>
-		/// <param name="styleCatalog">
-		/// Reference to an optional collection of style extension worksheets to
-		/// load
-		/// </param>
 		/// <returns>
 		/// The Avalonia XAML content representing the controls presented in
 		/// the local control areas.

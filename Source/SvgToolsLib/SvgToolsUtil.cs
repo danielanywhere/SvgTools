@@ -1752,8 +1752,8 @@ namespace SvgToolsLib
 		/// <param name="targetBitmap">
 		/// Reference to the target bitmap to receive the update.
 		/// </param>
-		/// <param name="targetPoint">
-		/// The point at which drawing will begin on the target image.
+		/// <param name="targetRect">
+		/// The area at which drawing will begin on the target image.
 		/// </param>
 		public static void DrawBitmap(SKBitmap sourceBitmap, SKBitmap targetBitmap,
 			SKRect targetRect)
@@ -4074,11 +4074,8 @@ namespace SvgToolsLib
 		/// Delete any objects in defs that are not referenced anywhere in the
 		/// main file.
 		/// </summary>
-		/// <param name="userNodes">
-		/// Reference to the list of HTML nodes representing the non-defs nodes.
-		/// </param>
-		/// <param name="defsNode">
-		/// Reference to the HTML node representing the DEFS container.
+		/// <param name="svgNode">
+		/// Reference to the base SVG node for the document.
 		/// </param>
 		public static void PurgeDefs(HtmlNodeItem svgNode)
 		{
@@ -4393,11 +4390,8 @@ namespace SvgToolsLib
 		/// <param name="angle">
 		/// The angle at which to rotate, in counter-clockwise form.
 		/// </param>
-		/// <param name="originX">
-		/// The X origin of the rotation.
-		/// </param>
-		/// <param name="originY">
-		/// The Y origin of the rotation.
+		/// <param name="origin">
+		/// The X, Y origin of the rotation.
 		/// </param>
 		/// <returns>
 		/// List of X and Y values representing the rotated points of the bounding

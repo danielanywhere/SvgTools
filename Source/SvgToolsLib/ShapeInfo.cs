@@ -248,6 +248,9 @@ namespace SvgToolsLib
 		/// Reference to the shape containing the properties collections to
 		/// be updated.
 		/// </param>
+		/// <param name="propertyNames">
+		/// Reference to an array of property names to be assigned.
+		/// </param>
 		private static void AssignProperties(HtmlNodeItem node,
 			ShapeInfoItem shape, string[] propertyNames)
 		{
@@ -1458,9 +1461,6 @@ namespace SvgToolsLib
 		/// </summary>
 		/// <param name="node">
 		/// Reference to the HTML node to activate.
-		/// </param>
-		/// <param name="shape">
-		/// Reference to the shape to be filled-out by the node.
 		/// </param>
 		public static ShapeInfoItem CreateShapes(HtmlNodeItem node)
 		{

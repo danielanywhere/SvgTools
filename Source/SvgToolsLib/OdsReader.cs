@@ -28,6 +28,13 @@ using System.Xml.Linq;
 
 namespace LibreOfficeODS
 {
+	//*-------------------------------------------------------------------------*
+	//*	OdsReader																																*
+	//*-------------------------------------------------------------------------*
+	/// <summary>
+	/// OpenDocument ODS spreadsheet file reader for applications like
+	/// LibreOffice Calc.
+	/// </summary>
 	public static class OdsReader
 	{
 		//*************************************************************************
@@ -188,7 +195,7 @@ namespace LibreOfficeODS
 		/// <summary>
 		/// Return the raw XML content of the specified file.
 		/// </summary>
-		/// <param name="filename">
+		/// <param name="filePath">
 		/// Fully qualified path and filename of the file to open.
 		/// </param>
 		/// <returns>
@@ -287,6 +294,17 @@ namespace LibreOfficeODS
 		//*-----------------------------------------------------------------------*
 		//* ReadOds																																*
 		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Read an ODS file and return a data set where each table corresponds to
+		/// the contents of a sheet in the workbook.
+		/// </summary>
+		/// <param name="filename">
+		/// Fully qualified path and filename of the file to read.
+		/// </param>
+		/// <returns>
+		/// Reference to a data set containing the contents of the workbook
+		/// sheets.
+		/// </returns>
 		public static DataSet ReadOds(string filename)
 		{
 			string content = "";
@@ -318,4 +336,5 @@ namespace LibreOfficeODS
 		//*-----------------------------------------------------------------------*
 
 	}
+	//*-------------------------------------------------------------------------*
 }
