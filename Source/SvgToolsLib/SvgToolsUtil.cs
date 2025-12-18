@@ -3379,6 +3379,8 @@ namespace SvgToolsLib
 				nodeType = node.NodeType.ToLower();
 				switch(nodeType)
 				{
+					case "circle":
+					case "ellipse":
 					case "g":
 						bounds = CalcBounds(node);
 						if(bounds != null)
@@ -3445,6 +3447,8 @@ namespace SvgToolsLib
 				nodeType = node.NodeType.ToLower();
 				switch(nodeType)
 				{
+					case "circle":
+					case "ellipse":
 					case "g":
 						bounds = CalcBounds(node);
 						if(bounds != null)

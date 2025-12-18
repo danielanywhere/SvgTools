@@ -168,7 +168,8 @@ namespace SvgToolsLib
 								switch(colIndices[index])
 								{
 									case SvgTimelineKeyframeFieldEnum.Absolute:
-										if(ToBool(cellItem))
+										if(ToBool(cellItem) ||
+											cellItem.ToLower().StartsWith("a"))
 										{
 											entry.Absolute = true;
 											entry.ActiveFields |=

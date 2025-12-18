@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -92,6 +93,7 @@ namespace SvgToolsLib
 				mHeight = GetHeight(node);
 				mX = GetX(node);
 				mY = GetY(node);
+				mNode = node;
 			}
 		}
 		//*-----------------------------------------------------------------------*
@@ -128,7 +130,6 @@ namespace SvgToolsLib
 			string scaleYOrigin = "center";
 			List<float> times = null;
 			StringBuilder transform = new StringBuilder();
-
 
 			if(node?.mKeyframes.Count > 0)
 			{
@@ -214,7 +215,7 @@ namespace SvgToolsLib
 							}
 							//	Y.
 							if((keyframeItem.ActiveFields &
-								SvgTimelineKeyframeFieldEnum.Height) != 0)
+								SvgTimelineKeyframeFieldEnum.Y) != 0)
 							{
 								measurement = keyframeItem.Y;
 								if(keyframeItem.Absolute)
