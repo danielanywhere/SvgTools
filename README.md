@@ -214,4 +214,10 @@ dotnet run -- /? /wait
 
 ```
 
+<p>&nbsp;</p>
+
+## API Documentation
+
+Full API documentation is available at this library's [**GitHub User Page**](https://danielanywhere.github.io/SvgToolsLib).
+
 (This ReadMe file was created in LibreOffice Write!)
