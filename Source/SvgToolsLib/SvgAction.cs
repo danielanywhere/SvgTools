@@ -66,6 +66,10 @@ namespace SvgToolsLib
 		/// Return the base number or filename pattern of the source or target
 		/// files, depending upon the action.
 		/// </summary>
+		/// <returns>
+		/// The base number or filename pattern of the source or target files,
+		/// dependending upon the action. This value is inherited.
+		/// </returns>
 		public string GetBase()
 		{
 			string result = "";
@@ -179,6 +183,11 @@ namespace SvgToolsLib
 		/// or without wildcards. This parameter can be specified multiple times
 		/// on the command line with different values to load multiple input files.
 		/// </summary>
+		/// <returns>
+		/// Reference to a list of filenames or folder names, with or without
+		/// wildcards, if present. Otherwise, an empty list. This value is
+		/// inherited.
+		/// </returns>
 		public List<string> GetDataNames()
 		{
 			List<string> result = null;
@@ -319,6 +328,11 @@ namespace SvgToolsLib
 		/// or without wildcards. This parameter can be specified multiple times
 		/// on the command line with different values to load multiple input files.
 		/// </summary>
+		/// <returns>
+		/// Reference to a list of filenames or folder names, with or without
+		/// wildcards, if present. Otherwise, an empty list. This value is
+		/// inherited.
+		/// </returns>
 		public List<string> GetInputNames()
 		{
 			List<string> result = null;
@@ -504,6 +518,10 @@ namespace SvgToolsLib
 		/// Return the nearest instance of style extension worksheets on this
 		/// session.
 		/// </summary>
+		/// <returns>
+		/// Reference to a list of style worksheets on this session, if found.
+		/// Otherwise, an empty string. This value is inherited.
+		/// </returns>
 		public List<string> GetStyleWorksheets()
 		{
 			List<string> result = null;
@@ -545,6 +563,10 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Return the working path for operations in this instance.
 		/// </summary>
+		/// <returns>
+		/// The current working path, if defined. Otherwise, an empty string.
+		/// This value is inherited.
+		/// </returns>
 		public string GetWorkingPath()
 		{
 			string result = "";
@@ -563,6 +585,10 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Return the working SVG file for operations in this instance.
 		/// </summary>
+		/// <returns>
+		/// Reference to the SVG document object active in this instance, if
+		/// found. Otherwise, null. This value is inherited.
+		/// </returns>
 		public SvgDocumentItem GetWorkingSvg()
 		{
 			SvgDocumentItem result = null;
@@ -4741,6 +4767,9 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Run the configured action.
 		/// </summary>
+		/// <returns>
+		/// Reference to a Task that represents the asynchronous operation.
+		/// </returns>
 		public async Task Run()
 		{
 			//List<FileActionItem> actionItems = null;

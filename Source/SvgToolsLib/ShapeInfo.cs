@@ -1462,6 +1462,9 @@ namespace SvgToolsLib
 		/// <param name="node">
 		/// Reference to the HTML node to activate.
 		/// </param>
+		/// <returns>
+		/// Reference to a shape information item containing the associated shapes.
+		/// </returns>
 		public static ShapeInfoItem CreateShapes(HtmlNodeItem node)
 		{
 			HtmlAttributeItem attrib = null;

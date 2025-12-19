@@ -125,6 +125,9 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Create a new instance of the ControlAreaCollection item.
 		/// </summary>
+		/// <param name="areas">
+		/// Reference to a collection of control areas to add to this collection.
+		/// </param>
 		public ControlAreaCollection(List<ControlAreaItem> areas)
 		{
 			if(areas?.Count > 0)
@@ -488,6 +491,9 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Create a new instance of the ControlAreaItem item.
 		/// </summary>
+		/// <param name="area">
+		/// Reference to an area of which a clean clone will be created.
+		/// </param>
 		public ControlAreaItem(ControlAreaItem area)
 		{
 			if(area != null)
