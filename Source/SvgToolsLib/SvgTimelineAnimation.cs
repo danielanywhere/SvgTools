@@ -23,6 +23,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 
+using static SvgToolsLib.SvgToolsUtil;
+
 namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
@@ -65,9 +67,14 @@ namespace SvgToolsLib
 		public static string GenerateAnimationCss(HtmlDocument doc, DataSet data,
 			string tableName = "")
 		{
+			CssKeyframeAnimationItem animation = null;
+			CssKeyframeAnimationSetItem animationSet = null;
+			CssKeyframeAnimationSetCollection animationSets = null;
 			StringBuilder builder = new StringBuilder();
 			string css = "";
+			//SvgTimelineKeyframeGroupItem group = null;
 			List<string> groupNames = null;
+			//SvgTimelineKeyframeGroupCollection groups = null;
 			SvgTimelineKeyframeCollection keyframes = null;
 			SvgTimelineKeyframeCollection keyframeSet = null;
 			HtmlNodeItem node = null;
@@ -76,7 +83,8 @@ namespace SvgToolsLib
 
 			if(doc != null && data?.Tables.Count > 0)
 			{
-				//timelines = new SvgTimelineCollection();
+				animationSets = new CssKeyframeAnimationSetCollection();
+				//groups = new SvgTimelineKeyframeGroupCollection();
 				keyframeSet = new SvgTimelineKeyframeCollection();
 				if(string.IsNullOrEmpty(tableName) ||
 					!data.Tables.Contains(tableName))
@@ -95,6 +103,9 @@ namespace SvgToolsLib
 					.ToList();
 				foreach(string groupNameItem in groupNames)
 				{
+					//group = new SvgTimelineKeyframeGroupItem();
+					//group.Name = groupNameItem;
+
 					keyframeSet.Clear();
 					keyframeSet.AddRange(
 						keyframes.FindAll(k =>
@@ -112,18 +123,32 @@ namespace SvgToolsLib
 								.Equals(node.Id, objectNameItem));
 						if(node != null)
 						{
-							timelineNode = new SvgTimelineNodeItem(node);
-							timelineNode.Keyframes.AddRange(
+							animationSet = animationSets.FirstOrDefault(x =>
+								StringComparer.OrdinalIgnoreCase
+									.Equals(x.Selector, $"#{objectNameItem}"));
+							if(animationSet == null)
+							{
+								animationSet = new CssKeyframeAnimationSetItem()
+								{
+									Selector = $"#{objectNameItem}"
+								};
+								animationSets.Add(animationSet);
+							}
+							animation = new CssKeyframeAnimationItem(node);
+							animation.Name = $"{objectNameItem}-" +
+									Right(Guid.NewGuid().ToString("N"), 8);
+							CssKeyframeAnimationItem.ProcessTimelineKeyframes(
+								animation,
 								keyframeSet.FindAll(k =>
 									StringComparer.OrdinalIgnoreCase
 										.Equals(k.ObjectName, objectNameItem)));
-							css = SvgTimelineNodeItem.GenerateAnimationCss(timelineNode);
-							if(css.Length > 0)
-							{
-								builder.AppendLine(css);
-							}
+							animationSet.Animations.Add(animation);
 						}
 					}
+				}
+				if(animationSets.Count > 0)
+				{
+					builder.Append(animationSets.ToString());
 				}
 			}
 			return builder.ToString();

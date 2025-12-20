@@ -4899,6 +4899,46 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* ToCss																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the CSS-level string setting for the supplied value.
+		/// </summary>
+		/// <param name="direction">
+		/// The CssAnimationDirection enumeration value to represent.
+		/// </param>
+		/// <returns>
+		/// The CSS-level string setting compatible with animation-direction.
+		/// </returns>
+		public static string ToCss(
+			CssAnimationDirectionEnum direction)
+		{
+			string result = direction.ToString().ToLower();
+
+			if(result == "alternatereverse")
+			{
+				result = "alternate-reverse";
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Return the CSS-level string setting for the supplied value.
+		/// </summary>
+		/// <param name="fillMode">
+		/// The CssAnimationFillModeEnum enumeration value to represent.
+		/// </param>
+		/// <returns>
+		/// The CSS-level string setting compatible with animation-fill-mode.
+		/// </returns>
+		public static string ToCss(CssAnimationFillModeEnum fillMode)
+		{
+			string result = fillMode.ToString().ToLower();
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ToDouble																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
