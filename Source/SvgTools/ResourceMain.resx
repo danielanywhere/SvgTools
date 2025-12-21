@@ -144,6 +144,10 @@ All parameters can be prefixed with either '/' or '--'.
                     AnimateTimeline - Animate an SVG from the provided
                         freeform timeline file. If output filename is
                         omitted, the result is written to the input file.
+                        Currently, only OpenDocument ODS files are supported
+                        as data file formats, but support for Text-based CSV
+                        and JSON files are coming within the next few
+                        versions.
                         /infile /datafile[ /outfile]
                         Properties:
                             SheetName - Name of the sheet to load from the
