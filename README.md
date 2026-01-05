@@ -2,7 +2,59 @@
 
 <img src="Images/SvgToolsBanner001.png" width="100%" alt="SVG Tools Page Banner" />
 
-## 🆕 Introducing Implied Form Design
+<p>&nbsp;</p>
+
+## Table of Contents
+
+-   [External Keyframe Animation](#-external-keyframe-animation).
+
+-   [Introducing Implied Form Design](#introducing-implied-form-design).
+
+    -   [Problems Solved by Implied Form Design](#problems-solved-by-implied-form-design).
+    -   [Application Development Improvements from Implied Form Design](#application-development-improvements-from-implied-form-design).
+    -   [The Roles of Implied Form Design](#the-roles-of-implied-form-design).
+    -   [Single Role GUI Application Development](#single-role-gui-application-development).
+    -   [The Steps of Implied Form Design](#the-steps-of-implied-form-design).
+    -   [Current Limitations of Implied Form Design](#current-limitations-of-implied-form-design).
+    -   [More Information](#more-information).
+
+-   [SvgTools Background](#svgtools-background).
+
+-   [Current Toolset](#current-toolset).
+
+-   [Version Notes](#version-notes).
+
+-   [API Documentation](#api-documentation).
+
+<p>&nbsp;</p>
+
+## 🆕 External Keyframe Animation
+
+Anyone who has spent a considerable amount of time and effort animating CSS/SVG entities will undoubtedly be familiar with the facts that not only are CSS control methods somewhat different than any other commonly accepted method, but that because CSS keyframe sets are based upon a percentage of the runtime, as opposed to a simple time, managing more than a couple of simultaneous movements can easily become overly complicated, difficult to debug, and a nightmare to blend with other animations.
+
+With the human interface element aside, however, CSS animation, is also known to be somewhat reliable in non-critical applications, which is why I set out to allow you to build general purpose time-based keyframe lists in a spreadsheet or tabular text file, then apply that keyframe logic to the CSS patterns of your target file using a single command (AnimateTimeline).
+
+Using the external keyframe animation approach, your keyframes immediately become more manageable, intuitive, infinitely editable, portable, sortable, categorizable, and best of all, filterable. Using this technique, you can finally define and manage several unrelated yet simultaneous motions in single, easy to manage text format, making it easier to picture the state of the entire scene at at given point.
+
+### Timeline Layout
+
+If you have used timeline managers in software like Blender, Adobe Flash, or even PowerPoint, you will likely have little to no trouble getting started. The main different in this layout is that instead of time moving from left to right, it moves from top to bottom. Unlike with Blender and other formal timeline editors, however, this data is entirely represented by information you create and maintain on your own file.
+
+In this arrangement, each row, although it only potentially occurs at a unique time, represents an Object/Time combination for a specific object on the timeline. Meanwhile, the columns of the chart define specific properties that are to be reached at the current. The following figure illustrates this arrangement, as well as some of the other notable features of the timeline.
+
+<img src="Images/ExternalKeyframeAnimation-ColumnOverview01.png" width="100%" alt="External Keyframe Animation - Column Overview 01" />
+
+Note one of the main features of this approach is that although many properties are available for animation, any unused properties can be omitted from the spreadsheet without harming anything. Additionally, either rows or columns can occur in any order you like on every animation.
+
+Please standby for the user manual detailing this feature, which is scheduled to be released next.
+
+### Format Update
+
+At this moment, only the .ODS (OpenDocument Spreadsheet, from brands like LibreOffice Calc, etc.) spreadsheet format is supported. However, support is scheduled for Microsoft Excel, CSV, and JSON file formats as well.
+
+<p>&nbsp;</p>
+
+## Introducing Implied Form Design
 
 The notion of implied form design involves giving you the ability to draw normal art in your favorite vector editor then to convert it directly to a working application GUI with very little effort, effectively separating the roles of artist from front-end developer, simultaneously giving each of those roles drastically increased focus on their own unique tasks, and retaining the original art as the maintainable center of visual truth during the evolution cycle.
 
@@ -132,6 +184,8 @@ Implied Form Design is an iterative process that involves the following speciali
 
 <p style="text-align:center;"><img src="Images/Figure-ArtTranslationLogicProcess.png" width="250" alt="Implied Form Design Process" /></p>
 
+<p>&nbsp;</p>
+
 ### Single Role GUI Application Development
 
 If you are running a one-person shop, your entire job can suddenly become immensely faster, more productive, and vastly easier. Using this approach, it is once again feasible for an individual to create an entire multi-form XAML application in less than one day, similarly to the productive output that was once possible in the prior widget-based form era.
@@ -170,7 +224,7 @@ The general README for SvgTools follows.
 
 <p>&nbsp;</p>
 
-## Background
+## SvgTools Background
 
 This application was created to perform commonly-needed tasks related to SVG files, like those exported from Inkscape, Adobe Illustrator, Canva, Figma, or others.
 
@@ -182,6 +236,7 @@ The function library will offer a very long list of features in the near future,
 
 The application currently supports the following actions.
 
+-   **AnimateTimeline**. Animate an SVG from the provided freeform timeline file. If output filename is omitted, the result is written to the input file. Currently, only OpenDocument ODS files are supported as data file formats, but support for Text-based CSV and JSON files are coming within the next few versions.<p>&nbsp;</p>
 -   **ApplyTransforms**. This action dereferences all linked objects in the document, applies transforms to every object in the hierarchy, and removes all of the transforms.<p>&nbsp;</p>
 -   **Batch**. Load a batch file, whose actions are defined in JSON format, to run multiple actions. See the files **Docs/CommandLines.md** and **Scripts/SvgToolsBuildWizardForms.json** for a practical example.<p>&nbsp;</p>
 -   **CalculateTransform**. Display the result of an SVG transform like matrix, scale, rotate, etc., applied to caller-supplied x, y, width and height variables. This action has no effect on the file.<p>&nbsp;</p>
@@ -219,5 +274,7 @@ dotnet run -- /? /wait
 ## API Documentation
 
 Full API documentation is available at this library's [**GitHub User Page**](https://danielanywhere.github.io/SvgToolsLib).
+
+<p>&nbsp;</p>
 
 (This ReadMe file was created in LibreOffice Write!)

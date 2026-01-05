@@ -1,34 +1,36 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <RootNamespace>SvgToolsApp</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>disable</ImplicitUsings>
+		<Nullable>disable</Nullable>
+		<RootNamespace>SvgToolsApp</RootNamespace>
+		<Version>25.3218.4612</Version>
+		<Authors>Daniel Patterson, MCSD (danielanywhere)</Authors>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SvgToolsLib\SvgToolsLib.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\SvgToolsLib\SvgToolsLib.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="ResourceMain.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ResourceMain.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="ResourceMain.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ResourceMain.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="ResourceMain.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ResourceMain.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="ResourceMain.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>ResourceMain.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
 </Project>

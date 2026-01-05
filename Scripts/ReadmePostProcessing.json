@@ -1,5 +1,31 @@
 [
 	{
+		"Remarks": "Convert link text to lower-case.",
+		"FindPattern": "\\((?<linkcontent>\\#[^\\)]+)\\)",
+		"ReplacePattern": "(LowerCase(${linkcontent}))",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Remove outline from link text.",
+		"FindPattern": "\\((?<linkcontent>\\#[^\\)]+)\\|outline\\)",
+		"ReplacePattern": "(${linkcontent})",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Convert link spaces to lines.",
+		"GroupFindPattern": "\\((?<linkcontent>\\#[^\\)]+)\\)",
+		"FindPattern": "\\s",
+		"ReplacePattern": "-",
+		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Remove punctuation and other special characters on links.",
+		"GroupFindPattern": "\\((?<linkcontent>\\#[^\\)]+)\\)",
+		"FindPattern": "([^a-zA-Z0-9\\(\\)\\#-]+)",
+		"ReplacePattern": "",
+		"UseRegEx": 1
+	},
+	{
 		"Remarks": "Replace file insertion variable with file content. (3 parameters)",
 		"FindPattern": "(?i:\\{\\s*(?<block>CodeBlock)\\s*,\\s*(?<language>\\w+)\\s*,\\s*(?<filename>[^\\}]+)\\s*\\})",
 		"ReplacePattern": "```${language}\r\nLoadFileContent(${filename})\r\n```",

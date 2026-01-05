@@ -1,0 +1,11 @@
+[
+	{
+		"Remarks": "Transfer current version from SvgToolsLib to SvgTools.",
+		"SourceFiles": [ "../Source/SvgToolsLib/SvgToolsLib.csproj" ],
+		"TargetFiles": [ "../Source/SvgTools/SvgTools.csproj" ],
+		"SourceFindPatterns": [ "(?i:\\<(?<sourcetag>version)\\>(?<sourceversion>(\\d+|\\.)+)\\</\\k<sourcetag>\\>)" ],
+		"TargetFindPattern": "(?i:\\<(?<targettag>version)\\>(?<targetversion>(\\d+|\\.)+)\\</\\k<targettag>\\>)",
+		"TargetReplacePattern": "<${targettag}>${sourceversion}</${targettag}>",
+		"UseRegEx": 1
+	}
+]
