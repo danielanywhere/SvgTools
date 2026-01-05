@@ -36,11 +36,13 @@ With the human interface element aside, however, CSS animation, is also known to
 
 Using the external keyframe animation approach, your keyframes immediately become more manageable, intuitive, infinitely editable, portable, sortable, categorizable, and best of all, filterable. Using this technique, you can finally define and manage several unrelated yet simultaneous motions in single, easy to manage text format, making it easier to picture the state of the entire scene at at given point.
 
+<p>&nbsp;</p>
+
 ### Timeline Layout
 
-If you have used timeline managers in software like Blender, Adobe Flash, or even PowerPoint, you will likely have little to no trouble getting started. The main different in this layout is that instead of time moving from left to right, it moves from top to bottom. Unlike with Blender and other formal timeline editors, however, this data is entirely represented by information you create and maintain on your own file.
+If you have used timeline managers in software like Blender, Adobe Flash, or even PowerPoint, you will likely have little to no trouble getting started. The main difference in this layout is that instead of time moving from left to right, it moves from top to bottom. Unlike with Blender and other formal timeline editors, however, this data is entirely represented by information you create and maintain on your own file.
 
-In this arrangement, each row, although it only potentially occurs at a unique time, represents an Object/Time combination for a specific object on the timeline. Meanwhile, the columns of the chart define specific properties that are to be reached at the current. The following figure illustrates this arrangement, as well as some of the other notable features of the timeline.
+In this arrangement, each row, although it only potentially occurs at a unique time, represents an Object/Time combination for a specific object on the timeline. Meanwhile, the columns of the chart define specific values for distinct properties that are to be reached at the stated time. The following figure illustrates this arrangement, as well as some of the other notable features of the timeline.
 
 <img src="Images/ExternalKeyframeAnimation-ColumnOverview01.png" width="100%" alt="External Keyframe Animation - Column Overview 01" />
 
@@ -48,9 +50,11 @@ Note one of the main features of this approach is that although many properties 
 
 Please standby for the user manual detailing this feature, which is scheduled to be released next.
 
+<p>&nbsp;</p>
+
 ### Format Update
 
-At this moment, only the .ODS (OpenDocument Spreadsheet, from brands like LibreOffice Calc, etc.) spreadsheet format is supported. However, support is scheduled for Microsoft Excel, CSV, and JSON file formats as well.
+At this moment, only the .ODS (OpenDocument Spreadsheet, from brands like LibreOffice Calc, etc.) spreadsheet format is supported. However, support is scheduled soon for Microsoft Excel, CSV, and JSON file formats as well.
 
 <p>&nbsp;</p>
 
