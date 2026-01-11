@@ -6,8 +6,6 @@
 
 ## Table of Contents
 
--   [External Keyframe Animation](#-external-keyframe-animation).
-
 -   [Introducing Implied Form Design](#introducing-implied-form-design).
 
     -   [Problems Solved by Implied Form Design](#problems-solved-by-implied-form-design).
@@ -18,6 +16,8 @@
     -   [Current Limitations of Implied Form Design](#current-limitations-of-implied-form-design).
     -   [More Information](#more-information).
 
+-   [External Keyframe Animation](#external-keyframe-animation).
+
 -   [SvgTools Background](#svgtools-background).
 
 -   [Current Toolset](#current-toolset).
@@ -25,36 +25,6 @@
 -   [Version Notes](#version-notes).
 
 -   [API Documentation](#api-documentation).
-
-<p>&nbsp;</p>
-
-## 🆕 External Keyframe Animation
-
-Anyone who has spent a considerable amount of time and effort animating CSS/SVG entities will undoubtedly be familiar with the facts that not only are CSS control methods somewhat different than any other commonly accepted method, but that because CSS keyframe sets are based upon a percentage of the runtime, as opposed to a simple time, managing more than a couple of simultaneous movements can easily become overly complicated, difficult to debug, and a nightmare to blend with other animations.
-
-With the human interface element aside, however, CSS animation, is also known to be somewhat reliable in non-critical applications, which is why I set out to allow you to build general purpose time-based keyframe lists in a spreadsheet or tabular text file, then apply that keyframe logic to the CSS patterns of your target file using a single command (AnimateTimeline).
-
-Using the external keyframe animation approach, your keyframes immediately become more manageable, intuitive, infinitely editable, portable, sortable, categorizable, and best of all, filterable. Using this technique, you can finally define and manage several unrelated yet simultaneous motions in single, easy to manage text format, making it easier to picture the state of the entire scene at at given point.
-
-<p>&nbsp;</p>
-
-### Timeline Layout
-
-If you have used timeline managers in software like Blender, Adobe Flash, or even PowerPoint, you will likely have little to no trouble getting started. The main difference in this layout is that instead of time moving from left to right, it moves from top to bottom. Unlike with Blender and other formal timeline editors, however, this data is entirely represented by information you create and maintain on your own file.
-
-In this arrangement, each row, although it only potentially occurs at a unique time, represents an Object/Time combination for a specific object on the timeline. Meanwhile, the columns of the chart define specific values for distinct properties that are to be reached at the stated time. The following figure illustrates this arrangement, as well as some of the other notable features of the timeline.
-
-<img src="Images/ExternalKeyframeAnimation-ColumnOverview01.png" width="100%" alt="External Keyframe Animation - Column Overview 01" />
-
-Note one of the main features of this approach is that although many properties are available for animation, any unused properties can be omitted from the spreadsheet without harming anything. Additionally, either rows or columns can occur in any order you like on every animation.
-
-Please standby for the user manual detailing this feature, which is scheduled to be released next.
-
-<p>&nbsp;</p>
-
-### Format Update
-
-At this moment, only the .ODS (OpenDocument Spreadsheet, from brands like LibreOffice Calc, etc.) spreadsheet format is supported. However, support is scheduled soon for Microsoft Excel, CSV, and JSON file formats as well.
 
 <p>&nbsp;</p>
 
@@ -70,7 +40,9 @@ The basic goal of Implied Form Design is that if you can at least indicate what 
 
 ### Problems Solved by Implied Form Design
 
-Among others, the Implied Form Design approach can solve the following problems.
+Firstly, you might have seen that XAML Studio has recently been released to open source here on GitHub. However, that and other similar products, like the one available in JetBrains Rider, for example, are guaranteed NOT to give you any satisfaction as a form designer, because none of the software in that class offers visual-first editing, as you will see.
+
+Among other problems, however, the Implied Form Design approach can solve the following problems the so-called XAML editors (small e) are not at all able to solve.
 
 <p>&nbsp;</p>
 
@@ -220,11 +192,39 @@ This version only supports output to Avalonia XAML, a cross-platform .NET GUI pl
 
 If you plan to use the SvgTools implied form design processes, please feel free to read the user manual on this website at [Docs/ImpliedFormDesign-UserManual.pdf](https://danielanywhere.github.io/SvgTools/ImpliedFormDesign-UserManual.pdf).
 
+<p>&nbsp;</p>
+
+## External Keyframe Animation
+
+Anyone who has spent a considerable amount of time and effort animating CSS/SVG entities will undoubtedly be familiar with the facts that not only are CSS control methods somewhat different than any other commonly accepted method, but that because CSS keyframe sets are based upon a percentage of the runtime, as opposed to a simple time, managing more than a couple of simultaneous movements can easily become overly complicated, difficult to debug, and a nightmare to blend with other animations.
+
+With the human interface element aside, however, CSS animation, is also known to be somewhat reliable in non-critical applications, which is why I set out to allow you to build general purpose time-based keyframe lists in a spreadsheet or tabular text file, then apply that keyframe logic to the CSS patterns of your target file using a single command (AnimateTimeline).
+
+Using the external keyframe animation approach, your keyframes immediately become more manageable, intuitive, infinitely editable, portable, sortable, categorizable, and best of all, filterable. Using this technique, you can finally define and manage several unrelated yet simultaneous motions in single, easy to manage text format, making it easier to picture the state of the entire scene at at given point.
+
+<p>&nbsp;</p>
+
+### Timeline Layout
+
+If you have used timeline managers in software like Blender, Adobe Flash, or even PowerPoint, you will likely have little to no trouble getting started. The main difference in this layout is that instead of time moving from left to right, it moves from top to bottom. Unlike with Blender and other formal timeline editors, however, this data is entirely represented by information you create and maintain on your own file.
+
+In this arrangement, each row, although it only potentially occurs at a unique time, represents an Object/Time combination for a specific object on the timeline. Meanwhile, the columns of the chart define specific values for distinct properties that are to be reached at the stated time. The following figure illustrates this arrangement, as well as some of the other notable features of the timeline.
+
+<img src="Images/ExternalKeyframeAnimation-ColumnOverview01.png" width="100%" alt="External Keyframe Animation - Column Overview 01" />
+
+Note one of the main features of this approach is that although many properties are available for animation, any unused properties can be omitted from the spreadsheet without harming anything. Additionally, either rows or columns can occur in any order you like on every animation.
+
+Please standby for the user manual detailing this feature, which is scheduled to be released next.
+
+<p>&nbsp;</p>
+
+### Format Update
+
+At this moment, only the .ODS (OpenDocument Spreadsheet, from brands like LibreOffice Calc, etc.) spreadsheet format is supported. However, support is scheduled soon for Microsoft Excel, CSV, and JSON file formats as well.
+
+<p>&nbsp;</p>
+
 The general README for SvgTools follows.
-
----
-
-### 
 
 <p>&nbsp;</p>
 
