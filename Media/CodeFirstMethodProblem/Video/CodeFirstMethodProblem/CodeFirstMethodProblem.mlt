@@ -868,9 +868,9 @@
     <transition id="transition1" out="00:00:00.292">
       <property name="a_track">0</property>
       <property name="b_track">1</property>
+      <property name="mlt_service">mix</property>
       <property name="start">-1</property>
       <property name="accepts_blanks">1</property>
-      <property name="mlt_service">mix</property>
     </transition>
   </tractor>
   <producer id="producer6" in="00:00:00.000" out="00:00:08.792">
