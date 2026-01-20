@@ -49,7 +49,12 @@ This single paragraph describes the entire workflow for producing compilable GUI
 After you visually design the form, as in the above finished example, you run SvgTools with the **ImpliedDesignToAvaloniaXaml** action to convert that form directly to compilable XAML for Avalonia UI, as in the following example:
 
 ```plaintext
-svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard02.svg /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage02.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml
+ /infile:ImpliedFormDesignWizard02.svg
+ /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage02.axaml
+ /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json
+ /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+
 
 ```
 
