@@ -6,9 +6,16 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<RootNamespace>SvgToolsApp</RootNamespace>
-		<Version>25.3218.4612</Version>
+		<Version>26.2120.3921</Version>
 		<Authors>Daniel Patterson, MCSD (danielanywhere)</Authors>
+		<ApplicationIcon>SvgTools.ico</ApplicationIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="SvgTools.ico">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
