@@ -1,0 +1,1 @@
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard02.svg /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage02.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings

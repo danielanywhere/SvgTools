@@ -8,4 +8,4 @@ SET PATTERN=ReadmePostProcessing.json
 
 :: When the image has a URL assigned it isn't placed in the output. Use 'Image' or 'Banner' blocks.
 PANDOC -t markdown_strict --embed-resources=false --wrap=none "%SOURCE%" -o "%TARGET%"
-"%FAR%" /wait "/workingpath:..\Docs" "/files:%TARGET%" "/patternfile:%PATTERN%"
+"%FAR%" /wait "/files:%TARGET%" "/patternfile:%PATTERN%"

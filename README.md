@@ -38,6 +38,27 @@ The basic goal of Implied Form Design is that if you can at least indicate what 
 
 <p>&nbsp;</p>
 
+### The Basic Workflow
+
+Please note that the Implied Form Design system is currently only focused on the tools **Inkscape** and **Avalonia UI** until it becomes a little more mature. Also note that a complete user manual is available at [Docs/ImpliedFormDesign-UserManual.pdf](https://danielanywhere.github.io/SvgTools/ImpliedFormDesign-UserManual.pdf), also in this repository. There, you will find a complete list of supported control names, settings, and techniques.
+
+This single paragraph describes the entire workflow for producing compilable GUI desktop application forms. First, open Inkscape, create an image, and place basic shapes, like rectangles and images. As you place those shapes, you also set the labels to easily memorable control names, like TextBox, Button, etc. Whenever you need direct code access to those controls, you also set their ID fields. Both the **Label** and the **ID** values are available on the **Object Properties** panel, as you can see in the following example, where a textbox has just been drawn using a normal rectangle. Its **ID** is **txtSelectDrawing** and its **Label** is **TextBox**. Other than running the conversion, that is all there is to it.
+
+<img src="Images/IFDTextBoxExample.jpg" width="80%" alt="Form Editing in Inkscape" />
+
+After you visually design the form, as in the above finished example, you run SvgTools with the **ImpliedDesignToAvaloniaXaml** action to convert that form directly to compilable XAML for Avalonia UI, as in the following example:
+
+```plaintext
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard02.svg /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage02.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+
+```
+
+In the above example, the styleworksheet parameter specifies a file of helper information that allows you to reuse information consistently across numerous forms such as this one, which happens to be a Wizard form. You can see the actual content of that file in the Drawings/Styles/Avalonia subfolder of this repository. You don't have to specify a stylesheet if the additional information isn't needed in your application, but it's supported to assist you.
+
+The following sections offer more philosophical perspective about the problems in modern UI design, and the solutions being presented by this method.
+
+<p>&nbsp;</p>
+
 ### Problems Solved by Implied Form Design
 
 Firstly, you might have seen that XAML Studio has recently been released to open source here on GitHub. However, that and other similar products, like the one available in JetBrains Rider, for example, are guaranteed NOT to give you any satisfaction as a form designer, because none of the software in that class offers visual-first editing, as you will see.
@@ -266,12 +287,7 @@ Please read the <b>Docs/Syntax.txt</b> file for more information. You can also g
 
 On any system with .NET Core installed, you can get the project and run it initially using the following commands.
 
-```batch
-git clone https://github.com/danielanywhere/SvgTools
-cd SvgTools/Source/SvgTools
-dotnet run -- /? /wait
-
-```
+{CodeBlock,batch,UsageExample01.txt}
 
 <p>&nbsp;</p>
 
