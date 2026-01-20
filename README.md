@@ -8,6 +8,7 @@
 
 -   [Introducing Implied Form Design](#introducing-implied-form-design).
 
+    -   [The Basic Workflow](#the-basic-workflow).
     -   [Problems Solved by Implied Form Design](#problems-solved-by-implied-form-design).
     -   [Application Development Improvements from Implied Form Design](#application-development-improvements-from-implied-form-design).
     -   [The Roles of Implied Form Design](#the-roles-of-implied-form-design).
@@ -40,9 +41,9 @@ The basic goal of Implied Form Design is that if you can at least indicate what 
 
 ### The Basic Workflow
 
-Please note that the Implied Form Design system is currently only focused on the tools **Inkscape** and **Avalonia UI** until it becomes a little more mature. Also note that a complete user manual is available at [Docs/ImpliedFormDesign-UserManual.pdf](https://danielanywhere.github.io/SvgTools/ImpliedFormDesign-UserManual.pdf), also in this repository. There, you will find a complete list of supported control names, settings, and techniques.
+Please note that the Implied Form Design system is currently only focused on the tools **Inkscape** and **Avalonia UI** until it becomes a little more mature. Also note that a complete user manual is available at [Docs/ImpliedFormDesign-UserManual.pdf](https://danielanywhere.github.io/SvgTools/ImpliedFormDesign-UserManual.pdf), in this repository. There, you will find a complete list of supported control names, settings, and techniques.
 
-This single paragraph describes the entire workflow for producing compilable GUI desktop application forms. First, open Inkscape, create an image, and place basic shapes, like rectangles and images. As you place those shapes, you also set the labels to easily memorable control names, like TextBox, Button, etc. Whenever you need direct code access to those controls, you also set their ID fields. Both the **Label** and the **ID** values are available on the **Object Properties** panel, as you can see in the following example, where a textbox has just been drawn using a normal rectangle. Its **ID** is **txtSelectDrawing** and its **Label** is **TextBox**. Other than running the conversion, that is all there is to it.
+This single paragraph describes the entire workflow for producing compilable GUI desktop application forms. First, open Inkscape, create an image, and place basic shapes, like rectangles and images. As you place those shapes, set the labels to easily memorable control names, like TextBox, Button, etc. Whenever you need direct code access to those controls, also set their ID fields. Just the **Label** field is available in the **Layers** panel. For setting addressable names right away, both the **Label** and the **ID** values are available on the **Object Properties** panel, as you can see in the following example, where a textbox has just been drawn using a normal rectangle. Its **ID** is **txtSelectDrawing** and its **Label** is **TextBox**. Other than running the conversion, that is all there is to it.
 
 <img src="Images/IFDTextBoxExample.jpg" width="80%" alt="Form Editing in Inkscape" />
 
