@@ -293,7 +293,12 @@ Please read the <b>Docs/Syntax.txt</b> file for more information. You can also g
 
 On any system with .NET Core installed, you can get the project and run it initially using the following commands.
 
-{CodeBlock,batch,UsageExample01.txt}
+```batch
+git clone https://github.com/danielanywhere/SvgTools
+cd SvgTools/Source/SvgTools
+dotnet run -- /? /wait
+
+```
 
 <p>&nbsp;</p>
 
