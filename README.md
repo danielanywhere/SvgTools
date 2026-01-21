@@ -115,7 +115,7 @@ Even at that top level, the containment metaphor is already strained. Human desi
 
 However, the real breakdown occurs as the required structure becomes deeper and more rigid. Modern interfaces often contain multiple layers of grids, stacks, panels, and alignment containers. In XML/XAML paradigms, which constitute the basis for almost all contemporary GUI development platforms, this means every alteration, no matter how visually small, must be expressed through structural rearrangement of nested nodes. The designer's creative expression becomes constrained not by visual intent but by the strictures of a hierarchical syntax.
 
-As a result, instead of ever asking, how a form should appear to the user, the designer is required to constantly think about where an object must be placed in the tree.
+As a result, instead of ever asking how a form should appear to the user, the designer is required to constantly think about where an object must be placed in the tree.
 
 The direct consequence is that the tools expected to enable visual creativity are constantly imposing a cognitive tax that is tangent to the act of design itself. Designers must reason about parent-child relationships, element hosting, layout logic, and structural validity long before they can express ideas visually. At this point, all work in this field no longer resembles graphic or interaction design, but data modeling.
 
