@@ -4,7 +4,6 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Internal reference
-launchSettings.json
 UpdateSharedFiles.cmd
 
 Docs/InProgress/
