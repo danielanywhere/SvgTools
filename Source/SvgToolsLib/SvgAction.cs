@@ -1147,6 +1147,123 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* ChangeImage																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Change an image within the loaded SVG.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the current action.
+		/// </param>
+		private static void ChangeImage(SvgActionItem item)
+		{
+			bool bContinue = true;
+			string content = "";
+			byte[] data = null;
+			SvgDocumentItem doc = null;
+			string extension = "";
+			FileInfo file = null;
+			string id = "";
+			HtmlNodeItem node = null;
+			string fileMode = "base64";
+			string filename = "";
+			string src = "";
+
+			if(item != null)
+			{
+				doc = GetSpecifiedOrWorking(item);
+				if(doc != null)
+				{
+					fileMode = GetPropertyByName(item, "filemode").ToLower();
+					if(string.IsNullOrEmpty(fileMode))
+					{
+						fileMode = "base64";
+					}
+					switch(fileMode)
+					{
+						case "base64":
+							break;
+						case "linked":
+							break;
+						default:
+							Trace.WriteLine(" Valid choices for filemode are " +
+								$"'base64' and 'linked'. '{fileMode}' is not " +
+								"supported.",
+								$"{MessageImportanceEnum.Err}");
+							bContinue = false;
+							break;
+					}
+					if(bContinue)
+					{
+						filename = GetPropertyByName(item, "filename");
+						if(string.IsNullOrEmpty(filename))
+						{
+							Trace.WriteLine($" Filename not specified.",
+								$"{MessageImportanceEnum.Err}");
+							bContinue = false;
+						}
+					}
+					if(bContinue)
+					{
+						id = GetPropertyByName(item, "id");
+						if(string.IsNullOrEmpty(id))
+						{
+							Trace.WriteLine($" No object specified.",
+								$"{MessageImportanceEnum.Err}");
+							bContinue = false;
+						}
+					}
+					if(bContinue)
+					{
+						node = doc.Document.Nodes.FindMatch(x =>
+							(StringComparer.OrdinalIgnoreCase.Equals(x.Id, id)));
+						if(node == null)
+						{
+							Trace.WriteLine($" Object not found: {id}",
+								$"{MessageImportanceEnum.Err}");
+							bContinue = false;
+						}
+					}
+					if(bContinue)
+					{
+						//	Filename and ID are known.
+						file = new FileInfo(AbsolutePath(item.WorkingPath, filename));
+						if(file.Exists)
+						{
+							data = File.ReadAllBytes(file.FullName);
+							switch(fileMode)
+							{
+								case "base64":
+									content = Html.DataUrl.ToB64(data,
+										Mime.MimeType(file.Extension));
+									break;
+								case "linked":
+									content = filename;
+									break;
+							}
+							node.Attributes.SetAttribute("xlink:href", content);
+							doc.Changed = true;
+						}
+						else
+						{
+							Trace.WriteLine($" File not found: {filename}",
+								$"{MessageImportanceEnum.Err}");
+							bContinue = false;
+						}
+					}
+				}
+			}
+			if(bContinue)
+			{
+				//	TODO: Make working document singleton.
+				//	TODO: Defer workding document save until end of all activity.
+				SaveWorkingSvg(item);
+				item.WorkingSvg.Changed = false;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* CheckElements																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -4197,6 +4314,7 @@ namespace SvgToolsLib
 					//	Just load the document if the filenames were specified.
 					content = File.ReadAllText(item.InputFiles[0].FullName);
 					doc = new SvgDocumentItem(content);
+					item.WorkingSvg = doc;
 				}
 				else
 				{
@@ -4963,6 +5081,9 @@ namespace SvgToolsLib
 				#endregion
 				case SvgActionTypeEnum.CalculateTransform:
 					CalculateTransform(this);
+					break;
+				case SvgActionTypeEnum.ChangeImage:
+					ChangeImage(this);
 					break;
 				case SvgActionTypeEnum.CleanupSvg:
 					CleanupSvg(this);

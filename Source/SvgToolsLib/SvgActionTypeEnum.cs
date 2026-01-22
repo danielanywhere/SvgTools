@@ -55,6 +55,10 @@ namespace SvgToolsLib
 		/// </summary>
 		Batch,
 		/// <summary>
+		/// Change the content of the specified image by id and filename.
+		/// </summary>
+		ChangeImage,
+		/// <summary>
 		/// Clean up the specified SVG file by dereferencing links,
 		/// applying transforms, purging unused defs, and rounding all
 		/// values.

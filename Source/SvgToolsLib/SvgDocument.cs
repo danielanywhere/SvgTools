@@ -71,6 +71,12 @@ namespace SvgToolsLib
 		/// </summary>
 		public SvgDocumentItem()
 		{
+			Document = new HtmlDocument()
+			{
+				LineFeed = false,
+				IncludeComments = true,
+				PreserveSpace = true,
+			};
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
@@ -83,7 +89,7 @@ namespace SvgToolsLib
 		{
 			if(htmlDocument != null)
 			{
-				mDocument = htmlDocument;
+				Document = htmlDocument;
 			}
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
@@ -93,12 +99,31 @@ namespace SvgToolsLib
 		/// <param name="htmlContent">
 		/// HTML content with which to initialize the document.
 		/// </param>
-		public SvgDocumentItem(string htmlContent)
+		public SvgDocumentItem(string htmlContent) : this()
 		{
 			if(htmlContent?.Length > 0)
 			{
 				mDocument.Html = htmlContent;
+				mChanged = false;
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Changed																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Changed">Changed</see>.
+		/// </summary>
+		private bool mChanged = false;
+		/// <summary>
+		/// Get/Set a value indicating whether data has changed on the current
+		/// document.
+		/// </summary>
+		public bool Changed
+		{
+			get { return mChanged; }
+			set { mChanged = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -108,19 +133,17 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Private member for <see cref="Document">Document</see>.
 		/// </summary>
-		private HtmlDocument mDocument = new HtmlDocument()
-		{
-			LineFeed = false,
-			IncludeComments = true,
-			PreserveSpace = true,
-		};
+		private HtmlDocument mDocument = null;
 		/// <summary>
 		/// Get/Set a reference to the HTML document object of the SVG.
 		/// </summary>
 		public HtmlDocument Document
 		{
 			get { return mDocument; }
-			set { mDocument = value; }
+			set
+			{
+				mDocument = value;
+			}
 		}
 		//*-----------------------------------------------------------------------*
 

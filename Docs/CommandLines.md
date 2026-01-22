@@ -117,3 +117,11 @@ Example #2.
 ```
 svgtools /wait /action:AnimateTimeline /infile:QuietShift.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/QuietShift.svg "/properties:[{'Name':'SheetName','Value':'QuietShift'}]" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
 ```
+
+### Change Image to base-64 DataUrl in SVG File
+
+Change the content of the image in the specified object to the base-64 of the specified file.
+
+```
+svgtools /wait /action:ChangeImage /infile:Aerionics-Animated.svg /outfile:Aerionics-Animated.svg "/properties:[{'Name':'id','Value':'imgSlideStrip'},{'Name':'filemode','Value':'base64'},{'Name':'filename','Value':'../images/SlideStrip01sm.jpg'}]" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Drawings
+```
