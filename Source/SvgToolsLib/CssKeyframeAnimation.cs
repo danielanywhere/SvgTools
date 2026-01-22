@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -104,8 +105,16 @@ namespace SvgToolsLib
 					builder.Append(' ');
 					builder.Append($"{animationItem.Delay:0.###}s");
 					builder.Append(' ');
-					builder.Append($"{animationItem.IterationCount}");
-					builder.Append(' ');
+					if(animationItem.IterationCount > -1)
+					{
+						builder.Append($"{animationItem.IterationCount}");
+						builder.Append(' ');
+					}
+					else
+					{
+						builder.Append($"infinite");
+						builder.Append(' ');
+					}
 					builder.Append(SvgToolsUtil.ToCss(animationItem.Direction));
 					builder.Append(' ');
 					builder.Append(SvgToolsUtil.ToCss(animationItem.FillMode));
@@ -423,6 +432,10 @@ namespace SvgToolsLib
 			List<float> times = null;
 			StringBuilder transform = new StringBuilder();
 
+			//if(animation.Name.StartsWith("set01-"))
+			//{
+			//	Trace.WriteLine("CssKeyframeAnimationItem.ProcessTimelineKeyframes: Break here...");
+			//}
 			if(animation != null && tKeyframes?.Count > 0)
 			{
 				//	Configure the static values.
@@ -682,8 +695,16 @@ namespace SvgToolsLib
 				builder.Append(' ');
 				builder.Append($"{mDelay:0.###}s");
 				builder.Append(' ');
-				builder.Append($"{mIterationCount}");
-				builder.Append(' ');
+				if(mIterationCount > -1)
+				{
+					builder.Append($"{mIterationCount}");
+					builder.Append(' ');
+				}
+				else
+				{
+					builder.Append($"infinite");
+					builder.Append(' ');
+				}
 				builder.Append(ToCss(mDirection));
 				builder.Append(' ');
 				builder.Append(ToCss(mFillMode));

@@ -20,6 +20,7 @@ using Html;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -143,6 +144,12 @@ namespace SvgToolsLib
 									StringComparer.OrdinalIgnoreCase
 										.Equals(k.ObjectName, objectNameItem)));
 							animationSet.Animations.Add(animation);
+						}
+						else
+						{
+							Trace.WriteLine(
+								$"SVG object id not found for: {objectNameItem}",
+								$"{MessageImportanceEnum.Warn}");
 						}
 					}
 				}

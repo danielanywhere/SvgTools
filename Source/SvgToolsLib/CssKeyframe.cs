@@ -136,7 +136,7 @@ namespace SvgToolsLib
 		{
 			StringBuilder builder = new StringBuilder();
 
-			builder.AppendLine($"{mTemporalPosition:0.###}%");
+			builder.AppendLine($"{mTemporalPosition:0.#####}%");
 			builder.AppendLine("{");
 			builder.Append(mStyles.ToString());
 			builder.AppendLine("}");
