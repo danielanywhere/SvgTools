@@ -289,7 +289,7 @@ The application currently supports the following actions.
 
 This version is currently available as command-line application only, but work is proceeding that will expose this functionality for programmatic use in other applications.
 
-Please read the <b>Docs/Syntax.txt</b> file for more information. You can also get some sample ideas from <b>Docs/CommandLines.md</b> and <b>Docs/WorkingSvg-SvgTools01.json</b>.
+Please read the **[Docs/Syntax.txt](Docs/Syntax.txt)** file for more information. You can also get some sample ideas from <b>Docs/CommandLines.md</b> and <b>Docs/WorkingSvg-SvgTools01.json</b>.
 
 On any system with .NET Core installed, you can get the project and run it initially using the following commands.
 
