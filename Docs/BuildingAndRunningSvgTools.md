@@ -2,6 +2,19 @@
 
 SvgTools is a managed command-line application running on the .NET Core framework on Linux, Mac, and Windows.
 
+## Table of Contents
+
+-   [Prerequisites](#prerequisites).
+
+    -   [Install on Ubuntu](#install-on-ubuntu).
+    -   [Install on macOS](#install-on-macos).
+    -   [Install on Windows](#install-on-windows).
+    -   [Verify your .NET SDK](#verify-your-net-sdk).
+
+-   [Basic Run Only Mode](#basic-run-only-mode).
+
+-   [Publishing and Running the Compiled Version](#publishing-and-running-the-compiled-version).
+
 <p>&nbsp;</p>
 
 ## Prerequisites
@@ -146,9 +159,9 @@ The first time you run the application, there will be some delay because it will
 
 ## Publishing and Running the Compiled Version
 
-If you intend to use SvgTools multiple times, you can compile it for use in release mode and run the compiled file directly with the dotnet command, as shown in the example commands below.
+If you intend to use SvgTools multiple times, you can compile it for use in release mode and run the compiled file directly using the dotnet command, as shown in the example commands below.
 
-Note that the cd Downloads command will only have an effect in certain cases, like Ubuntu and Windows, for example.
+Note that the following cd Downloads command will only have an effect in certain cases, like Ubuntu and Windows, for example.
 
 <p>&nbsp;</p>
 

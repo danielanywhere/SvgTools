@@ -96,5 +96,11 @@
 		"FindPattern": "(?i:https{0,1}\\://(?<folder>[a-z]+/))",
 		"ReplacePattern": "${folder}",
 		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Remove numeric prefix from local links.",
+		"FindPattern": "(?i:\\]\\(\\#\\d+(?<linkText>[^\\)]+))",
+		"ReplacePattern": "](#${linkText}",
+		"UseRegEx": 1
 	}
 ]
