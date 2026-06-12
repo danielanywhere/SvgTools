@@ -3,6 +3,9 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
+		<PublishAot>true</PublishAot>
+		<SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+		<SuppressAotAnalysisWarnings>true</SuppressAotAnalysisWarnings>
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<RootNamespace>SvgToolsApp</RootNamespace>
@@ -22,7 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SvgToolsLib\SvgToolsLib.csproj" />
+		<ProjectReference Include="..\SvgToolsLib\SvgToolsLib.csproj" UndefineProperties="PublishAot" />
 	</ItemGroup>
 
 	<ItemGroup>

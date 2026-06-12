@@ -287,9 +287,9 @@ The application currently supports the following actions.
 
 ## Version Notes
 
-This version is currently available as command-line application only, but work is proceeding that will expose this functionality for programmatic use in other applications.
+This version is currently available as command-line application only, but work is proceeding that will also expose this functionality as a stand-alone API for programmatic use in other applications.
 
-Please read the **[Docs/Syntax.txt](Docs/Syntax.txt)** file for more information. You can also get some sample ideas from <b>Docs/CommandLines.md</b> and <b>Docs/WorkingSvg-SvgTools01.json</b>.
+Please read the [**Docs/Syntax.txt**](Docs/Syntax.txt) file for more information. You can also get some sample ideas from [**Docs/CommandLines.md**](Docs/CommandLines.md) and [**Docs/WorkingSvg-SvgTools01.json**](Docs/WorkingSvg-SvgTools01.json).
 
 On any system with .NET Core installed, you can get the project and run it initially using the following commands.
 
@@ -299,6 +299,8 @@ cd SvgTools/Source/SvgTools
 dotnet run -- /? /wait
 
 ```
+
+A full description of compiling and running SvgTools on your PC is also available at [**Docs/BuildingAndRunningSvgTools.md**](Docs/BuildingAndRunningSvgTools.md).
 
 <p>&nbsp;</p>
 
