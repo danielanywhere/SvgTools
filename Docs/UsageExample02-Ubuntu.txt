@@ -1,3 +1,5 @@
+sudo apt-get update
+sudo apt-get install -y clang zlib1g-dev
 cd Downloads
 git clone https://github.com/danielanywhere/SvgTools
 cd SvgTools/Source/SvgTools

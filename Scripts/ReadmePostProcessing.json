@@ -90,5 +90,11 @@
 		"FindPattern": "(?s:(?i:( |\\t)*\\{pre\\}(?<lineContent>.*?)( |\\t)*\\{/pre\\}))",
 		"ReplacePattern": "<pre>${lineContent}</pre>",
 		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Remove https:// prefix from local relative links.",
+		"FindPattern": "(?i:https{0,1}\\://(?<folder>[a-z]+/))",
+		"ReplacePattern": "${folder}",
+		"UseRegEx": 1
 	}
 ]

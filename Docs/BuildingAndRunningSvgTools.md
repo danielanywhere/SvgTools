@@ -153,6 +153,8 @@ Note that the cd Downloads command will only have an effect in certain cases, li
 <p>&nbsp;</p>
 
 ```batch
+sudo apt-get update
+sudo apt-get install -y clang zlib1g-dev
 cd Downloads
 git clone https://github.com/danielanywhere/SvgTools
 cd SvgTools/Source/SvgTools
@@ -168,6 +170,8 @@ cd bin/Release/net8.0/linux-x64/native
 
 In the above example for Ubuntu, the following actions are used.
 
+-   Update the package installer, if necessary.
+-   Install the necessary compilation tools, if not already present.
 -   Change to a directory where clutter can be managed.
 -   Clone the source code from GitHub.
 -   Change directories to the one containing the SvgTools.csproj file.
