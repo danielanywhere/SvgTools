@@ -1256,7 +1256,7 @@ namespace SvgToolsLib
 			if(bContinue)
 			{
 				//	TODO: Make working document singleton.
-				//	TODO: Defer workding document save until end of all activity.
+				//	TODO: Defer working document save until end of all activity.
 				SaveWorkingSvg(item);
 				item.WorkingSvg.Changed = false;
 			}
@@ -1714,6 +1714,7 @@ namespace SvgToolsLib
 		/// </param>
 		private static void CleanupSvg(SvgActionItem item)
 		{
+			bool bIsLocal = false;
 			string content = "";
 			SvgDocumentItem doc = null;
 			int precision = 0;
@@ -1723,6 +1724,7 @@ namespace SvgToolsLib
 				doc = GetSpecifiedOrWorking(item);
 				if(doc != null)
 				{
+					bIsLocal = doc.IsLocal;
 					Trace.WriteLine(" Dereference Links...",
 						$"{MessageImportanceEnum.Info}");
 					Trace.WriteLine(" ApplyTransforms...",
@@ -1736,7 +1738,7 @@ namespace SvgToolsLib
 					precision = GetPrecision(item);
 					SvgToolsUtil.RoundAllValues(doc.Document, precision);
 
-					if(doc.IsLocal)
+					if(bIsLocal)
 					{
 						//	Per-file mode is active.
 						content = doc.Document.Html;
@@ -4299,6 +4301,10 @@ namespace SvgToolsLib
 		/// <returns>
 		/// Reference to the SVG document found, if successul. Otherwise, null.
 		/// </returns>
+		/// <remarks>
+		/// The first caller to open the working document receives a local
+		/// indicator. All others receive a non-local indicator.
+		/// </remarks>
 		private static SvgDocumentItem GetSpecifiedOrWorking(SvgActionItem item)
 		{
 			string content = "";
@@ -4306,7 +4312,16 @@ namespace SvgToolsLib
 
 			if(item != null)
 			{
-				if(CheckElements(item,
+				if(item.WorkingSvg != null &&
+					(item.InputFiles.Count == 0 ||
+					(item.InputFiles?.Count > 0 &&
+					item.InputFiles[0].FullName == item.WorkingSvg.FullName)))
+				{
+					//	The working document has already been opened.
+					doc = item.WorkingSvg;
+					doc.IsLocal = false;
+				}
+				else if(CheckElements(item,
 					ActionElementEnum.InputFilename |
 					ActionElementEnum.OutputFilename,
 					includeInherited: false, quiet: true))
@@ -4314,11 +4329,9 @@ namespace SvgToolsLib
 					//	Just load the document if the filenames were specified.
 					content = File.ReadAllText(item.InputFiles[0].FullName);
 					doc = new SvgDocumentItem(content);
+					doc.FullName = item.InputFiles[0].FullName;
+					doc.IsLocal = true;
 					item.WorkingSvg = doc;
-				}
-				else
-				{
-					doc = item.WorkingSvg;
 				}
 			}
 			return doc;
@@ -5093,6 +5106,7 @@ namespace SvgToolsLib
 				//	ClearInputFiles(this);
 				//	break;
 				#endregion
+
 				#region Removed
 				//case ActionTypeEnum.ConvertFromB64:
 				//	//	Convert the file from base-64 to binary.
@@ -5102,6 +5116,9 @@ namespace SvgToolsLib
 				//	//	Convert the file from binary to base-64.
 				//	ConvertToB64(this);
 				//	break;
+				#endregion
+
+				#region Removed
 				//case ActionTypeEnum.CopyNumericToRange:
 				//	CopyNumericToRange(this);
 				//	break;
@@ -5529,10 +5546,10 @@ namespace SvgToolsLib
 					mParent == null || mParent.Parent == null)
 				{
 					mWorkingSvg = value;
-					if(mWorkingSvg != null)
-					{
-						mWorkingSvg.IsLocal = false;
-					}
+					//if(mWorkingSvg != null)
+					//{
+					//	mWorkingSvg.IsLocal = false;
+					//}
 				}
 				else if(string.IsNullOrEmpty(mInputFilename) &&
 					mParent?.Parent != null)

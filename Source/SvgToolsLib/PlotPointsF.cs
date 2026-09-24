@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
 using SkiaSharp;
@@ -56,6 +57,7 @@ namespace SvgToolsLib
 		public static void ConvertToAbsolute(PlotPointsFCollection plotPoints)
 		{
 			int index = 0;
+			SKPoint lastMovePoint = new SKPoint();
 			SKPoint pt = new SKPoint();
 			List<float> pts = new List<float>();
 
@@ -90,6 +92,11 @@ namespace SvgToolsLib
 							//	Line, Move, Quadratic batch: 0, 1.
 							pt.X = plotItem.Points[0];
 							pt.Y = plotItem.Points[1];
+							if(plotItem.Action == "M")
+							{
+								lastMovePoint.X = pt.X;
+								lastMovePoint.Y = pt.Y;
+							}
 							break;
 						case "Q":
 							//	Quadratic Bezier curve: 2, 3.
@@ -101,6 +108,8 @@ namespace SvgToolsLib
 							pt.Y = plotItem.Points[0];
 							break;
 						case "Z":
+							pt.X = lastMovePoint.X;
+							pt.Y = lastMovePoint.Y;
 							break;
 						case "a":
 							//	Arc: 5, 6.
@@ -139,6 +148,11 @@ namespace SvgToolsLib
 							pt.Y += plotItem.Points[1];
 							plotItem.Points[0] = pt.X;
 							plotItem.Points[1] = pt.Y;
+							if(plotItem.Action == "m")
+							{
+								lastMovePoint.X = pt.X;
+								lastMovePoint.Y = pt.Y;
+							}
 							plotItem.Action = plotItem.Action.ToUpper();
 							break;
 						case "q":
@@ -164,6 +178,8 @@ namespace SvgToolsLib
 						case "z":
 							//	Relative actions.
 							plotItem.Action = plotItem.Action.ToUpper();
+							pt.X = lastMovePoint.X;
+							pt.Y = lastMovePoint.Y;
 							break;
 					}
 					index++;

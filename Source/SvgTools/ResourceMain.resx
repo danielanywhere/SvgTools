@@ -171,6 +171,11 @@ All parameters can be prefixed with either '/' or '--'.
                         The following accompanying properties are supported:
                             x, y, width, height
                         Properties: transform, x, y [, width, height]
+                    CleanUpSvg - Clean up the specified SVG file by
+                        dereferencing links, applying transforms, purging
+                        unused defs, and rounding all values.
+                        /infile /outfile
+                        Properties: precision
                     ImpliedDesignEnumerateControls - Enumerate the identified
                         controls within an SVG source file.
                         /infile

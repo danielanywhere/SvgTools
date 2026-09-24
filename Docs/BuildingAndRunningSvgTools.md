@@ -27,7 +27,7 @@ The only major consideration that needs to be made is that you have the .NET Cod
 
 <p>&nbsp;</p>
 
-### Install on Ubuntu
+### Install .NET SDK on Ubuntu
 
 Use the following command to install .NET 10 SDK on Ubuntu.
 
@@ -40,7 +40,7 @@ sudo apt-get install -y dotnet-sdk-10.0
 
 <p>&nbsp;</p>
 
-### Install on macOS
+### Install .NET SDK on macOS
 
 There are three methods you can use for installing the .NET SDK on Macintosh.
 
@@ -94,7 +94,7 @@ chmod +x dotnet-install.sh
 
 <p>&nbsp;</p>
 
-### Install on Windows
+### Install .NET SDK on Windows
 
 If you have Windows 10, Windows Server 2012, or newer, you can install .NET 10 SDK by following these steps.
 

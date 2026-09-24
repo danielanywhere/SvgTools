@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2025 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2026 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,20 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using Html;
+using Geometry;
+
+using static SvgToolsLib.SvgToolsUtil;
 
 namespace SvgToolsLib
 {
 	//*-------------------------------------------------------------------------*
-	//*	SvgDocumentCollection																										*
+	//*	SvgPathLineActionCollection																							*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Collection of SvgDocumentItem Items.
+	/// Collection of SvgPathLineActionItem Items.
 	/// </summary>
-	public class SvgDocumentCollection : List<SvgDocumentItem>
+	public class SvgPathLineActionCollection :
+		List<SvgPathLineActionItem>
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -47,12 +50,12 @@ namespace SvgToolsLib
 	//*-------------------------------------------------------------------------*
 
 	//*-------------------------------------------------------------------------*
-	//*	SvgDocumentItem																													*
+	//*	SvgPathLineActionItem																										*
 	//*-------------------------------------------------------------------------*
 	/// <summary>
-	/// Information about the loaded SVG document.
+	/// Information about an individual line action.
 	/// </summary>
-	public class SvgDocumentItem
+	public class SvgPathLineActionItem : SvgPathActionItem
 	{
 		//*************************************************************************
 		//*	Private																																*
@@ -67,121 +70,89 @@ namespace SvgToolsLib
 		//*	_Constructor																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the SvgDocumentItem item.
+		/// Create a new instance of the SvgPathLineActionItem item.
 		/// </summary>
-		public SvgDocumentItem()
+		public SvgPathLineActionItem()
 		{
-			Document = new HtmlDocument()
-			{
-				LineFeed = false,
-				IncludeComments = true,
-				PreserveSpace = true,
-			};
+			mActionType = SvgPathActionType.Line;
 		}
-		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* FromPlotPoint																													*
+		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Create a new instance of the SvgDocumentItem item.
+		/// Inspect the caller's plot point and return a strongly-typed
+		/// representation.
 		/// </summary>
-		/// <param name="htmlDocument">
-		/// HTML document with which to initialize the SVG document.
+		/// <param name="plotPoint">
+		/// The parameterized plot point of a line.
 		/// </param>
-		public SvgDocumentItem(HtmlDocument htmlDocument)
-		{
-			if(htmlDocument != null)
-			{
-				Document = htmlDocument;
-			}
-		}
-		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
-		/// <summary>
-		/// Create a new instance of the SvgDocumentItem item.
-		/// </summary>
-		/// <param name="htmlContent">
-		/// HTML content with which to initialize the document.
+		/// <param name="currentPoint">
+		/// The last-known current coordinate.
 		/// </param>
-		public SvgDocumentItem(string htmlContent) : this()
+		/// <returns>
+		/// Reference to a new line action item representing the
+		/// caller's parameters, if found. Otherwise, null.
+		/// </returns>
+		public static SvgPathLineActionItem FromPlotPoint(
+			PlotPointsFItem plotPoint, FVector2 currentPoint)
 		{
-			if(htmlContent?.Length > 0)
+			SvgPathLineActionItem result = null;
+
+			if(plotPoint?.Action?.Length > 0 && plotPoint.Points.Count > 1 &&
+				currentPoint != null)
 			{
-				mDocument.Html = htmlContent;
-				mChanged = false;
+				result = new SvgPathLineActionItem();
+				FVector2.TransferValues(currentPoint, result.Start);
+				if(IsUpperCase(plotPoint.Action[0]))
+				{
+					//	Absolute.
+					result.End.X = plotPoint.Points[0];
+					result.End.Y = plotPoint.Points[1];
+				}
+				else
+				{
+					//	Relative.
+					result.End.X = currentPoint.X + plotPoint.Points[0];
+					result.End.Y = currentPoint.Y + plotPoint.Points[1];
+				}
+				FVector2.TransferValues(result.End, currentPoint);
 			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	Changed																																*
+		//* FromVectors																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Private member for <see cref="Changed">Changed</see>.
+		/// Return a strongly-typed representation of a line.
 		/// </summary>
-		private bool mChanged = false;
-		/// <summary>
-		/// Get/Set a value indicating whether data has changed on the current
-		/// document.
-		/// </summary>
-		public bool Changed
+		/// <param name="startPoint">
+		/// Reference to the original start point.
+		/// </param>
+		/// <param name="endPoint">
+		/// Reference to the original end point.
+		/// </param>
+		/// <returns>
+		/// Reference to a new line action item representing the
+		/// caller's parameters, if found. Otherwise, null.
+		/// </returns>
+		public static SvgPathLineActionItem FromVectors(FVector2 startPoint,
+			FVector2 endPoint)
 		{
-			get { return mChanged; }
-			set { mChanged = value; }
-		}
-		//*-----------------------------------------------------------------------*
+			SvgPathLineActionItem result = null;
 
-		//*-----------------------------------------------------------------------*
-		//*	Document																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="Document">Document</see>.
-		/// </summary>
-		private HtmlDocument mDocument = null;
-		/// <summary>
-		/// Get/Set a reference to the HTML document object of the SVG.
-		/// </summary>
-		public HtmlDocument Document
-		{
-			get { return mDocument; }
-			set
+			if(startPoint != null && endPoint != null)
 			{
-				mDocument = value;
+				result = new SvgPathLineActionItem();
+				FVector2.TransferValues(startPoint, result.Start);
+				FVector2.TransferValues(endPoint, result.End);
 			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	FullName																															*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="FullName">FullName</see>.
-		/// </summary>
-		private string mFullName = "";
-		/// <summary>
-		/// Get/Set the fully qualified path and file name of the document.
-		/// </summary>
-		public string FullName
-		{
-			get { return mFullName; }
-			set { mFullName = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	IsLocal																																*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="IsLocal">IsLocal</see>.
-		/// </summary>
-		private bool mIsLocal = true;
-		/// <summary>
-		/// Get/Set a value indicating whether this document was loaded at the
-		/// local level (true) or a base level (false).
-		/// </summary>
-		public bool IsLocal
-		{
-			get { return mIsLocal; }
-			set { mIsLocal = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
 
 	}
 	//*-------------------------------------------------------------------------*

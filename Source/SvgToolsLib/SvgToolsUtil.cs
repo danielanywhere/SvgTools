@@ -63,6 +63,12 @@ namespace SvgToolsLib
 		};
 
 		/// <summary>
+		/// Local epsilon for distinquishing semi-small values. Anything within
+		/// 1/100 units (usually mm) is considered to be the same.
+		/// </summary>
+		private static float mEpsilon = 0.01f;
+
+		/// <summary>
 		/// Font-relative CSS measurement units.
 		/// </summary>
 		private static string[] mFontRelativeCssMeasurements = new string[]
@@ -3707,6 +3713,59 @@ namespace SvgToolsLib
 					}
 				}
 			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	IsDifferent																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether the values of two vectors are
+		/// different.
+		/// </summary>
+		/// <param name="vector1">
+		/// Reference to the first vector to compare.
+		/// </param>
+		/// <param name="vector2">
+		/// Reference to the second vector to compare.
+		/// </param>
+		/// <returns>
+		/// True if the two vectors are different. Otherwise, false.
+		/// </returns>
+		public static bool IsDifferent(FVector2 vector1, FVector2 vector2)
+		{
+			bool result = false;
+
+			if(vector1 != null && vector2 != null)
+			{
+				result = (Math.Abs(vector2.X - vector1.X) > mEpsilon) ||
+					(Math.Abs(vector2.Y - vector1.Y) > mEpsilon);
+			}
+			else if(vector1 != null || vector2 != null)
+			{
+				result = true;
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Return a value indicating whether the two values are different.
+		/// </summary>
+		/// <param name="value1">
+		/// First value to compare.
+		/// </param>
+		/// <param name="value2">
+		/// Second value to compare.
+		/// </param>
+		/// <returns>
+		/// True if the two values are different. Otherwise, false.
+		/// </returns>
+		public static bool IsDifferent(float value1, float value2)
+		{
+			bool result = false;
+
+			result = (Math.Abs(value2 - value1) > mEpsilon);
 			return result;
 		}
 		//*-----------------------------------------------------------------------*

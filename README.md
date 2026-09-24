@@ -291,7 +291,7 @@ This version is currently available as command-line application only, but work i
 
 Please read the [**Docs/Syntax.txt**](Docs/Syntax.txt) file for more information. You can also get some sample ideas from [**Docs/CommandLines.md**](Docs/CommandLines.md) and [**Docs/WorkingSvg-SvgTools01.json**](Docs/WorkingSvg-SvgTools01.json).
 
-On any system with .NET Core installed, you can get the project and run it initially using the following commands.
+On any system with .NET Core SDK 8 or greater installed, you can get the project and run it initially using the following commands.
 
 ```batch
 git clone https://github.com/danielanywhere/SvgTools
