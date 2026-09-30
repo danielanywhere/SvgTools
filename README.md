@@ -8,6 +8,8 @@
 
 -   🆕 [SVG-to-Plasma Cutter G-Code Conversion](#-svg-to-plasma-cutter-g-code-conversion).
 
+-   🆕 [Switch Images in File](#-switch-images-in-file).
+
 -   [Introducing Implied Form Design](#introducing-implied-form-design).
 
     -   [The Basic Workflow](#the-basic-workflow).
@@ -37,7 +39,7 @@ SVGTools now supports the generation of a general plasma cutter g-code file dire
 
 <p>&nbsp;</p>
 
-The following properties can be specified with the GeneratePlasmaGCode action.
+The following properties can be specified with the **GeneratePlasmaGCode** action.
 
 <table>
 <tbody>
@@ -121,6 +123,60 @@ svgtools /wait /action:GeneratePlasmaGCode
 	/outfile:BikeFrameDiskBrakeAdaptor03-Brace.gcode
 	"/properties:[{'Name':'Kerf','Value':'2'},{'Name':'Precision','Value':'0.5'}]"
 	"/workingpath:%SHAREDPATH%\Develop\Projects\Manufacturing\ElectricBicycle\DPHuffy26\Drawings"
+
+```
+
+<p>&nbsp;</p>
+
+## 🆕 Switch Images in File
+
+The **ChangeImage** action is used to change
+
+<p>&nbsp;</p>
+
+The following properties can be specified with the **ChangeImage** action.
+
+<table>
+<tbody>
+<tr class="odd">
+<td><b>Name</b></td>
+<td><b>Allowable Values</b></td>
+<td><b>Default</b></td>
+<td><b>Description</b></td>
+</tr>
+<tr class="even">
+<td><b>id</b></td>
+<td>(string)</td>
+<td>(blank)</td>
+<td>The unique ID of the SVG image to replace.</td>
+</tr>
+<tr class="odd">
+<td><b>filename</b></td>
+<td>(string)</td>
+<td>(blank)</td>
+<td>The filename of the new image to use.</td>
+</tr>
+<tr class="even">
+<td><b>filemode</b></td>
+<td>base64, linked</td>
+<td>base64</td>
+<td><p>The method to use for attaching the image.</p>
+<p><b>base64</b> - The binary data of the new image is embedded directly into the SVG object.</p>
+<p><b>linked</b> - The image is loaded as an external reference each time the SVG loads.</p></td>
+</tr>
+</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+Example command:
+
+```plaintext
+svgtools /wait /action:ChangeImage
+ /infile:Aerionics-Animated.svg
+ /outfile:Aerionics-Animated.svg
+ "/properties:[{'Name':'id','Value':'imgSlideStrip'},{'Name':'filemode','Value':'base64'},{'Name':'filename','Value':'../images/SlideStrip01sm.jpg'}]"
+ "/workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Experiments/Drawings"
 
 ```
 
@@ -368,6 +424,7 @@ The application currently supports the following actions. Please see the syntax 
 -   **ApplyTransforms**. This action dereferences all linked objects in the document, applies transforms to every object in the hierarchy, and removes all of the transforms.<p>&nbsp;</p>
 -   **Batch**. Load a batch file, whose actions are defined in JSON format, to run multiple actions. See the files **Docs/CommandLines.md** and **Scripts/SvgToolsBuildWizardForms.json** for a practical example.<p>&nbsp;</p>
 -   **CalculateTransform**. Display the result of an SVG transform like matrix, scale, rotate, etc., applied to caller-supplied x, y, width and height variables. This action has no effect on the file.<p>&nbsp;</p>
+-   **ChangeImage**. Change the content of the image in the specified object to the link or binary data of the specified file, as indicated in the FileMode property. If FileMode is 'base64', the image data will be embedded into the object.<p>&nbsp;</p>
 -   **CleanupSvg**. This action dereferences all linked objects, applies transforms, purges unreferenced items from the defs section, and rounds all values to the specified decimal precision (default precision = 3 if not specified).<p>&nbsp;</p>
 -   **DereferenceLinks**. This action serves the purpose of encapsulating as many of the referenced shapes from the defs section as possible into the actual implementation targets from where they have been referenced. This allows each object to be handled freely and independently, either in a visual or text editor.<p>&nbsp;</p>
 -   **GeneratePlasmaGCode**. Generate g-code for a plasma cutter from an SVG drawing.<p>&nbsp;</p>
@@ -439,6 +496,21 @@ All parameters can be prefixed with either '/' or '--'.
                         The following accompanying properties are supported:
                             x, y, width, height
                         Properties: transform, x, y [, width, height]
+                    ChangeImage - Change the content of the image in the
+                        specified object to the link or the base-64 data of
+                        the specified file, as indicated in the FileMode
+                        property.
+                        Properties:
+                            id: string, default = (blank). The ID of the SVG
+                                image to replace.
+                            filename: string, default = (blank). The filename
+                                of the new image to use.
+                            filemode: { base64 | linked }, default = base64.
+                                The method to use for attaching the image.
+                                'base64' - The binary data of the new image
+                                    is embedded directly into the SVG object.
+                                'linked' - The image is loaded as an external
+                                    reference each time the SVG loads.
                     GeneratePlasmaGCode - Generate g-code for a plasma cutter.
                         /infile /outfile
                         Properties:

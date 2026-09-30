@@ -49,19 +49,19 @@ Test precision setting values
 Enumerate the elements in an Implicit Form Design file
 
 ```
-svgtools /wait /action:ImpliedDesignEnumerateControls /infile:ProjectTaskImpliedDesign.svg /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+svgtools /wait /action:ImpliedDesignEnumerateControls /infile:ProjectTaskImpliedDesign.svg /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Drawings
 ```
 
 Render Avalonia XAML file (.axaml) from an Implicit Form Design file.
 
 ```
-svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ProjectTaskImpliedDesign.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmMainTest.axaml /styleworksheet:Styles/Avalonia/ProjectTaskImpliedDesignStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ProjectTaskImpliedDesign.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmMainTest.axaml /styleworksheet:Styles/Avalonia/ProjectTaskImpliedDesignStyles.json /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Drawings
 ```
 
 Render a widget-styled form in Avalonia XAML (.axaml) from a minimal Implicit Form Design file.
 
 ```
-svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard01.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmSvgToolsWizardPage01.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard01.svg /outfile:../Experiments/Output/ProjectTask/Avalonia/frmSvgToolsWizardPage01.axaml /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Drawings
 ```
 
 ### Implicit Form Design Wizard Form 01
@@ -69,7 +69,7 @@ svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWiza
 Render a widget-styled form in Avalonia XAML (.axaml) from a minimal Implicit Form Design file with an external configuration file.
 
 ```
-svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard01.svg /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage01.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard01.svg /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage01.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Drawings
 ```
 
 ### Implicit Form Design Wizard Form 02
@@ -77,7 +77,7 @@ svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWiza
 Render a second widget-styled form in Avalonia XAML (.axaml) from a minimal Implicit Form Design file with an external configuration file.
 
 ```
-svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard02.svg /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage02.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWizard02.svg /outfile:../Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizardPage02.axaml /styleworksheet:Styles/Avalonia/ImpliedFormDesignWizardStyles.json /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Drawings
 ```
 
 ### Implicit Form Design Wizard Join Forms
@@ -85,7 +85,7 @@ svgtools /wait /action:ImpliedDesignToAvaloniaXaml /infile:ImpliedFormDesignWiza
 Combine the contents of the wizard forms into a series of panels under a single window.
 
 ```
-svgtools /wait /action:XamlMergeContents /infile:frmImpliedFormDesignWizardPage0?.axaml /outfile:frmImpliedFormDesignWizard.axaml /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia "/properties:[{'name':'CreateBackingFile','value':'true'}]"
+svgtools /wait /action:XamlMergeContents /infile:frmImpliedFormDesignWizardPage0?.axaml /outfile:frmImpliedFormDesignWizard.axaml /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia "/properties:[{'name':'CreateBackingFile','value':'true'}]"
 ```
 
 ### Implicit Form Processing as a Single Batch
@@ -93,7 +93,7 @@ svgtools /wait /action:XamlMergeContents /infile:frmImpliedFormDesignWizardPage0
 Convert the SVG files to Avalonia XAML and merge them into a single, final form file with companion code-backing file for the project.
 
 ```
-svgtools /wait /action:Batch /configfile:C:/Files/Dropbox/Develop/Shared/SvgTools/Scripts/SvgToolsBuildWizardForms.json
+svgtools /wait /action:Batch /configfile:%SHAREDPATH%/Develop/Shared/SvgTools/Scripts/SvgToolsBuildWizardForms.json
 ```
 
 ### XAML File Manifest
@@ -101,7 +101,7 @@ svgtools /wait /action:Batch /configfile:C:/Files/Dropbox/Develop/Shared/SvgTool
 Output a list of objects, and optionally properties, found in the specified XAML file.
 
 ```
-svgtools /wait /action:XamlManifest /infile:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizard.axaml /outfile:C:/Temp/XAMLManifest-frmImpliedFormDesignWizard.txt "/properties:[{'name':'IncludeProperties','value':'True'}]"
+svgtools /wait /action:XamlManifest /infile:%SHAREDPATH%/Develop/Shared/SvgTools/Experiments/Output/ImpliedFormDesignWizard/Avalonia/frmImpliedFormDesignWizard.axaml /outfile:C:/Temp/XAMLManifest-frmImpliedFormDesignWizard.txt "/properties:[{'name':'IncludeProperties','value':'True'}]"
 ```
 
 ### Timeline Animation to CSS Animation
@@ -109,13 +109,13 @@ svgtools /wait /action:XamlManifest /infile:C:/Files/Dropbox/Develop/Shared/SvgT
 Convert freeform timeline animation in a spreadsheet to CSS animation in the SVG file.
 
 ```
-svgtools /wait /action:AnimateTimeline /infile:GUIscape.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/GUIscape.svg "/properties:[{'Name':'SheetName','Value':'GUIscapeSvgTimeline'}]" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+svgtools /wait /action:AnimateTimeline /infile:GUIscape.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/GUIscape.svg "/properties:[{'Name':'SheetName','Value':'GUIscapeSvgTimeline'}]" /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Drawings
 ```
 
 Example #2.
 
 ```
-svgtools /wait /action:AnimateTimeline /infile:QuietShift.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/QuietShift.svg "/properties:[{'Name':'SheetName','Value':'QuietShift'}]" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Drawings
+svgtools /wait /action:AnimateTimeline /infile:QuietShift.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/QuietShift.svg "/properties:[{'Name':'SheetName','Value':'QuietShift'}]" /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Drawings
 ```
 
 ### Change Image to base-64 DataUrl in SVG File
@@ -123,7 +123,7 @@ svgtools /wait /action:AnimateTimeline /infile:QuietShift.svg /datafile:../Docs/
 Change the content of the image in the specified object to the base-64 of the specified file.
 
 ```
-svgtools /wait /action:ChangeImage /infile:Aerionics-Animated.svg /outfile:Aerionics-Animated.svg "/properties:[{'Name':'id','Value':'imgSlideStrip'},{'Name':'filemode','Value':'base64'},{'Name':'filename','Value':'../images/SlideStrip01sm.jpg'}]" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Drawings
+svgtools /wait /action:ChangeImage /infile:Aerionics-Animated.svg /outfile:Aerionics-Animated.svg "/properties:[{'Name':'id','Value':'imgSlideStrip'},{'Name':'filemode','Value':'base64'},{'Name':'filename','Value':'../images/SlideStrip01sm.jpg'}]" /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Experiments/Drawings
 ```
 
 
@@ -133,3 +133,4 @@ Create generic g-code for a plasma cutter.
 ```
 svgtools /wait /action:GeneratePlasmaGCode /infile:BikeFrameDiskBrakeAdaptor03-Brace-ProfileOnly.svg /outfile:BikeFrameDiskBrakeAdaptor03-Brace.gcode "/properties:[{'Name':'Kerf','Value':'2'},{'Name':'Precision','Value':'0.5'}]" "/workingpath:%SHAREDPATH%\Develop\Projects\Manufacturing\ElectricBicycle\DPHuffy26\Drawings"
 ```
+

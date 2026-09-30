@@ -1,0 +1,5 @@
+svgtools /wait /action:ChangeImage
+ /infile:Aerionics-Animated.svg
+ /outfile:Aerionics-Animated.svg
+ "/properties:[{'Name':'id','Value':'imgSlideStrip'},{'Name':'filemode','Value':'base64'},{'Name':'filename','Value':'../images/SlideStrip01sm.jpg'}]"
+ "/workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Experiments/Drawings"

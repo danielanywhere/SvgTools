@@ -51,6 +51,21 @@ All parameters can be prefixed with either '/' or '--'.
                         The following accompanying properties are supported:
                             x, y, width, height
                         Properties: transform, x, y [, width, height]
+                    ChangeImage - Change the content of the image in the
+                        specified object to the link or the base-64 data of
+                        the specified file, as indicated in the FileMode
+                        property.
+                        Properties:
+                            id: string, default = (blank). The ID of the SVG
+                                image to replace.
+                            filename: string, default = (blank). The filename
+                                of the new image to use.
+                            filemode: { base64 | linked }, default = base64.
+                                The method to use for attaching the image.
+                                'base64' - The binary data of the new image
+                                    is embedded directly into the SVG object.
+                                'linked' - The image is loaded as an external
+                                    reference each time the SVG loads.
                     GeneratePlasmaGCode - Generate g-code for a plasma cutter.
                         /infile /outfile
                         Properties:
