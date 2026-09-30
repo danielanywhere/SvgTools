@@ -108,7 +108,7 @@ The following properties can be specified with the GeneratePlasmaGCode action.
 
 Following are some pointers related to the plasma cutter generator.
 
--   Conversion is strictly metric in this version. For the most predictable results, the source document should be saved in millimeters with a view port scaling of 1.
+-   Conversion is strictly metric in this version. For the most predictable results, the source document should be saved in millimeters with a view port scaling of 1. Please create an issue or let me know if you have a real need for adding inches.
 -   Only path objects are parsed. If you have multiple shape objects like rectangles and circles, please convert them to paths then perform unions and differences on them, as appropriate, before running the converter. I generally create a second copy of my file that serves as a final profile, which allows me to keep editing the master in its original form.
 
 <p>&nbsp;</p>
