@@ -9,7 +9,7 @@
 		<Platforms>AnyCPU;x64</Platforms>
 		<PackageId>Dans.SvgTools.Library</PackageId>
 		<Title>Dan's SvgTools Library</Title>
-		<Version>25.3218.4612</Version>
+		<Version>26.2930.4510</Version>
 		<Description>Dan's SvgTools Library.</Description>
 		<Copyright>Copyright(c) 2025. Daniel Patterson, MCSD (danielanywhere)</Copyright>
 		<PackageProjectUrl>https://github.com/danielanywhere/SvgTools</PackageProjectUrl>
