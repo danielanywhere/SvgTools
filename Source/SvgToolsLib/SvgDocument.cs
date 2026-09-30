@@ -18,8 +18,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-
+using System.Text.RegularExpressions;
 using Html;
 
 namespace SvgToolsLib
@@ -161,6 +162,96 @@ namespace SvgToolsLib
 		{
 			get { return mFullName; }
 			set { mFullName = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetHeightmm																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the usable height of the document viewport, in mm.
+		/// </summary>
+		/// <returns>
+		/// Usable height of the viewport, in millimeters.
+		/// </returns>
+		public float GetHeightmm()
+		{
+			HtmlAttributeItem attribute = null;
+			char[] delimiters = new char[] { ' ', ',' };
+			Match match = null;
+			double multiplier = 0d;
+			string[] parts = null;
+			float result = 39.69f;
+			HtmlNodeItem svg = null;
+
+			if(mDocument != null)
+			{
+				svg = mDocument.Nodes.FindMatch(x => x.NodeType == "svg");
+				if(svg != null)
+				{
+					attribute = svg.Attributes.FirstOrDefault(x =>
+						string.Equals(x.Name, "height",
+							StringComparison.OrdinalIgnoreCase));
+					if(attribute == null)
+					{
+						//	Fall back to view box.
+						attribute = svg.Attributes.FirstOrDefault(x =>
+							string.Equals(x.Name, "viewBox",
+								StringComparison.OrdinalIgnoreCase));
+						if(attribute != null)
+						{
+							parts = attribute.Value.Split(delimiters,
+								StringSplitOptions.RemoveEmptyEntries);
+							if(parts.Length > 3)
+							{
+								result = (float)(SvgToolsUtil.CConverter.Convert(
+									SvgToolsUtil.ToDouble(parts[3]), "px", "mm"));
+							}
+						}
+					}
+					else if(attribute.Value.EndsWith("%"))
+					{
+						//	Measure against viewbox.
+						match = Regex.Match(attribute.Value,
+							ResourceMain.rxCssNumberWithMeasure);
+						if(match.Success)
+						{
+							multiplier =
+								SvgToolsUtil.ToDouble(
+									SvgToolsUtil.GetValue(match, "number")) / 100d;
+							attribute = svg.Attributes.FirstOrDefault(x =>
+								string.Equals(x.Name, "viewBox",
+									StringComparison.OrdinalIgnoreCase));
+							if(attribute != null)
+							{
+								parts = attribute.Value.Split(delimiters,
+									StringSplitOptions.RemoveEmptyEntries);
+								if(parts.Length > 3)
+								{
+									result = (float)(SvgToolsUtil.CConverter.Convert(
+										SvgToolsUtil.ToDouble(parts[3]), "px", "mm") *
+										multiplier);
+								}
+							}
+						}
+					}
+					else
+					{
+						//	Height is specified directly.
+						match = Regex.Match(attribute.Value,
+							ResourceMain.rxCssNumberWithMeasure);
+						if(match.Success)
+						{
+							result = (float)SvgToolsUtil.CConverter.Convert(
+								SvgToolsUtil.ToDouble(
+									SvgToolsUtil.GetValue(match, "number")),
+								SvgToolsUtil.GetValue(match, "measure"),
+								"mm");
+						}
+					}
+				}
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 

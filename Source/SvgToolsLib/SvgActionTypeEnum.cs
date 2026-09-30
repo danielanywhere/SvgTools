@@ -104,6 +104,10 @@ namespace SvgToolsLib
 		///// CurrentFile property for each pass.
 		///// </summary>
 		//ForEachFile,
+		/// <summary>
+		/// Generate g-code for a plasma cutter.
+		/// </summary>
+		GeneratePlasmaGCode,
 		///// <summary>
 		///// Run one or more conditions to determine whether the sub-actions
 		///// of the action should be run.

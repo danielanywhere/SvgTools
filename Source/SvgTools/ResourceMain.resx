@@ -171,11 +171,22 @@ All parameters can be prefixed with either '/' or '--'.
                         The following accompanying properties are supported:
                             x, y, width, height
                         Properties: transform, x, y [, width, height]
-                    CleanUpSvg - Clean up the specified SVG file by
-                        dereferencing links, applying transforms, purging
-                        unused defs, and rounding all values.
+                    GeneratePlasmaGCode - Generate g-code for a plasma cutter.
                         /infile /outfile
-                        Properties: precision
+                        Properties:
+                            UnitSystem: { Metric | US }, default = Metric;
+                            DefaultPathSide: { Auto | Center |
+                                InsideShape | OutsideShape |
+                                LeftOfTravel | RightOfTravel }: string,
+                                default = Auto;
+                            FeedRate: number, default = 1000;
+                            SafeHeight: number, default = 20;
+                            PierceHeight: number, default = 3;
+                            CutHeight: number, 1.5;
+                            Kerf: number, 2;
+                            PierceDelay: number, default = 0.5;
+                            OffDelay: number, default = 0.5;
+                            Precision: number, default = 0.1;
                     ImpliedDesignEnumerateControls - Enumerate the identified
                         controls within an SVG source file.
                         /infile

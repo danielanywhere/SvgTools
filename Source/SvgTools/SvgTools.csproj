@@ -9,7 +9,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<RootNamespace>SvgToolsApp</RootNamespace>
-		<Version>26.2120.3921</Version>
+		<Version>26.2930.4510</Version>
 		<Authors>Daniel Patterson, MCSD (danielanywhere)</Authors>
 		<ApplicationIcon>SvgTools.ico</ApplicationIcon>
 	</PropertyGroup>

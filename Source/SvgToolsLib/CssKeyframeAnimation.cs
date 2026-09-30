@@ -679,6 +679,9 @@ namespace SvgToolsLib
 		/// <summary>
 		/// Return the string representation of this item.
 		/// </summary>
+		/// <returns>
+		/// The string representation of this item.
+		/// </returns>
 		public override string ToString()
 		{
 			StringBuilder builder = new StringBuilder();

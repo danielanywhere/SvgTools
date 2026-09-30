@@ -1,0 +1,5 @@
+svgtools /wait /action:GeneratePlasmaGCode 
+ /infile:BikeFrameDiskBrakeAdaptor03-Brace-ProfileOnly.svg
+	/outfile:BikeFrameDiskBrakeAdaptor03-Brace.gcode
+	"/properties:[{'Name':'Kerf','Value':'2'},{'Name':'Precision','Value':'0.5'}]"
+	"/workingpath:%SHAREDPATH%\Develop\Projects\Manufacturing\ElectricBicycle\DPHuffy26\Drawings"

@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
+
+using Geometry;
 using SkiaSharp;
 
 using static SvgToolsLib.SvgToolsUtil;
@@ -138,7 +140,15 @@ namespace SvgToolsLib
 							//	Horizontal line.
 							pt.X += plotItem.Points[0];
 							plotItem.Points[0] = pt.X;
-							plotItem.Action = plotItem.Action.ToUpper();
+							//plotItem.Action = plotItem.Action.ToUpper();
+							//	In this version, partial lines are converted to full
+							//	to support rotation.
+							if(plotItem.Points.Count < 2)
+							{
+								plotItem.Points.Add(0f);
+							}
+							plotItem.Points[1] = pt.Y;
+							plotItem.Action = "L";
 							break;
 						case "l":
 						case "m":
@@ -172,8 +182,17 @@ namespace SvgToolsLib
 						case "v":
 							//	Vertical: 0
 							pt.Y += plotItem.Points[0];
-							plotItem.Points[0] = pt.Y;
-							plotItem.Action = plotItem.Action.ToUpper();
+							//plotItem.Points[0] = pt.Y;
+							//plotItem.Action = plotItem.Action.ToUpper();
+							//	In this version, partial lines are converted to full
+							//	to support rotation.
+							if(plotItem.Points.Count < 2)
+							{
+								plotItem.Points.Add(0f);
+							}
+							plotItem.Points[0] = pt.X;
+							plotItem.Points[1] = pt.Y;
+							plotItem.Action = "L";
 							break;
 						case "z":
 							//	Relative actions.
@@ -379,10 +398,12 @@ namespace SvgToolsLib
 			string action = "";
 			bool bx = false;
 			bool by = false;
+			List<FVector2> coordinates = null;
 			int index = 0;
 			string la = "";
 			int paramCount = 0;
 			int paramIndex = 0;
+			FVector2 point = null;
 			float ta = 0f;
 			float tb = 0f;
 			float tc = 0f;
@@ -484,6 +505,22 @@ namespace SvgToolsLib
 									}
 									break;
 								case TransformTypeEnum.Rotate:
+									ta = (transformItem.Parameters[0] * (float)Math.PI) / 180f;
+									tb = transformItem.Parameters[1];
+									tc = transformItem.Parameters[2];
+									//	Rotation applies to all locations.
+									if(plotItem.Action.Length > 0 && plotItem.Points.Count > 0)
+									{
+										coordinates = PlotPointsFItem.GetCoordinates(plotItem);
+										foreach(FVector2 coordinateItem in coordinates)
+										{
+											point = RotatePoint(coordinateItem.X, coordinateItem.Y,
+												ta, tb, tc);
+											coordinateItem.X = point.X;
+											coordinateItem.Y = point.Y;
+										}
+										PlotPointsFItem.SetCoordinates(plotItem, coordinates);
+									}
 									break;
 								case TransformTypeEnum.Scale:
 									tx = transformItem.Parameters[0];
@@ -609,6 +646,72 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetCoordinates																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the X, Y coordinates of the elements of the supplied action.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the plot points action to enumerate.
+		/// </param>
+		/// <returns>
+		/// Reference to the collection of X, Y coordinates found on the supplied
+		/// item, if found. Otherwise, an empty collection.
+		/// </returns>
+		public static List<FVector2> GetCoordinates(PlotPointsFItem item)
+		{
+			List<FVector2> result = new List<FVector2>();
+
+			if(item != null)
+			{
+				switch(item.mAction.ToLower())
+				{
+					case "l":
+					case "m":
+					case "t":
+						if(item.mPoints.Count > 1)
+						{
+							result.Add(new FVector2(item.mPoints[0], item.mPoints[1]));
+						}
+						break;
+					case "q":
+					case "s":
+						if(item.mPoints.Count > 1)
+						{
+							result.Add(new FVector2(item.mPoints[0], item.mPoints[1]));
+						}
+						if(item.mPoints.Count > 3)
+						{
+							result.Add(new FVector2(item.mPoints[2], item.mPoints[3]));
+						}
+						break;
+					case "c":
+						if(item.mPoints.Count > 1)
+						{
+							result.Add(new FVector2(item.mPoints[0], item.mPoints[1]));
+						}
+						if(item.mPoints.Count > 3)
+						{
+							result.Add(new FVector2(item.mPoints[2], item.mPoints[3]));
+						}
+						if(item.mPoints.Count > 5)
+						{
+							result.Add(new FVector2(item.mPoints[4], item.mPoints[5]));
+						}
+						break;
+					case "a":
+						if(item.mPoints.Count > 6)
+						{
+							result.Add(new FVector2(item.mPoints[5], item.mPoints[6]));
+						}
+						break;
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Points																																*
 		//*-----------------------------------------------------------------------*
 		private List<float> mPoints = new List<float>();
@@ -618,6 +721,111 @@ namespace SvgToolsLib
 		public List<float> Points
 		{
 			get { return mPoints; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* SetCoordinates																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the values of the coordinates associated with the specified item
+		/// from the provided values.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the item to be updated.
+		/// </param>
+		/// <param name="coordinates">
+		/// Reference to the collection of coordinates to transfer to the
+		/// item.
+		/// </param>
+		public static void SetCoordinates(PlotPointsFItem item,
+			List<FVector2> coordinates)
+		{
+			FVector2 coordinate = null;
+			List<float> points = null;
+
+			if(item != null && coordinates?.Count > 0)
+			{
+				points = item.mPoints;
+				switch(item.mAction.ToLower())
+				{
+					case "l":
+					case "m":
+					case "t":
+						if(points.Count > 1 && coordinates.Count > 0)
+						{
+							coordinate = coordinates[0];
+							points[0] = coordinate.X;
+							points[1] = coordinate.Y;
+						}
+						break;
+					case "q":
+					case "s":
+						if(points.Count > 1 && coordinates.Count > 0)
+						{
+							coordinate = coordinates[0];
+							points[0] = coordinate.X;
+							points[1] = coordinate.Y;
+						}
+						if(item.mPoints.Count > 3 && coordinates.Count > 1)
+						{
+							coordinate = coordinates[1];
+							points[2] = coordinate.X;
+							points[3] = coordinate.Y;
+						}
+						break;
+					case "c":
+						if(points.Count > 1 && coordinates.Count > 0)
+						{
+							coordinate = coordinates[0];
+							points[0] = coordinate.X;
+							points[1] = coordinate.Y;
+						}
+						if(item.mPoints.Count > 3 && coordinates.Count > 1)
+						{
+							coordinate = coordinates[1];
+							points[2] = coordinate.X;
+							points[3] = coordinate.Y;
+						}
+						if(item.mPoints.Count > 5 && coordinates.Count > 2)
+						{
+							coordinate = coordinates[2];
+							points[4] = coordinate.X;
+							points[5] = coordinate.Y;
+						}
+						break;
+					case "a":
+						if(points.Count > 6 && coordinates.Count > 0)
+						{
+							coordinate = coordinates[0];
+							points[5] = coordinate.X;
+							points[6] = coordinate.Y;
+						}
+						break;
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToString																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a string representation of this item.
+		/// </summary>
+		/// <returns>
+		/// A string representation of this item.
+		/// </returns>
+		public override string ToString()
+		{
+			StringBuilder builder = new StringBuilder();
+
+			builder.Append(mAction);
+			foreach(float pointItem in mPoints)
+			{
+				builder.Append($" {pointItem:0.000}");
+			}
+			return builder.ToString();
 		}
 		//*-----------------------------------------------------------------------*
 

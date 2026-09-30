@@ -2165,6 +2165,144 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GeneratePlasmaGCode																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Generate g-code for a plasma cutter.
+		/// </summary>
+		/// <param name="item">
+		/// Reference to the action for which the document will be processed.
+		/// </param>
+		private static void GeneratePlasmaGCode(SvgActionItem item)
+		{
+			string content = "";
+			float cutHeight = 1.5f;
+			SvgDocumentItem doc = null;
+			float feedRate = 1000f;
+			float kerf = 2f;
+			PathSideEnum pathSide = PathSideEnum.Auto;
+			float pierceDelay = 0.5f;
+			float pierceHeight = 3;
+			float offDelay = 0.5f;
+			SvgPlasmaPlotter plotter = null;
+			float precision = 0.1f;
+			NameValueItem property = null;
+			float safeHeight = 20f;
+			UnitSystemEnum unitSystem = UnitSystemEnum.Metric;
+
+			if(item != null && CheckElements(item,
+				ActionElementEnum.InputFilename |
+				ActionElementEnum.OutputFilename))
+			{
+				content = File.ReadAllText(item.InputFiles[0].FullName);
+				doc = new SvgDocumentItem(content);
+				HtmlDocument.RecalculateAbsoluteIndex(doc.Document);
+				SvgToolsUtil.ApplyTransforms(doc.Document);
+				SvgToolsUtil.RoundAllValues(doc.Document, 3);
+				item.WorkingSvg = doc;
+				Trace.WriteLine($" Working document: {item.InputFiles[0].Name}",
+					$"{MessageImportanceEnum.Info}");
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "UnitSystem",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					Enum.TryParse<UnitSystemEnum>(property.Value, out unitSystem);
+				}
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "DefaultPathSide",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					Enum.TryParse<PathSideEnum>(property.Value, out pathSide);
+				}
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "FeedRate",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					feedRate = ToFloat(property.Value);
+				}
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "SafeHeight",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					safeHeight = ToFloat(property.Value);
+				}
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "PierceHeight",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					pierceHeight = ToFloat(property.Value);
+				}
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "CutHeight",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					cutHeight = ToFloat(property.Value);
+				}
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "Kerf",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					kerf = ToFloat(property.Value);
+				}
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "PierceDelay",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					pierceDelay = ToFloat(property.Value);
+				}
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "OffDelay",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					offDelay = ToFloat(property.Value);
+				}
+				property = item.Properties.FirstOrDefault(x =>
+					string.Equals(x.Name, "Precision",
+						StringComparison.OrdinalIgnoreCase));
+				if(property != null)
+				{
+					precision = ToFloat(property.Value);
+					if(precision == 0f)
+					{
+						precision = 0.1f;
+					}
+				}
+				plotter = new SvgPlasmaPlotter()
+				{
+					UnitSystem = unitSystem,
+					DefaultPathSide = pathSide,
+					FeedRate = feedRate,
+					SafeHeight = safeHeight,
+					PierceHeight = pierceHeight,
+					CutHeight = cutHeight,
+					Kerf = kerf,
+					PierceDelay = pierceDelay,
+					OffDelay = offDelay,
+					Precision = precision
+				};
+				content = SvgPlasmaPlotter.GenerateGCode(plotter, doc);
+				if(plotter.NegativeValuesPresent)
+				{
+					Trace.WriteLine(" Negative values present.",
+						$"{MessageImportanceEnum.Warn}");
+				}
+				File.WriteAllText(item.OutputFile.FullName, content);
+				Trace.WriteLine($" Target file written: {item.OutputFile.Name}",
+					$"{MessageImportanceEnum.Info}");
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetCurrentFile																												*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -5177,6 +5315,12 @@ namespace SvgToolsLib
 				//case SvgActionTypeEnum.ForEachFile:
 				//	ForEachFile(this);
 				//	break;
+				#endregion
+				case SvgActionTypeEnum.GeneratePlasmaGCode:
+					//	Generate g-code for plasma cutter.
+					GeneratePlasmaGCode(this);
+					break;
+				#region NotYetImplemented
 				//case SvgActionTypeEnum.If:
 				//	//	Run comparisons in this item's Actions collection.
 				//	If(this);

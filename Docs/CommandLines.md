@@ -125,3 +125,11 @@ Change the content of the image in the specified object to the base-64 of the sp
 ```
 svgtools /wait /action:ChangeImage /infile:Aerionics-Animated.svg /outfile:Aerionics-Animated.svg "/properties:[{'Name':'id','Value':'imgSlideStrip'},{'Name':'filemode','Value':'base64'},{'Name':'filename','Value':'../images/SlideStrip01sm.jpg'}]" /workingpath:C:/Files/Dropbox/Develop/Shared/SvgTools/Experiments/Drawings
 ```
+
+
+### Generate G-Code for Plasma Cutter
+Create generic g-code for a plasma cutter.
+
+```
+svgtools /wait /action:GeneratePlasmaGCode /infile:BikeFrameDiskBrakeAdaptor03-Brace-ProfileOnly.svg /outfile:BikeFrameDiskBrakeAdaptor03-Brace.gcode "/properties:[{'Name':'Kerf','Value':'2'},{'Name':'Precision','Value':'0.5'}]" "/workingpath:%SHAREDPATH%\Develop\Projects\Manufacturing\ElectricBicycle\DPHuffy26\Drawings"
+```

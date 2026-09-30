@@ -2782,6 +2782,74 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* GetEllipticalArcAngles																								*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Calculate the true parametric start and end angles of an elliptical
+		/// arc.
+		/// </summary>
+		/// <param name="ellipse">
+		/// Reference to the ellipse for which the angles will be calculated.
+		/// </param>
+		/// <param name="start">
+		/// Reference to the absolute starting point of the arc.
+		/// </param>
+		/// <param name="end">
+		/// Reference to the absolute ending point of the arc.
+		/// </param>
+		/// <returns>
+		/// Reference to an 2D vector where X contains the start angle and
+		/// Y contains the end angle.
+		/// </returns>
+		public static FVector2 GetEllipticalArcAngles(
+			FEllipse ellipse,
+			FVector2 start,
+			FVector2 end)
+		{
+			float relEndX = 0f;
+			float relEndY = 0f;
+			float relStartX = 0f;
+			float relStartY = 0f;
+			FVector2 result = new FVector2();
+			float unitEndX;
+			float unitEndY;
+			float unitStartX;
+			float unitStartY;
+
+			if(ellipse != null && start != null && end != null)
+			{
+				// Get vectors relative to the absolute center point.
+				relStartX = start.X - ellipse.Center.X;
+				relStartY = start.Y - ellipse.Center.Y;
+				relEndX = end.X - ellipse.Center.X;
+				relEndY = end.Y - ellipse.Center.Y;
+
+				// Transform the relative vectors into unit circle space.
+				// This removes the elliptical distortion so Atan2 returns the
+				// parametric angle.
+				unitStartX = relStartX / ellipse.RadiusX;
+				unitStartY = relStartY / ellipse.RadiusY;
+				unitEndX = relEndX / ellipse.RadiusX;
+				unitEndY = relEndY / ellipse.RadiusY;
+
+				// Calculate angles. Atan2 returns values between -PI and PI.
+				result.X = (float)Math.Atan2(unitStartY, unitStartX);
+				result.Y = (float)Math.Atan2(unitEndY, unitEndX);
+				//	Remain on the inside of PI as much as possible.
+				if(result.Y - result.X > (float)Math.PI)
+				{
+					result.X += (float)(Math.PI * 2d);
+				}
+				else if(result.X - result.Y > (float)Math.PI)
+				{
+					result.Y += (float)(Math.PI * 2d);
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetExtent																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -4527,6 +4595,48 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* RotatePoint																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Rotate a point by the specified angle, in radians, around the supplied
+		/// center axis.
+		/// </summary>
+		/// <param name="pointX">
+		/// The X position to rotate.
+		/// </param>
+		/// <param name="pointY">
+		/// The Y position to rotate.
+		/// </param>
+		/// <param name="angle">
+		/// The angle by which to rotate, in radians.
+		/// </param>
+		/// <param name="centerX">
+		/// The center X position.
+		/// </param>
+		/// <param name="centerY">
+		/// The center Y position.
+		/// </param>
+		/// <returns>
+		/// Reference to the rotated point.
+		/// </returns>
+		public static FVector2 RotatePoint(float pointX, float pointY, float angle,
+			float centerX, float centerY)
+		{
+			double dx = pointX - centerX;
+			double dy = pointY - centerY;
+			double cos = Math.Cos(angle);
+			double sin = Math.Sin(angle);
+			FVector2 result = new FVector2()
+			{
+				X = (float)((dx * cos) - (dy * sin) + (double)centerX),
+				Y = (float)((dx * sin) + (dy * cos) + (double)centerY)
+			};
+
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* Round																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -5547,6 +5657,120 @@ namespace SvgToolsLib
 					}
 				}
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* TryGetArcCenter																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Calculate the exact arc center point using Sweep and IsLargeArc
+		/// constraints.
+		/// </summary>
+		/// <param name="start">
+		/// Reference to the starting coordinate of the arc.
+		/// </param>
+		/// <param name="end">
+		/// Reference to the ending coordinate of the arc.
+		/// </param>
+		/// <param name="radii">
+		/// Reference to the radii of the ellipse.
+		/// </param>
+		/// <param name="sweep">
+		/// Value indicating sweep direction.
+		/// </param>
+		/// <param name="isLargeArc">
+		/// Value indicating whether the large arc is followed.
+		/// </param>
+		/// <param name="center">
+		/// Reference to the center coordinate found, if true.
+		/// </param>
+		/// <returns>
+		/// Value indidcating whether the center of the shape was found.
+		/// </returns>
+		public static bool TryGetArcCenter(
+				FVector2 start,
+				FVector2 end,
+				FVector2 radii,
+				bool sweep,
+				bool isLargeArc,
+				out FVector2 center)
+		{
+			float chordLength = 0f;
+			float dx = 0f;
+			float dy = 0f;
+			float eX = 0f;
+			float eY = 0f;
+			float h = 0f;
+			float halfChord = 0f;
+			float midX = 0f;
+			float midY = 0f;
+			float pX = 0f;
+			float pY = 0f;
+			float sX = 0f;
+			float sY = 0f;
+			bool result = false;
+			bool switchSides = false;
+			float unitCenterX = 0f;
+			float unitCenterY = 0f;
+
+			center = new FVector2(0, 0);
+
+			if(start != null && end != null && radii?.X > 0f && radii.Y > 0f)
+			{
+				sX = start.X / radii.X;
+				sY = start.Y / radii.Y;
+				eX = end.X / radii.X;
+				eY = end.Y / radii.Y;
+
+				dx = eX - sX;
+				dy = eY - sY;
+				chordLength = (float)Math.Sqrt(dx * dx + dy * dy);
+
+				if(chordLength != 0f && chordLength <= 2f)
+				{
+					midX = (sX + eX) / 2.0f;
+					midY = (sY + eY) / 2.0f;
+
+					halfChord = chordLength / 2f;
+					h = (float)Math.Sqrt(1f - (halfChord * halfChord));
+
+					// Perpendicular unit vector
+					// (points to the LEFT of the start->end line).
+					pX = -dy / chordLength;
+					pY = dx / chordLength;
+
+					// Evaluate conditional flags to pick the correct side of the chord.
+					// By default, Center1 (mid + p*h) is chosen for a Small, CCW arc.
+					switchSides = false;
+
+					if(!sweep)
+					{
+						switchSides = !switchSides;
+					}
+
+					if(isLargeArc)
+					{
+						switchSides = !switchSides;
+					}
+
+					// Compute center.
+					if(switchSides)
+					{
+						unitCenterX = midX - pX * h;
+						unitCenterY = midY - pY * h;
+					}
+					else
+					{
+						unitCenterX = midX + pX * h;
+						unitCenterY = midY + pY * h;
+					}
+					center = new FVector2(unitCenterX * radii.X, unitCenterY * radii.Y);
+					result = true;
+				}
+			}
+
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 

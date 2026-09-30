@@ -6,6 +6,8 @@
 
 ## Table of Contents
 
+-   🆕 [SVG-to-Plasma Cutter G-Code Conversion](#-svg-to-plasma-cutter-g-code-conversion).
+
 -   [Introducing Implied Form Design](#introducing-implied-form-design).
 
     -   [The Basic Workflow](#the-basic-workflow).
@@ -26,6 +28,101 @@
 -   [Version Notes](#version-notes).
 
 -   [API Documentation](#api-documentation).
+
+<p>&nbsp;</p>
+
+## 🆕 SVG-to-Plasma Cutter G-Code Conversion
+
+SVGTools now supports the generation of a general plasma cutter g-code file directly from an SVG drawing.
+
+<p>&nbsp;</p>
+
+The following properties can be specified with the GeneratePlasmaGCode action.
+
+<table>
+<tbody>
+<tr class="odd">
+<td><b>Name</b></td>
+<td><b>Allowable Values</b></td>
+<td><b>Default</b></td>
+<td><b>Description</b></td>
+</tr>
+<tr class="even">
+<td><b>DefaultPathSide</b></td>
+<td>Auto, Center, InsideShape, OutsideShape, LeftOfTravel, RightOfTravel</td>
+<td>Auto</td>
+<td>Determine the default side of the tool to its path when calculating kerf compensation. When auto, inside edges are cut to the inside of the kerf and outside edges are cut to the outside of the kerf.</td>
+</tr>
+<tr class="odd">
+<td><b>FeedRate</b></td>
+<td>(floating-point number)</td>
+<td>1000</td>
+<td>The feed rate of the machine, in mm/min, while cutting.</td>
+</tr>
+<tr class="even">
+<td><b>SafeHeight</b></td>
+<td>(floating-point number)</td>
+<td>20</td>
+<td>The height at which to lift the tool for rapid positioning.</td>
+</tr>
+<tr class="odd">
+<td><b>PierceHeight</b></td>
+<td>(floating-point number)</td>
+<td>3</td>
+<td>The height at which to pierce the surface of the work before beginning a cut.</td>
+</tr>
+<tr class="even">
+<td><b>CutHeight</b></td>
+<td>(floating-point number)</td>
+<td>1.5</td>
+<td>The height at which to cut the work piece during the drawing operation.</td>
+</tr>
+<tr class="odd">
+<td><b>Kerf</b></td>
+<td>(floating-point number)</td>
+<td>2</td>
+<td>The width of the cut created by the plasma beam.</td>
+</tr>
+<tr class="even">
+<td><b>PierceDelay</b></td>
+<td>(floating-point number)</td>
+<td>0.5</td>
+<td>The number of seconds to wait for the surface of the workpiece to be pierced by the plasma beam before beginning a cut.</td>
+</tr>
+<tr class="odd">
+<td><b>OffDelay</b></td>
+<td>(floating-point number)</td>
+<td>0.5</td>
+<td>The number of seconds to wait at the end of the cut before turning off the plasma beam.</td>
+</tr>
+<tr class="even">
+<td><b>Precision</b></td>
+<td>(floating-point number)</td>
+<td>0.1</td>
+<td>The smallest recognized unit of measurement during conversion. Smaller numbers, though more accurate, will create larger and more time-consuming jobs.</td>
+</tr>
+</tbody>
+</table>
+
+<p>&nbsp;</p>
+
+Following are some pointers related to the plasma cutter generator.
+
+-   Conversion is strictly metric in this version. For the most predictable results, the source document should be saved in millimeters with a view port scaling of 1.
+-   Only path objects are parsed. If you have multiple shape objects like rectangles and circles, please convert them to paths then perform unions and differences on them, as appropriate, before running the converter. I generally create a second copy of my file that serves as a final profile, which allows me to keep editing the master in its original form.
+
+<p>&nbsp;</p>
+
+Example command:
+
+```plaintext
+svgtools /wait /action:GeneratePlasmaGCode 
+ /infile:BikeFrameDiskBrakeAdaptor03-Brace-ProfileOnly.svg
+	/outfile:BikeFrameDiskBrakeAdaptor03-Brace.gcode
+	"/properties:[{'Name':'Kerf','Value':'2'},{'Name':'Precision','Value':'0.5'}]"
+	"/workingpath:%SHAREDPATH%\Develop\Projects\Manufacturing\ElectricBicycle\DPHuffy26\Drawings"
+
+```
 
 <p>&nbsp;</p>
 
@@ -265,7 +362,7 @@ The function library will offer a very long list of features in the near future,
 
 ## Current Toolset
 
-The application currently supports the following actions.
+The application currently supports the following actions. Please see the syntax block following this list for more information on each action.
 
 -   **AnimateTimeline**. Animate an SVG from the provided freeform timeline file. If output filename is omitted, the result is written to the input file. Currently, only OpenDocument ODS files are supported as data file formats, but support for Text-based CSV and JSON files are coming within the next few versions.<p>&nbsp;</p>
 -   **ApplyTransforms**. This action dereferences all linked objects in the document, applies transforms to every object in the hierarchy, and removes all of the transforms.<p>&nbsp;</p>
@@ -273,6 +370,7 @@ The application currently supports the following actions.
 -   **CalculateTransform**. Display the result of an SVG transform like matrix, scale, rotate, etc., applied to caller-supplied x, y, width and height variables. This action has no effect on the file.<p>&nbsp;</p>
 -   **CleanupSvg**. This action dereferences all linked objects, applies transforms, purges unreferenced items from the defs section, and rounds all values to the specified decimal precision (default precision = 3 if not specified).<p>&nbsp;</p>
 -   **DereferenceLinks**. This action serves the purpose of encapsulating as many of the referenced shapes from the defs section as possible into the actual implementation targets from where they have been referenced. This allows each object to be handled freely and independently, either in a visual or text editor.<p>&nbsp;</p>
+-   **GeneratePlasmaGCode**. Generate g-code for a plasma cutter from an SVG drawing.<p>&nbsp;</p>
 -   **ImpliedDesignEnumerateControls**. Enumerate the controls found in the provided implied form design.<p>&nbsp;</p>
 -   **ImpliedDesignToAvaloniaXaml**. Convert the specified implied form design SVG file to Avalonia XAML.<p>&nbsp;</p>
 -   **OpenWorkingSvg**. Only supported in batch mode, this action opens an SVG file so multiple actions can be taken during the same session.<p>&nbsp;</p>
@@ -282,6 +380,160 @@ The application currently supports the following actions.
 -   **SortSymbols**. This action alphabetically sorts the symbols list in the defs section of the SVG.<p>&nbsp;</p>
 -   **XamlManifest**. Output a manifest of the objects, and optionally their properties, of a XAML file. Console output by default, with text file output optional.<p>&nbsp;</p>
 -   **XamlMergeContents**. Merge the contents of two or more XAML files, producing a single output file. Helpful in cases where multiple SVG drawings will be used as a series of panels on a target form.<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+Syntax:
+
+```plaintext
+Command-line tool suite for working with SVG files.
+
+
+Syntax:
+SvgTools.exe /action:{ActionName}
+    [/configfile:{Filename}]
+    [/infile:{Filename}] [/outfile:{Filename}]
+    [/datafile:{Filename}]
+    [/option:{OptionName[,OptionValue]}]
+    [/properties:{NameValueArray}]
+    [/styleworksheet:{Filename}]
+    [/workingpath:{FolderName}]
+    [/wait]
+    [/?]
+
+All parameters can be prefixed with either '/' or '--'.
+
+ * -    Actions marked with an asterisk are only supported within a
+        configuration file.
+
+    /action     -   Describes the action to be made. Following are the
+                    recognized actions, with associated parameter names.
+                    Starred names ('*') are only available in a batch.
+                    AnimateTimeline - Animate an SVG from the provided
+                        freeform timeline file. If output filename is
+                        omitted, the result is written to the input file.
+                        Currently, only OpenDocument ODS files are supported
+                        as data file formats, but support for Text-based CSV
+                        and JSON files are coming within the next few
+                        versions.
+                        /infile /datafile[ /outfile]
+                        Properties:
+                            SheetName - Name of the sheet to load from the
+                                data file, if a spreadsheet file was
+                                specified. If no sheet name is specified,
+                                the first sheet in the workbook is loaded.
+                    ApplyTransforms - Apply transformations on the
+                        specified SVG document.
+                        {/infile[ /outfile]|(working SVG)}
+                    Batch - Perform a batch of file operations from a
+                        single JSON configuration file.
+                        /infile
+                    CalculateTransform - Solve an individual transform for the
+                        provided properties.
+                        The following transforms are supported in the
+                        'transform' property:
+                            translate(x,y)
+                            rotate(a[,x,y])
+                            scale(x,y)
+                            matrix(a,b,c,d,e,f)
+                        The following accompanying properties are supported:
+                            x, y, width, height
+                        Properties: transform, x, y [, width, height]
+                    GeneratePlasmaGCode - Generate g-code for a plasma cutter.
+                        /infile /outfile
+                        Properties:
+                            UnitSystem: { Metric | US }, default = Metric;
+                            DefaultPathSide: { Auto | Center |
+                                InsideShape | OutsideShape |
+                                LeftOfTravel | RightOfTravel }: string,
+                                default = Auto;
+                            FeedRate: number, default = 1000;
+                            SafeHeight: number, default = 20;
+                            PierceHeight: number, default = 3;
+                            CutHeight: number, 1.5;
+                            Kerf: number, 2;
+                            PierceDelay: number, default = 0.5;
+                            OffDelay: number, default = 0.5;
+                            Precision: number, default = 0.1;
+                    ImpliedDesignEnumerateControls - Enumerate the identified
+                        controls within an SVG source file.
+                        /infile
+                    ImpliedDesignToAvaloniaXaml - Render an Avalonia XAML file
+                        from an Implied Design SVG file.
+                        /infile /outfile
+                    OpenWorkingSvg * - Set the current working SVG to make it
+                        eligible for participating in multiple sequential
+                        operations.
+                        InputFilename
+                    PurgeDefs - Remove unused entries from the defs section.
+                        {/infile[ /outfile]|(working SVG)}
+                    RoundAllValues - Round all values to the precision
+                        supplied in the 'Precision' user property.
+                        {/infile[ /outfile]|(working SVG)}
+                        Properties: Precision (optional, default = 3)
+                    SaveWorkingSvg * - Save the current working SVG to
+                        the specified output filename.
+                        OutputFilename
+                    XamlMergeContents - Merge the contents of two or more XAML
+                        files, producing a single output file.
+                        Properties: CreateBackingFile (bool, optional,
+                                                        default = false)
+    /datafile   -   Data file path and filename.
+    /infile     -   Input path and filename only. Wherever infile and outfile
+                        are both specified options and the outfile parameter
+                        has not been supplied, the value of outfile is assumed
+                        to be the same as infile.
+    /option     -   Specifies a single option name and optional matching
+                        value. Multiple options can be specified per command.
+                        Options are specific to the action context in which
+                        they are specified.
+    /outfile    -   Output path and filename only.
+    /styleworksheet -   Specify the name of a style extension worksheet to
+                        include in the process. Currently only used for
+                        ImpliedDesignTo{TargetName} actions.
+    /workingpath-   Set the working path and foldername. When this parameter
+                        is specified, all of the other parameters can use
+                        relative naming.
+
+{ActionName}    -   Name of the action to execute.
+{Filename}      -   Fully qualified path and filename.
+{Foldername}    -   Fully qualified path.
+{TargetName}    -   Implied Design conversion target. Following are the
+                        currently recognized values.
+                        AvaloniaXaml
+
+Options:
+Following are the available options.
+
+Mute            -   Don't run this action.
+                    Value: (none)
+                    Commands: (Any)
+Solo            -   Run only this action within the context of the current
+                    parent batch.
+                    Value: (none)
+                    Commands: (Any)
+
+Example:
+SvgTools /action:ApplyTransforms /infile:C:\Temp\MyDrawing.svg
+
+The above example applies transformations in the file MyDrawing.svg,
+overwriting the original file with the changed version.
+
+Batch config file variables.
+
+| Name | Command Var | Type | Description |
+|------|-------------|------|-------------|
+| Action | /action | SvgActionTypeEnum | The action to be made on the file. |
+| Actions | (none) | List<SvgActionItem> | Collection of actions to run as a part of
+this action. |
+| DataFilename | /datafile | string | The path and filename of a reference data file. |
+| InputFilename | /infile | string | The path and filename of the input file. |
+| OutputFilename | /outfile | string | The output path and filename for the operation. |
+| Properties | List<NameValueItem> | Collection of properties for action. |
+| StyleWorksheets | /styleworksheet | List<string> | Collection of style extension worksheet filenames. |
+| WorkingPath | /workingpath | string | Working path for current operation. |
+
+```
 
 <p>&nbsp;</p>
 

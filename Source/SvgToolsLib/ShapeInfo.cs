@@ -496,7 +496,7 @@ namespace SvgToolsLib
 		//* GetReferenceDimension																									*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
-		/// Return the primary reference dimension value for the speccified shape.
+		/// Return the primary reference dimension value for the specified shape.
 		/// </summary>
 		/// <param name="shape">
 		/// Reference to the shape containing the dimension to find.
@@ -1065,6 +1065,10 @@ namespace SvgToolsLib
 
 			if(shape != null && transforms?.Count > 0)
 			{
+				//if(shape.mNode.Id == "path6" || shape.mNode.Id == "path7")
+				//{
+				//	Trace.WriteLine("ShapeInfoItem.TransformShape: Break here...");
+				//}
 				//	Transform basic properties and general points.
 				//	Get the original reference dimension.
 				//if(shape.mNode.Attributes.Exists(x =>

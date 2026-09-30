@@ -179,6 +179,72 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//* IsClosed																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a value indicating whether this collection contains a closed
+		/// shape.
+		/// </summary>
+		/// <param name="actions">
+		/// Reference to the collection of actions to review.
+		/// </param>
+		/// <returns>
+		/// True if the collection represents a closed shape. Otherwise, false.
+		/// </returns>
+		public static bool IsClosed(SvgPathActionCollection actions)
+		{
+			return (actions?.Exists(x =>
+				x.ActionType == SvgPathActionType.ClosePath) == true);
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* Trim																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Trim the tool-up rapid travel movements from the caller's collection
+		/// of actions.
+		/// </summary>
+		/// <param name="actions">
+		/// Reference to the collection of actions to update.
+		/// </param>
+		public static void Trim(SvgPathActionCollection actions)
+		{
+			SvgPathActionItem action = null;
+			int count = 0;
+			int index = 0;
+
+			if(actions?.Count > 0)
+			{
+				count = actions.Count;
+				while(count > 0 && index == 0)
+				{
+					action = actions[index];
+					if(action.ActionType == SvgPathActionType.Move)
+					{
+						actions.RemoveAt(index);
+						count--;
+					}
+					else
+					{
+						index++;
+					}
+				}
+				index = count - 1;
+				while(count > 0 && index + 1 == count)
+				{
+					action = actions[index];
+					if(action.ActionType == SvgPathActionType.Move)
+					{
+						actions.RemoveAt(index);
+						count--;
+					}
+					index--;
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
 
 	}
 	//*-------------------------------------------------------------------------*
@@ -265,6 +331,21 @@ namespace SvgToolsLib
 		{
 			get { return mStart; }
 			set { mStart = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ToString																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the string representation of this item.
+		/// </summary>
+		/// <returns>
+		/// The string representation of this path action.
+		/// </returns>
+		public override string ToString()
+		{
+			return $"{mActionType}: {mEnd.X:0.000}, {mEnd.Y:0.000}";
 		}
 		//*-----------------------------------------------------------------------*
 
