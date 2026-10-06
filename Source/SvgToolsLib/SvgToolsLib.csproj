@@ -9,9 +9,9 @@
 		<Platforms>AnyCPU;x64</Platforms>
 		<PackageId>Dans.SvgTools.Library</PackageId>
 		<Title>Dan's SvgTools Library</Title>
-		<Version>26.2930.4510</Version>
+		<Version>26.3006.2520</Version>
 		<Description>Dan's SvgTools Library.</Description>
-		<Copyright>Copyright(c) 2025. Daniel Patterson, MCSD (danielanywhere)</Copyright>
+		<Copyright>Copyright(c) 2026. Daniel Patterson, MCSD (danielanywhere)</Copyright>
 		<PackageProjectUrl>https://github.com/danielanywhere/SvgTools</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageTags>svg;svg-to-xaml;svg-animation</PackageTags>
