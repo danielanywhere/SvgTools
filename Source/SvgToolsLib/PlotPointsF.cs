@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2025 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2025-2026 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -428,28 +427,6 @@ namespace SvgToolsLib
 							switch(transformItem.TransformType)
 							{
 								case TransformTypeEnum.Matrix:
-									ta = transformItem.Parameters[0];
-									tb = tc = td = te = tf = 0f;
-									if(transformItem.Parameters.Count > 1)
-									{
-										tb = transformItem.Parameters[1];
-									}
-									if(transformItem.Parameters.Count > 2)
-									{
-										tc = transformItem.Parameters[2];
-									}
-									if(transformItem.Parameters.Count > 3)
-									{
-										td = transformItem.Parameters[3];
-									}
-									if(transformItem.Parameters.Count > 4)
-									{
-										te = transformItem.Parameters[4];
-									}
-									if(transformItem.Parameters.Count > 5)
-									{
-										tf = transformItem.Parameters[5];
-									}
 									if(plotItem.Action.Length > 0)
 									{
 										paramCount = plotItem.Points.Count;
@@ -458,22 +435,62 @@ namespace SvgToolsLib
 											//	Apply translation to two subsequent parameters.
 											bx = false;
 											by = false;
-											x = 0;
-											y = 0;
 											if(PlotPointsCollection.ParamIsLocation(
 												action, paramIndex) ||
 												PlotPointsCollection.ParamIsDimension(
 													action, paramIndex))
 											{
 												//	Parameter 1 is present.
-												if(PlotPointsCollection.ParamIsHorizontal(
+												//	Parameters are reset on every loop so we can tune
+												//	out translation on dimensions.
+												//	ta = scaleX.
+												//	tb = skewY.
+												//	tc = skewX.
+												//	td = scaleY.
+												//	te = translateX.
+												//	tf = translateY.
+												ta = transformItem.Parameters[0];
+												tb = tc = td = te = tf = tx = ty = x = y = 0f;
+												if(transformItem.Parameters.Count > 1)
+												{
+													tb = transformItem.Parameters[1];
+												}
+												if(transformItem.Parameters.Count > 2)
+												{
+													tc = transformItem.Parameters[2];
+												}
+												if(transformItem.Parameters.Count > 3)
+												{
+													td = transformItem.Parameters[3];
+												}
+												if(transformItem.Parameters.Count > 4)
+												{
+													te = transformItem.Parameters[4];
+												}
+												if(transformItem.Parameters.Count > 5)
+												{
+													tf = transformItem.Parameters[5];
+												}
+												if(PlotPointsCollection.ParamIsDimension(
+													action, paramIndex))
+												{
+													//	Only leave the scale active.
+													tb = tc = te = tf = 0f;
+													if(ta == 0f)
+													{
+														ta = 1f;
+													}
+													tx = plotItem.Points[paramIndex];
+													bx = true;
+												}
+												else if(PlotPointsCollection.ParamIsHorizontal(
 													action, paramIndex))
 												{
 													//	This is a horizontal item.
 													//	TODO: Any time there is a dimension, we will need
 													//	to create an alternate endpoint to find the
 													//	new dimension.
-													x = plotItem.Points[paramIndex];
+													tx = plotItem.Points[paramIndex];
 													bx = true;
 												}
 											}
@@ -481,18 +498,33 @@ namespace SvgToolsLib
 												(PlotPointsCollection.ParamIsLocation(
 													action, paramIndex + 1) ||
 												PlotPointsCollection.ParamIsDimension(
-													action, paramIndex + 1)) &&
-													PlotPointsCollection.ParamIsVertical(
-														action, paramIndex + 1))
+													action, paramIndex + 1)))
 											{
-												y = plotItem.Points[paramIndex + 1];
-												by = true;
+												if(PlotPointsCollection.ParamIsDimension(
+													action, paramIndex + 1))
+												{
+													tb = tc = te = tf = 0f;
+													if(td == 0f)
+													{
+														td = 1f;
+													}
+													ty = plotItem.Points[paramIndex + 1];
+													by = true;
+												}
+												else if(PlotPointsCollection.ParamIsVertical(
+													action, paramIndex + 1))
+												{
+													ty = plotItem.Points[paramIndex + 1];
+													by = true;
+												}
 											}
 											if(bx)
 											{
 												//	Update X.
-												x = (ta * x) + (tc * y) + te;
-												y = (tb * x) + (td * y) + tf;
+												//x = (ta * x) + (tc * y) + te;
+												//y = (tb * x) + (td * y) + tf;
+												x = (ta * tx) + (tc * ty) + te;
+												y = (tb * tx) + (td * ty) + tf;
 												plotItem.Points[paramIndex] = x;
 												if(by)
 												{

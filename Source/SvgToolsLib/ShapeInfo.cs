@@ -1065,7 +1065,7 @@ namespace SvgToolsLib
 
 			if(shape != null && transforms?.Count > 0)
 			{
-				//if(shape.mNode.Id == "path6" || shape.mNode.Id == "path7")
+				//if(shape.mNode.Id == "circle1571")
 				//{
 				//	Trace.WriteLine("ShapeInfoItem.TransformShape: Break here...");
 				//}

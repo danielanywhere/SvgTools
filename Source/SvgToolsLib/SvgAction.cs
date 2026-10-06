@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2025 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2025-2026 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -4390,8 +4390,9 @@ namespace SvgToolsLib
 			if(item != null && propertyName?.Length > 0)
 			{
 				propertySystem =
-					mPublicProperties.FirstOrDefault(x => x.Name.ToLower() ==
-					propertyName.ToLower());
+					mPublicProperties.FirstOrDefault(x =>
+					string.Equals(x.Name, propertyName,
+						StringComparison.OrdinalIgnoreCase));
 				if(propertySystem != null)
 				{
 					//	Built-in property.
@@ -4405,7 +4406,8 @@ namespace SvgToolsLib
 				{
 					//	User property.
 					propertyUser = item.Properties.FirstOrDefault(x =>
-						x.Name.ToLower() == propertyName.ToLower());
+						string.Equals(x.Name, propertyName,
+							StringComparison.OrdinalIgnoreCase));
 					if(propertyUser != null)
 					{
 						result = propertyUser.Value;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2025 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2025-2026 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -394,6 +394,38 @@ namespace SvgToolsLib
 		public void SetWidth(float width)
 		{
 			mMaxX = mMinX + width;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Tag																																		*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Tag">Tag</see>.
+		/// </summary>
+		private object mTag = null;
+		/// <summary>
+		/// Get/Set a reference to an object to associate with this bounding box.
+		/// </summary>
+		public object Tag
+		{
+			get { return mTag; }
+			set { mTag = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToString																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the string representation of this item.
+		/// </summary>
+		/// <returns>
+		/// The string representation of this item.
+		/// </returns>
+		public override string ToString()
+		{
+			return $"{mMinX:0.000}, {mMinY:0.000} -> {mMaxX:0.000}, {mMaxY:0.000}";
 		}
 		//*-----------------------------------------------------------------------*
 

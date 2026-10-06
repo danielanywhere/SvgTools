@@ -131,6 +131,6 @@ svgtools /wait /action:ChangeImage /infile:Aerionics-Animated.svg /outfile:Aerio
 Create generic g-code for a plasma cutter.
 
 ```
-svgtools /wait /action:GeneratePlasmaGCode /infile:BikeFrameDiskBrakeAdaptor03-Brace-ProfileOnly.svg /outfile:BikeFrameDiskBrakeAdaptor03-Brace.gcode "/properties:[{'Name':'Kerf','Value':'2'},{'Name':'Precision','Value':'0.5'}]" "/workingpath:%SHAREDPATH%\Develop\Projects\Manufacturing\ElectricBicycle\DPHuffy26\Drawings"
+svgtools /wait /action:GeneratePlasmaGCode /infile:BikeFrameDiskBrakeAdaptor03-Brace-Layout-18x6.svg /outfile:BikeFrameDiskBrakeAdaptor03-Brace-Layout-18x6.gcode "/properties:[{'Name':'Kerf','Value':'2'},{'Name':'Precision','Value':'0.5'}]" "/workingpath:%SHAREDPATH%\Develop\Projects\Manufacturing\ElectricBicycle\DPHuffy26\Drawings"
 ```
 

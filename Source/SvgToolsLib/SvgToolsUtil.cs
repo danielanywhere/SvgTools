@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2000 - 2025 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2000-2026 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -30,8 +28,8 @@ using SkiaSharp;
 
 using Html;
 using Geometry;
-using System.Net.NetworkInformation;
 using ConversionCalc;
+using System.Globalization;
 
 namespace SvgToolsLib
 {
@@ -75,6 +73,46 @@ namespace SvgToolsLib
 		{
 				"ch", "em", "ex", "rem"
 		};
+
+		/// <summary>
+		/// The allowable delimiters for point list values.
+		/// </summary>
+		private static char[] mPointSeparators = new char[] { ' ', ',' };
+
+		/// <summary>
+		/// Primitive graphic element node types.
+		/// </summary>
+		private static string[] mPrimitiveGraphicElementTypes = new string[]
+		{
+			"circle",
+			"ellipse",
+			"line",
+			"polygon",
+			"polyline",
+			"rect",
+			"text"
+		};
+
+		private static string[] mShapeAttributesCircle = new string[]
+			{ "cx", "cy", "r", "pathLength" };
+
+		private static string[] mShapeAttributesEllipse = new string[]
+			{ "cx", "cy", "rx", "ry", "pathLength" };
+
+		private static string[] mShapeAttributesLine = new string[]
+			{ "x1", "y1", "x2", "y2", "pathLength" };
+
+		private static string[] mShapeAttributesPolygon = new string[]
+			{ "points", "pathLength" };
+
+		private static string[] mShapeAttributesPolyline = new string[]
+			{ "points", "pathLength" };
+
+		private static string[] mShapeAttributesRect = new string[]
+			{ "x", "y", "width", "height", "rx", "ry", "pathLength" };
+
+		private static string[] mShapeAttributesText = new string[]
+			{ "x", "y", "dx", "dy", "rotate", "lengthAdjust", "textLength" };
 
 		/// <summary>
 		/// List of tag types that can be positioned in SVG.
@@ -690,19 +728,31 @@ namespace SvgToolsLib
 		/// </returns>
 		public static BoundingObjectItem CalcBounds(PlotPointsCollection plots)
 		{
+			bool bLargeArc = false;
+			bool bSweep = false;
+			FVector2 center = null;
+			FEllipse ellipse = null;
+			FVector2 endPoint = null;
 			int i = 0;
+			float length = 0f;
 			float maxX = 0f;
 			float maxY = 0f;
 			float minX = 0f;
 			float minY = 0f;
 			int p = 0;
+			List<FVector2> points = null;
 			XYValueItem pt = new XYValueItem();
 			XYValueItem[] px = new XYValueItem[]
 			{
 				new XYValueItem(), new XYValueItem(),
 				new XYValueItem(), new XYValueItem()
 			};
+			FVector2 radii = null;
 			BoundingObjectItem result = new BoundingObjectItem();
+			float rotation = 0f;
+			int sampleCount = 0;
+			FVector2 startEnd = null;
+			FVector2 startPoint = null;
 			float t = 0f;
 			XYValueItem xy = new XYValueItem();
 
@@ -719,10 +769,59 @@ namespace SvgToolsLib
 						case "A":
 							//	Arc to.
 							//	A rx ry x-rotation large-arc-flag sleep-flag x y
+							xy.Update(pt);
+							if(pointsItem.Points.Count >= 7)
+							{
+								startPoint = new FVector2(xy.X, xy.Y);
+								endPoint = new FVector2(
+									ToFloat(pointsItem.Points[5]),
+									ToFloat(pointsItem.Points[6]));
+								radii = new FVector2(
+									ToFloat(pointsItem.Points[0]),
+									ToFloat(pointsItem.Points[1]));
+								bSweep = ToBool(pointsItem.Points[4]);
+								bLargeArc = ToBool(pointsItem.Points[3]);
+								rotation = ToFloat(pointsItem.Points[2]);
+
+								if(TryGetArcCenter(
+									startPoint,
+									endPoint,
+									radii, bSweep, bLargeArc, out center))
+								{
+									ellipse = new FEllipse()
+									{
+										Center = center,
+										RadiusX = radii.X,
+										RadiusY = radii.Y,
+										Rotation = rotation
+									};
+									length = (radii.X + radii.Y) / 2f;
+									sampleCount = 100;
+									startEnd = GetEllipticalArcAngles(ellipse,
+										startPoint, endPoint);
+									points = FEllipse.GetVerticesInArc(ellipse, sampleCount,
+										startEnd.X, startEnd.Y - startEnd.X);
+									foreach(FVector2 pointItem in points)
+									{
+										minX = Math.Min(minX, pointItem.X);
+										minY = Math.Min(minY, pointItem.Y);
+										maxX = Math.Max(maxX, pointItem.X);
+										maxY = Math.Max(maxY, pointItem.Y);
+									}
+								}
+								minX = Math.Min(minX, endPoint.X);
+								minY = Math.Min(minY, endPoint.Y);
+								maxX = Math.Max(maxX, endPoint.X);
+								maxY = Math.Max(maxY, endPoint.Y);
+								xy.X = endPoint.X;
+								xy.Y = endPoint.Y;
+							}
+							pt.Update(xy);
 							break;
 						case "a":
 							//	Arc relative.
 							//	a rx ry x-rotation large-arc-flag sweep-flag dx dy
+							//	TODO: Calculate bounds on relative arc.
 							break;
 						case "C":
 							//	Cubic bezier curve to.
@@ -803,8 +902,8 @@ namespace SvgToolsLib
 								xy.Y = ToFloat(pointsItem.Points[1]);
 								minX = Math.Min(minX, Math.Min(pt.X, xy.X));
 								minY = Math.Min(minY, Math.Min(pt.Y, xy.Y));
-								maxX = Math.Min(maxX, Math.Max(pt.X, xy.X));
-								maxY = Math.Min(maxY, Math.Max(pt.Y, xy.Y));
+								maxX = Math.Max(maxX, Math.Max(pt.X, xy.X));
+								maxY = Math.Max(maxY, Math.Max(pt.Y, xy.Y));
 								pt.Update(xy);
 							}
 							break;
@@ -818,8 +917,8 @@ namespace SvgToolsLib
 								xy.Y = ToFloat(pointsItem.Points[1]) + pt.Y;
 								minX = Math.Min(minX, Math.Min(pt.X, xy.X));
 								minY = Math.Min(minY, Math.Min(pt.Y, xy.Y));
-								maxX = Math.Min(maxX, Math.Max(pt.X, xy.X));
-								maxY = Math.Min(maxY, Math.Max(pt.Y, xy.Y));
+								maxX = Math.Max(maxX, Math.Max(pt.X, xy.X));
+								maxY = Math.Max(maxY, Math.Max(pt.Y, xy.Y));
 								pt.Update(xy);
 							}
 							break;
@@ -1305,79 +1404,6 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//* Clear																																	*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Clear the contents of the specified Html node.
-		/// </summary>
-		/// <param name="node">
-		/// Reference to the node to clear.
-		/// </param>
-		public static void Clear(HtmlNodeItem node)
-		{
-			if(node != null)
-			{
-				node.Attributes.Clear();
-				node.Id = "";
-				node.Index = 0;
-				node.Name = "";
-				node.Nodes.Clear();
-				node.NodeType = "";
-				node.Original = "";
-				node.Parent = null;
-				node.SelfClosing = false;
-				node.Text = "";
-				node.TrailingText = "";
-			}
-		}
-		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
-		/// <summary>
-		/// Clear the contents of the specified string builder.
-		/// </summary>
-		/// <param name="builder">
-		/// Reference to the string builder to clear.
-		/// </param>
-		public static void Clear(StringBuilder builder)
-		{
-			if(builder?.Length > 0)
-			{
-				builder.Remove(0, builder.Length);
-			}
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//* ConvertElementsToLower																								*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Convert all HTML tags and property names to lower case.
-		/// </summary>
-		/// <param name="doc">
-		/// Reference to the document to be updated.
-		/// </param>
-		public static void ConvertElementsToLower(HtmlDocument doc)
-		{
-			List<HtmlNodeItem> flatNodesList = null;
-
-			if(doc?.Nodes.Count > 0)
-			{
-				flatNodesList = doc.Nodes.FindMatches(x => x.Text?.Length >= 0);
-				foreach(HtmlNodeItem nodeItem in flatNodesList)
-				{
-					nodeItem.NodeType = nodeItem.NodeType.ToLower();
-					foreach(HtmlAttributeItem attributeItem in nodeItem.Attributes)
-					{
-						if(attributeItem.Name?.Length > 0)
-						{
-							attributeItem.Name = attributeItem.Name.ToLower();
-						}
-					}
-				}
-			}
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//*	CConverter																														*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -1462,6 +1488,175 @@ namespace SvgToolsLib
 					mConverterInitialized = true;
 				}
 				return mCConverter;
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* Clear																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Clear the contents of the specified Html node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to clear.
+		/// </param>
+		public static void Clear(HtmlNodeItem node)
+		{
+			if(node != null)
+			{
+				node.Attributes.Clear();
+				node.Id = "";
+				node.Index = 0;
+				node.Name = "";
+				node.Nodes.Clear();
+				node.NodeType = "";
+				node.Original = "";
+				node.Parent = null;
+				node.SelfClosing = false;
+				node.Text = "";
+				node.TrailingText = "";
+			}
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
+		/// Clear the contents of the specified string builder.
+		/// </summary>
+		/// <param name="builder">
+		/// Reference to the string builder to clear.
+		/// </param>
+		public static void Clear(StringBuilder builder)
+		{
+			if(builder?.Length > 0)
+			{
+				builder.Remove(0, builder.Length);
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ConvertElementsToLower																								*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Convert all HTML tags and property names to lower case.
+		/// </summary>
+		/// <param name="doc">
+		/// Reference to the document to be updated.
+		/// </param>
+		public static void ConvertElementsToLower(HtmlDocument doc)
+		{
+			List<HtmlNodeItem> flatNodesList = null;
+
+			if(doc?.Nodes.Count > 0)
+			{
+				flatNodesList = doc.Nodes.FindMatches(x => x.Text?.Length >= 0);
+				foreach(HtmlNodeItem nodeItem in flatNodesList)
+				{
+					nodeItem.NodeType = nodeItem.NodeType.ToLower();
+					foreach(HtmlAttributeItem attributeItem in nodeItem.Attributes)
+					{
+						if(attributeItem.Name?.Length > 0)
+						{
+							attributeItem.Name = attributeItem.Name.ToLower();
+						}
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ConvertObjectsToPaths																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Convert the primitive shape objects in the document to fully-qualified
+		/// &lt;path&gt; elements.
+		/// </summary>
+		/// <param name="document">
+		/// Reference to the HTML document containing the elements to be converted.
+		/// </param>
+		public static void ConvertObjectsToPaths(HtmlDocument document)
+		{
+			float cx = 0f;
+			float cy = 0f;
+			string data = "";
+			List<HtmlNodeItem> nodes = null;
+			float r = 0f;
+
+			//	TODO: Add object-to-path support for text.
+			if(document != null)
+			{
+				nodes = document.Nodes.FindMatches(x =>
+					mPrimitiveGraphicElementTypes.Contains(x.NodeType));
+				foreach(HtmlNodeItem nodeItem in nodes)
+				{
+					switch(nodeItem.NodeType)
+					{
+						case "circle":
+							data = ToPathFromCircle(
+								ToFloat(nodeItem.Attributes.GetValue("cx")),
+								ToFloat(nodeItem.Attributes.GetValue("cy")),
+								ToFloat(nodeItem.Attributes.GetValue("r")));
+							nodeItem.Attributes.RemoveAll(x =>
+								mShapeAttributesCircle.Contains(x.Name));
+							nodeItem.NodeType = "path";
+							nodeItem.Attributes.SetAttribute("d", data);
+							break;
+						case "ellipse":
+							data = ToPathFromEllipse(
+								ToFloat(nodeItem.Attributes.GetValue("cx")),
+								ToFloat(nodeItem.Attributes.GetValue("cy")),
+								ToFloat(nodeItem.Attributes.GetValue("rx")),
+								ToFloat(nodeItem.Attributes.GetValue("ry")));
+							nodeItem.Attributes.RemoveAll(x =>
+								mShapeAttributesEllipse.Contains(x.Name));
+							nodeItem.NodeType = "path";
+							nodeItem.Attributes.SetAttribute("d", data);
+							break;
+						case "line":
+							data = ToPathFromLine(
+								ToFloat(nodeItem.Attributes.GetValue("x1")),
+								ToFloat(nodeItem.Attributes.GetValue("y1")),
+								ToFloat(nodeItem.Attributes.GetValue("x2")),
+								ToFloat(nodeItem.Attributes.GetValue("y2")));
+							nodeItem.Attributes.RemoveAll(x =>
+								mShapeAttributesLine.Contains(x.Name));
+							nodeItem.NodeType = "path";
+							nodeItem.Attributes.SetAttribute("d", data);
+							break;
+						case "polygon":
+							data = ToPathFromPolygon(
+								nodeItem.Attributes.GetValue("points"));
+							nodeItem.Attributes.RemoveAll(x =>
+								mShapeAttributesPolygon.Contains(x.Name));
+							nodeItem.NodeType = "path";
+							nodeItem.Attributes.SetAttribute("d", data);
+							break;
+						case "polyline":
+							data = ToPathFromPolyline(
+								nodeItem.Attributes.GetValue("points"));
+							nodeItem.Attributes.RemoveAll(x =>
+								mShapeAttributesPolygon.Contains(x.Name));
+							nodeItem.NodeType = "path";
+							nodeItem.Attributes.SetAttribute("d", data);
+							break;
+						case "rect":
+							data = ToPathFromRect(
+								ToFloat(nodeItem.Attributes.GetValue("x")),
+								ToFloat(nodeItem.Attributes.GetValue("y")),
+								ToFloat(nodeItem.Attributes.GetValue("width")),
+								ToFloat(nodeItem.Attributes.GetValue("height")),
+								ToFloat(nodeItem.Attributes.GetValue("rx")),
+								ToFloat(nodeItem.Attributes.GetValue("ry")));
+							nodeItem.Attributes.RemoveAll(x =>
+								mShapeAttributesRect.Contains(x.Name));
+							nodeItem.NodeType = "path";
+							nodeItem.Attributes.SetAttribute("d", data);
+							break;
+						case "text":
+							break;
+					}
+				}
 			}
 		}
 		//*-----------------------------------------------------------------------*
@@ -2226,6 +2421,39 @@ namespace SvgToolsLib
 				}
 			}
 			return width;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* FormatValue																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the formatted string representation of the caller's value.
+		/// </summary>
+		/// <param name="value">
+		/// The value to format.
+		/// </param>
+		/// <param name="format">
+		/// The optional format to apply. Default = 0.000.
+		/// </param>
+		/// <returns>
+		/// The formatted string value.
+		/// </returns>
+		public static string FormatValue(float value, string format = "0.000")
+		{
+			string localFormat = "";
+			string result = "";
+
+			if(format == null)
+			{
+				localFormat = "{0:0.000}";
+			}
+			else
+			{
+				localFormat = $"{{0:{format}}}";
+			}
+			result = string.Format(localFormat, value);
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -3327,6 +3555,34 @@ namespace SvgToolsLib
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
+		/// Return the value of the specified group member in the provided match.
+		/// </summary>
+		/// <param name="matches">
+		/// Reference to the collection of matches to be accessed.
+		/// </param>
+		/// <param name="index">
+		/// The index of the match to inspect.
+		/// </param>
+		/// <param name="groupName">
+		/// Name of the group for which the value will be found.
+		/// </param>
+		/// <returns>
+		/// The value found in the specified group, if found. Otherwise, empty
+		/// string.
+		/// </returns>
+		public static string GetValue(MatchCollection matches, int index,
+			string groupName)
+		{
+			string result = "";
+
+			if(index > -1 && matches?.Count > index)
+			{
+				result = GetValue(matches[index], groupName);
+			}
+			return result;
+		}
+		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
+		/// <summary>
 		/// Return the value of the specified group member in a match found with
 		/// the provided source and pattern.
 		/// </summary>
@@ -4359,6 +4615,83 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* ResolveObjectReferences																								*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Resolve linked copies of objects, deep cloning all instances.
+		/// </summary>
+		/// <param name="document">
+		/// Reference to the HTML document to search.
+		/// </param>
+		public static void ResolveObjectReferences(HtmlDocument document)
+		{
+			HtmlAttributeItem attrib = null;
+			string id = "";
+			List<string> ids = null;
+			int index = 0;
+			HtmlNodeItem newNode = null;
+			HtmlNodeItem node = null;
+			List<HtmlNodeItem> nodes = null;
+			HtmlNodeItem postNode = null;
+			HtmlNodeItem refNode = null;
+			string transform = "";
+			float x = 0f;
+			float y = 0f;
+
+			if(document != null)
+			{
+				nodes = document.Nodes.FindMatches(x => x.NodeType == "use");
+				foreach(HtmlNodeItem nodeItem in nodes)
+				{
+					attrib = nodeItem.Attributes.FirstOrDefault(x =>
+						x.Name.EndsWith("href"));
+					if(attrib != null && attrib.Value.StartsWith("#") &&
+						attrib.Value.Length > 1)
+					{
+						//	This node references other objects in the defs section.
+						refNode = document.Nodes.FindMatch(x =>
+							x.Id == attrib.Value.Substring(1));
+					}
+					if(refNode != null)
+					{
+						//	The source node was found.
+						//	Retrieve the values we can use from the <use> element.
+						x = ToFloat(nodeItem.Attributes.GetValue("x"));
+						y = ToFloat(nodeItem.Attributes.GetValue("y"));
+
+						transform = nodeItem.Attributes.GetValue("transform");
+						nodeItem.NodeType = "g";
+						nodeItem.Attributes.Clear();
+						nodeItem.Nodes.Clear();
+						postNode = nodeItem;
+						if(x != 0f || y != 0f)
+						{
+							nodeItem.Attributes.Add("transform",
+								$"translate({x:0.###} {y:0.###})");
+							if(transform.Length > 0)
+							{
+								newNode = new HtmlNodeItem()
+								{
+									NodeType = "g"
+								};
+								newNode.Attributes.Add("transform", transform);
+								nodeItem.Nodes.Add(newNode);
+								postNode = newNode;
+							}
+						}
+						else if(transform.Length > 0)
+						{
+							nodeItem.Attributes.Add("transform", transform);
+						}
+						newNode = HtmlNodeItem.Clone(refNode);
+						postNode.Nodes.Add(newNode);
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ResolveWildcards																											*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -5319,6 +5652,263 @@ namespace SvgToolsLib
 			}
 			catch { }
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToPathFromCircle																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return path data representing the caller's circle values.
+		/// </summary>
+		/// <param name="cx">
+		/// Circle center X.
+		/// </param>
+		/// <param name="cy">
+		/// Circle center Y.
+		/// </param>
+		/// <param name="r">
+		/// Circle radius.
+		/// </param>
+		/// <returns>
+		/// Path data representing the caller's circle values.
+		/// </returns>
+		public static string ToPathFromCircle(float cx, float cy, float r)
+		{
+			return ToPathFromEllipse(cx, cy, r, r);
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToPathFromEllipse																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return path data representing the caller's ellipse values.
+		/// </summary>
+		/// <param name="cx">
+		/// Center X.
+		/// </param>
+		/// <param name="cy">
+		/// Center Y.
+		/// </param>
+		/// <param name="rx">
+		/// Radius X.
+		/// </param>
+		/// <param name="ry">
+		/// Radius Y.
+		/// </param>
+		/// <returns>
+		/// Path data representing the caller's ellipse.
+		/// </returns>
+		public static string ToPathFromEllipse(float cx, float cy, float rx,
+			float ry)
+		{
+			string scx = FormatValue(cx);
+			string scy = FormatValue(cy);
+			string srx = FormatValue(rx);
+			string sry = FormatValue(ry);
+
+			return $"M {scx} {FormatValue(cy - ry)} " +
+				$"a {srx} {sry} 0 0 0 {FormatValue(cx + ry)} {scy} " +
+				$"a {srx} {sry} 0 0 0 {scx} {FormatValue(cy + ry)} " +
+				$"a {srx} {sry} 0 0 0 {FormatValue(cx - ry)} {scy} " +
+				$"a {srx} {sry} 0 0 0 {scx} {FormatValue(cy - ry)} " +
+				$"Z";
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToPathFromLine																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return path data representing the caller's line.
+		/// </summary>
+		/// <param name="x1">
+		/// Starting point X.
+		/// </param>
+		/// <param name="y1">
+		/// Starting point Y.
+		/// </param>
+		/// <param name="x2">
+		/// Ending point X.
+		/// </param>
+		/// <param name="y2">
+		/// Ending point Y.
+		/// </param>
+		/// <returns>
+		/// Path data representing the caller's line.
+		/// </returns>
+		public static string ToPathFromLine(float x1, float y1, float x2, float y2)
+		{
+			return $"M {FormatValue(x1)} {FormatValue(y1)} " +
+				$"L {FormatValue(x2)} {FormatValue(y2)}";
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToPathFromPointData																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return path data representing the caller's series of points.
+		/// </summary>
+		/// <param name="pointData">
+		/// Space-delimited or comma-delimited series of points to convert.
+		/// </param>
+		/// <param name="closed">
+		/// Value indicating whether the shape is closed.
+		/// </param>
+		/// <returns>
+		/// Path data representing the provided point data.
+		/// </returns>
+		public static string ToPathFromPointData(string pointData, bool closed)
+		{
+			StringBuilder builder = new StringBuilder();
+			int count = 0;
+			int index = 0;
+			MatchCollection matches = null;
+
+			if(pointData?.Length > 0)
+			{
+				matches = Regex.Matches(pointData, ResourceMain.rxNumeric);
+				count = matches.Count;
+				if(count > 1)
+				{
+					builder.Append($"M ");
+					builder.Append(GetValue(matches, 0, "pattern"));
+					builder.Append(' ');
+					builder.Append(GetValue(matches, 1, "pattern"));
+				}
+				for(index = 2; index < count; index += 2)
+				{
+					builder.Append(" L ");
+					builder.Append(GetValue(matches, index, "pattern"));
+					builder.Append(' ');
+					builder.Append(GetValue(matches, index + 1, "pattern"));
+				}
+				if(closed)
+				{
+					builder.Append(" Z");
+				}
+			}
+			return builder.ToString();
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToPathFromPolygon																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return path data representing the caller's polygon.
+		/// </summary>
+		/// <param name="pointData">
+		/// Space-delimited or comma-delimited point data string.
+		/// </param>
+		/// <returns>
+		/// Path data representing the caller's polygon.
+		/// </returns>
+		public static string ToPathFromPolygon(string pointData)
+		{
+			return ToPathFromPointData(pointData, closed: true);
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToPathFromPolyline																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return path data representing the caller's polyline.
+		/// </summary>
+		/// <param name="pointData">
+		/// Space-delimited or comma-delimited point data string.
+		/// </param>
+		/// <returns>
+		/// Path data representing the caller's polyline.
+		/// </returns>
+		public static string ToPathFromPolyline(string pointData)
+		{
+			return ToPathFromPointData(pointData, closed: false);
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//* ToPathFromRect																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return path data representing the caller's rectangle.
+		/// </summary>
+		/// <param name="x">
+		/// The starting X position.
+		/// </param>
+		/// <param name="y">
+		/// The starting Y position.
+		/// </param>
+		/// <param name="width">
+		/// The width of the shape.
+		/// </param>
+		/// <param name="height">
+		/// The height of the shape.
+		/// </param>
+		/// <param name="rx">
+		/// Rounded corner X radius.
+		/// </param>
+		/// <param name="ry">
+		/// Rounded corner Y radius.
+		/// </param>
+		/// <returns>
+		/// The path data representing the caller's rectangle.
+		/// </returns>
+		public static string ToPathFromRect(float x, float y,
+			float width, float height, float rx, float ry)
+		{
+			StringBuilder builder = new StringBuilder();
+			float radiusX = rx;
+			float radiusY = ry;
+			string srx = "";
+			string sry = "";
+
+			if(rx == 0f && ry == 0f)
+			{
+				builder.Append($"M {FormatValue(x)} {FormatValue(y)} ");
+				builder.Append($"h {FormatValue(width)} ");
+				builder.Append($"v {FormatValue(height)} ");
+				builder.Append($"h {FormatValue(-width)} Z");
+			}
+			else
+			{
+				if(radiusX == 0f)
+				{
+					radiusX = radiusY;
+				}
+				if(radiusY == 0f)
+				{
+					radiusY = radiusX;
+				}
+				if(radiusX > width / 2f)
+				{
+					radiusX = width / 2f;
+				}
+				if(radiusY > height / 2f)
+				{
+					radiusY = height / 2f;
+				}
+				srx = FormatValue(radiusX);
+				sry = FormatValue(radiusY);
+				builder.Append($"M {FormatValue(x + radiusX)} ");
+				builder.Append($"{FormatValue(y)} ");
+				builder.Append($"h {FormatValue(width - (radiusX * 2f))} ");
+				builder.Append($"a {srx} {sry} 0 0 0 {srx} {sry} ");
+				builder.Append($"v {FormatValue(height - (radiusY * 2f))} ");
+				builder.Append($"a {srx} {sry} 0 0 0 ");
+				builder.Append($"{FormatValue(-radiusX)} {sry} ");
+				builder.Append($"h {FormatValue(-(width - (radiusX * 2f)))} ");
+				builder.Append($"a {srx} {sry} 0 0 0 ");
+				builder.Append($"{FormatValue(-radiusX)} {FormatValue(-radiusY)} ");
+				builder.Append($"v {FormatValue(-(height - (radiusY * 2f)))} ");
+				builder.Append($"a {srx} {sry} 0 0 0 ");
+				builder.Append($"{srx} {FormatValue(-radiusY)} ");
+				builder.Append('Z');
+			}
+			return builder.ToString();
 		}
 		//*-----------------------------------------------------------------------*
 
