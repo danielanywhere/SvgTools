@@ -512,7 +512,7 @@ namespace SvgToolsLib
 			{
 				bIsClosed = IsClosed(lines, precision);
 				count = lines.Count;
-				for(index = 0; index < count; index ++)
+				for(index = 0; index < count; index++)
 				{
 					line = lines[index];
 					if(index > 0)
@@ -528,11 +528,13 @@ namespace SvgToolsLib
 						anchorPoint = startPoint;
 					}
 					endPoint = line.End;
-					if(Math.Abs(endPoint.X - anchorPoint.X) < precision &&
-						Math.Abs(endPoint.Y - anchorPoint.Y) < precision)
+					if(
+						(index + 1 < count || !bIsClosed) &&
+						(Math.Abs(endPoint.X - anchorPoint.X) < precision &&
+						Math.Abs(endPoint.Y - anchorPoint.Y) < precision))
 					{
 						lines.RemoveAt(index);
-						count--;	//	Discount.
+						count--;  //	Discount.
 						index--;  //	Deindex.
 						removedCount++;
 					}
@@ -545,7 +547,7 @@ namespace SvgToolsLib
 				if(removedCount > 0)
 				{
 					count = lines.Count;
-					for(index = 1; index < count; index ++)
+					for(index = 1; index < count; index++)
 					{
 						if(index + 1 == count && bIsClosed)
 						{
