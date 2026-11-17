@@ -204,7 +204,7 @@ svgtools /wait /action:GeneratePlasmaGCode
 
 ## Switch Images in File
 
-The **ChangeImage** action is used to change
+The **ChangeImage** action is used to change the base content of an image, either by reference or by embedded data.
 
 <p>&nbsp;</p>
 

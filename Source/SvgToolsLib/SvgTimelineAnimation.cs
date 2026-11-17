@@ -206,6 +206,7 @@ namespace SvgToolsLib
 							}
 							if(index == 0)
 							{
+								//	The first value is always absolute.
 								frameIndexCurrent = 1;
 								attributeValue = GetAttributeValue(node, attributeName);
 								if(attributeValue.Length > 0)
@@ -217,11 +218,23 @@ namespace SvgToolsLib
 									valueStart = ToFloat(
 										property.GetValue(matchingFrame, null).ToString());
 								}
+								valueEnd = ToFloat(
+									property.GetValue(matchingFrame, null).ToString());
 							}
 							else
 							{
 								frameIndexCurrent = frameIndexNext;
 								valueStart = valueEnd;
+								if(matchingFrame.Absolute)
+								{
+									valueEnd = ToFloat(
+										property.GetValue(matchingFrame, null).ToString());
+								}
+								else
+								{
+									valueEnd += ToFloat(
+										property.GetValue(matchingFrame, null).ToString());
+								}
 							}
 							frameIndexNext = matchingFrame.FrameIndex;
 							frameDifference = frameIndexNext - frameIndexCurrent - 1;
@@ -233,8 +246,6 @@ namespace SvgToolsLib
 							{
 								progressPerFrame = 0f;
 							}
-							valueEnd = ToFloat(
-								property.GetValue(matchingFrame, null).ToString());
 							for(progressValue = 0f;
 								(index + 1 < count ?
 									frameIndexCurrent < frameIndexNext :
