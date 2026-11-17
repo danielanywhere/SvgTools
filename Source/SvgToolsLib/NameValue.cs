@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2025 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2025-2026 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,36 @@ namespace SvgToolsLib
 				}
 				return result;
 			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetValue																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the value of the named property.
+		/// </summary>
+		/// <param name="name">
+		/// Name of the property to retrieve.
+		/// </param>
+		/// <returns>
+		/// Value of the specified property, if found. Otherwise, an empty string.
+		/// </returns>
+		public string GetValue(string name)
+		{
+			NameValueItem item = null;
+			string result = "";
+
+			if(name?.Length > 0)
+			{
+				item = this.FirstOrDefault(x => string.Equals(x.Name, name,
+					StringComparison.OrdinalIgnoreCase));
+				if(item != null)
+				{
+					result = item.Value;
+				}
+			}
+			return result;
 		}
 		//*-----------------------------------------------------------------------*
 

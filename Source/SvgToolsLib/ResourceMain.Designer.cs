@@ -196,6 +196,42 @@ namespace SvgToolsLib {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (?i:(?&lt;element&gt;ampm|ap|dd|d|hh|h|mm|m|ss|s|yyyy|yy|f(\:\d+){0,1}|index(\:\d+){0,1}|[\~\.-_])).
+        /// </summary>
+        internal static string rxPatternElement {
+            get {
+                return ResourceManager.GetString("rxPatternElement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (?i:(?&lt;fraction&gt;f\:(?&lt;value&gt;\d+))).
+        /// </summary>
+        internal static string rxPatternElementFractionValue {
+            get {
+                return ResourceManager.GetString("rxPatternElementFractionValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (?i:(?&lt;index&gt;index\:(?&lt;value&gt;\d+))).
+        /// </summary>
+        internal static string rxPatternElementIndexValue {
+            get {
+                return ResourceManager.GetString("rxPatternElementIndexValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (?i:(\[(?&lt;pattern&gt;[^\]]*)\])|(?&lt;static&gt;[^\[]+)).
+        /// </summary>
+        internal static string rxPatternStatic {
+            get {
+                return ResourceManager.GetString("rxPatternStatic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (?i:^(?&lt;qualifier&gt;[a-z][a-z0-9-_\.]+)\:(?&lt;pattern&gt;.*)).
         /// </summary>
         internal static string rxQualifiedSelector {

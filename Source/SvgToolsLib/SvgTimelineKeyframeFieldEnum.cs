@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2025 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2025-2026 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,65 +44,73 @@ namespace SvgToolsLib
 		/// </summary>
 		BackColor =			0x00000002,
 		/// <summary>
+		/// Value indicating whether object is displayed.
+		/// </summary>
+		Display =				0x00000004,
+		/// <summary>
 		/// The easing pattern field.
 		/// </summary>
-		Easing =				0x00000004,
+		Easing =				0x00000008,
 		/// <summary>
 		/// The foreground color field.
 		/// </summary>
-		ForeColor =			0x00000008,
+		ForeColor =			0x00000010,
+		/// <summary>
+		/// Absolute frame index.
+		/// </summary>
+		FrameIndex =		0x00000020,
 		/// <summary>
 		/// The group name field.
 		/// </summary>
-		GroupName =			0x00000010,
+		GroupName =			0x00000040,
 		/// <summary>
 		/// The height field.
 		/// </summary>
-		Height =				0x00000020,
+		Height =				0x00000080,
 		/// <summary>
 		/// The index field.
 		/// </summary>
-		Index =					0x00000040,
+		Index =					0x00000100,
 		/// <summary>
 		/// The object name field.
 		/// </summary>
-		ObjectName =		0x00000080,
+		ObjectName =		0x00000200,
 		/// <summary>
 		/// The opacity field.
 		/// </summary>
-		Opacity =				0x00000100,
+		Opacity =				0x00000400,
 		/// <summary>
 		/// The brief remark field.
 		/// </summary>
-		Remark =				0x00000200,
+		Remark =				0x00000800,
 		/// <summary>
 		/// The repeat strategy field.
 		/// </summary>
-		Repeat =				0x00000400,
+		Repeat =				0x00001000,
 		/// <summary>
 		/// The x-scale origin type field.
 		/// </summary>
-		ScaleXOrigin =	0x00000800,
+		ScaleXOrigin =	0x00002000,
 		/// <summary>
 		/// The y-scale origin type field.
 		/// </summary>
-		ScaleYOrigin =	0x00001000,
+		ScaleYOrigin =	0x00004000,
 		/// <summary>
 		/// The current time field.
 		/// </summary>
-		Seconds =				0x00002000,
+		Seconds =				0x00008000,
 		/// <summary>
 		/// The width field.
 		/// </summary>
-		Width =					0x00004000,
+		Width =					0x00010000,
 		/// <summary>
 		/// The X position field.
 		/// </summary>
-		X =							0x00008000,
+		X =							0x00020000,
 		/// <summary>
 		/// The Y position field.
 		/// </summary>
-		Y =							0x00010000
+		Y =							0x00040000
 	}
 	//*-------------------------------------------------------------------------*
 

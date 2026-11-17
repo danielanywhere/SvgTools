@@ -1,0 +1,12 @@
+{
+ "Action": "AnimateTimeline",
+ "InputFilename": "MrNarrator.svg",
+ "OutputFilename": "Frames/MrNarrator-{Index:4}.png",
+ "DataFilename": "Scripts/MrNarratorWorksheet.ods",
+ "Properties":
+ [
+  { "Name": "SheetName", "Value": "Timeline" },
+  { "Name": "Render", "Value": true },
+  { "Name": "FrameRate", "Value": 24 }
+ ]
+}

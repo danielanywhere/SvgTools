@@ -118,6 +118,33 @@ Example #2.
 svgtools /wait /action:AnimateTimeline /infile:QuietShift.svg /datafile:../Docs/SvgToolsAnimations.ods /outfile:../Examples/Site/QuietShift.svg "/properties:[{'Name':'SheetName','Value':'QuietShift'}]" /workingpath:%SHAREDPATH%/Develop/Shared/SvgTools/Drawings
 ```
 
+### Direct-To-Frame Timeline Animation
+
+Convert freeform timeline animation in a spreadsheet to a series of sequentially framed images.
+
+```
+svgtools /wait /action:Batch "/configfile:Scripts/AnimateMrNarrator.json"
+"/workingpath:%SHAREDPATH%\Documents\Drawings\Inkscape\Characters"
+```
+
+Contents of batch file:
+
+```
+{
+ "Action": "AnimateTimeline",
+ "InputFilename": "MrNarrator.svg",
+ "OutputFilename": "Frames/MrNarrator-{Index:4}.png",
+ "DataFilename": "Scripts/MrNarratorWorksheet.ods",
+ "Properties":
+ [
+  { "Name": "SheetName", "Value": "Timeline" },
+  { "Name": "Render", "Value": true },
+  { "Name": "FrameRate", "Value": 24 }
+ ]
+}
+```
+
+
 ### Change Image to base-64 DataUrl in SVG File
 
 Change the content of the image in the specified object to the base-64 of the specified file.

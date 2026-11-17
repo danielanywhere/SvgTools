@@ -44,13 +44,13 @@ namespace SvgToolsLib
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
-		/// <summary>
-		/// Absolute directory pattern index hints.
-		/// </summary>
-		private static string[] mAbsIndex = new string[]
-		{
-			":"
-		};
+		///// <summary>
+		///// Absolute directory pattern index hints.
+		///// </summary>
+		//private static string[] mAbsIndex = new string[]
+		//{
+		//	":"
+		//};
 
 		/// <summary>
 		/// Absolute directory start pattern hints.
@@ -1980,6 +1980,299 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	Ease																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return an eased representation of the caller's value between 0 and 1.
+		/// </summary>
+		/// <param name="value">
+		/// The value to convert, between 0 and 1.
+		/// </param>
+		/// <param name="easing">
+		/// The easing pattern to apply.
+		/// </param>
+		/// <returns>
+		/// A value between 0 and 1 representing the eased representation of the
+		/// caller's original value.
+		/// </returns>
+		public static float Ease(float value, CssEasingTypeEnum easing)
+		{
+			const float c1 = 1.70158f;
+			const float c2 = c1 * 1.525f;
+			const float c3 = c1 + 1f;
+			const float c4 = (2f * (float)Math.PI) / 3f;
+			const float c5 = (2f * (float)Math.PI) / 4.5f;
+			const float d1 = 2.75f;
+			const float n1 = 7.5625f;
+			float result = value;
+			float v = Math.Clamp(value, 0f, 1f);
+
+			switch(easing)
+			{
+				case CssEasingTypeEnum.Discrete:
+					if(value == 1.0f)
+					{
+						result = 1.0f;
+					}
+					break;
+				case CssEasingTypeEnum.EaseInBack:
+					result = c3 * v * v * v - c1 * v * v;
+					break;
+				case CssEasingTypeEnum.EaseInBounce:
+					result = 1f - Ease(value, CssEasingTypeEnum.EaseInOutBounce);
+					break;
+				case CssEasingTypeEnum.EaseInCirc:
+					result = (float)(1d - Math.Sqrt(1d - Math.Pow((double)v, 2d)));
+					break;
+				case CssEasingTypeEnum.EaseInCubic:
+					result = v * v * v;
+					break;
+				case CssEasingTypeEnum.EaseInElastic:
+					result =
+						(v == 0f ?
+							0f :
+							v == 1f ?
+								1f :
+								(float)(-Math.Pow(2d, 10d * (double)v - 10d) *
+								Math.Sin((v * 10d - 10.75d) * (double)c4)));
+					break;
+				case CssEasingTypeEnum.EaseInExpo:
+					result = (v == 0f ?
+						0f :
+						(float)Math.Pow(2d, 10d * (double)v - 10d));
+					break;
+				case CssEasingTypeEnum.EaseInOutBack:
+					result = (v < 0.5f ?
+						(float)(Math.Pow(2d * (double)v, 2d) *
+							(((double)c2 + 1d) * 2d * (double)v - (double)c2)) / 2f :
+						(float)(Math.Pow(2d * (double)v - 2d, 2d) *
+							(((double)c2 + 1d) * ((double)v * 2d - 2d) +
+								(double)c2) + 2d) / 2f);
+					break;
+				case CssEasingTypeEnum.EaseInOutBounce:
+					result = (v < 0.5f ?
+						(1f - Ease(1f - 2f * v, CssEasingTypeEnum.EaseOutBounce)) / 2f :
+						(1f + Ease(2f * v - 1f, CssEasingTypeEnum.EaseOutBounce)) / 2f);
+					break;
+				case CssEasingTypeEnum.EaseInOutCirc:
+					result = (v < 0.5f ?
+						(1f - (float)Math.Sqrt(1d - Math.Pow(2d * (float)v, 2d))) / 2f :
+						((float)Math.Sqrt(1d - Math.Pow(-2d * v + 2d, 2d)) + 1f) / 2f);
+					break;
+				case CssEasingTypeEnum.EaseInOutCubic:
+					result = (v < 0.5f ?
+						4f * v * v * v :
+						1f - (float)Math.Pow(-2d * (double)v + 2d, 3d) / 2f);
+					break;
+				case CssEasingTypeEnum.EaseInOutElastic:
+					result = (v == 0f ?
+						0f :
+						(v == 1f ?
+							1f :
+							(v < 0.5f ?
+								-((float)Math.Pow(2d, 20d * (double)v - 10d) *
+									(float)Math.Sin((20d * (double)v - 11.125d) * c5)) /
+										2f :
+								((float)Math.Pow(2d, -20d * (double)v + 10d) *
+									(float)Math.Sin((20d * (double)v - 11.125d) * c5)) /
+										2f + 1f)));
+					break;
+				case CssEasingTypeEnum.EaseInOutExpo:
+					result = (v == 0f ?
+						0f :
+						(v == 1f ?
+							1f :
+							(v < 0.5f ?
+								(float)Math.Pow(2d, 20d * (double)v - 10d) / 2f :
+								(2f - (float)Math.Pow(2d, -20d * (double)v + 10d)) / 2f)));
+					break;
+				case CssEasingTypeEnum.EaseInOutQuad:
+					result = (v < 0.5f ?
+						2f * v * v :
+						1f - (float)Math.Pow(-2d * (double)v + 2d, 2d) / 2f);
+					break;
+				case CssEasingTypeEnum.EaseInOutQuart:
+					result = (v < 0.5f ?
+						8f * v * v * v * v :
+						1f - (float)Math.Pow(-2d * (double)v + 2d, 4d) / 2f);
+					break;
+				case CssEasingTypeEnum.EaseInOutQuint:
+					result = (v < 0.5f ?
+						16f * v * v * v * v * v :
+						1f - (float)Math.Pow(-2d * (double)v + 2d, 5d) / 2f);
+					break;
+				case CssEasingTypeEnum.EaseInOutSine:
+					result = -((float)Math.Cos(Math.PI * (double)v) - 1f) / 2f;
+					break;
+				case CssEasingTypeEnum.EaseInQuad:
+					result = v * v;
+					break;
+				case CssEasingTypeEnum.EaseInQuart:
+					result = v * v * v * v;
+					break;
+				case CssEasingTypeEnum.EaseInQuint:
+					result = v * v * v * v * v;
+					break;
+				case CssEasingTypeEnum.EaseInSine:
+					result = 1f - (float)Math.Cos(((double)v * Math.PI) / 2f);
+					break;
+				case CssEasingTypeEnum.EaseOutBack:
+					result = 1f +
+						c3 * (float)Math.Pow((double)v - 1d, 3d) +
+						c1 * (float)Math.Pow((double)v - 1d, 2d);
+					break;
+				case CssEasingTypeEnum.EaseOutBounce:
+					if(v < 1f / d1)
+					{
+						result = n1 * v * v;
+					}
+					else if(v < 2f / d1)
+					{
+						result = n1 * (v -= 1.5f / d1) * v + 0.75f;
+					}
+					else if(v < 2.5f / d1)
+					{
+						result = n1 * (v -= 2.25f / d1) * v + 0.9375f;
+					}
+					else
+					{
+						result = n1 * (v -= 2.625f / d1) * v + 0.984375f;
+					}
+					break;
+				case CssEasingTypeEnum.EaseOutCirc:
+					result = (float)Math.Sqrt(1d - Math.Pow((double)v - 1d, 2d));
+					break;
+				case CssEasingTypeEnum.EaseOutCubic:
+					result = 1f - (float)Math.Pow(1d - (double)v, 3d);
+					break;
+				case CssEasingTypeEnum.EaseOutElastic:
+					result = (v == 0f ?
+						0f :
+						(v == 1f ?
+							1f :
+							(float)Math.Pow(2d, -10d * (double)v) *
+							(float)Math.Sin(((double)v * 10d - 0.75d) * (double)c4) + 1f));
+					break;
+				case CssEasingTypeEnum.EaseOutExpo:
+					result = (v == 1f ?
+						1f :
+						1f - (float)Math.Pow(2d, -10d * (double)v));
+					break;
+				case CssEasingTypeEnum.EaseOutQuad:
+					result = 1f - (1f - v) * (1f - v);
+					break;
+				case CssEasingTypeEnum.EaseOutQuart:
+					result = 1f - (float)Math.Pow(1d - (double)v, 4d);
+					break;
+				case CssEasingTypeEnum.EaseOutQuint:
+					result = 1f - (float)Math.Pow(1d - (double)v, 5f);
+					break;
+				case CssEasingTypeEnum.EaseOutSine:
+					result = (float)Math.Sin(((double)v * Math.PI) / 2d);
+					break;
+				case CssEasingTypeEnum.Linear:
+				case CssEasingTypeEnum.None:
+					result = v;
+					break;
+			}
+
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	EaseInterpolate																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Interpolate the value between two numbers using the specified easing
+		/// type.
+		/// </summary>
+		/// <param name="start">
+		/// The starting position.
+		/// </param>
+		/// <param name="end">
+		/// The ending position.
+		/// </param>
+		/// <param name="progress">
+		/// The progress of completion between the start and end values.
+		/// </param>
+		/// <param name="easing">
+		/// The easing type to apply.
+		/// </param>
+		/// <returns>
+		/// The interpolated value between start and end as indicated by
+		/// the progress value and easing type.
+		/// </returns>
+		public static float EaseInterpolate(float start, float end,
+			float progress, CssEasingTypeEnum easing)
+		{
+			float easedProgress = 0;
+			float result = start;
+
+			//	TODO: Transfer the easing functions to the HTML library.
+			easedProgress = Ease(progress, easing);
+			result = Lerp(start, end, easedProgress);
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Interpolate the value between two numbers using the specified easing
+		/// type.
+		/// </summary>
+		/// <param name="startColor">
+		/// The starting color.
+		/// </param>
+		/// <param name="endColor">
+		/// The ending color.
+		/// </param>
+		/// <param name="progress">
+		/// The progress of completion between the start and end values.
+		/// </param>
+		/// <param name="easing">
+		/// The easing type to apply.
+		/// </param>
+		/// <returns>
+		/// The interpolated value between start and end as indicated by
+		/// the progress value and easing type.
+		/// </returns>
+		public static SKColor EaseInterpolate(SKColor startColor,
+			SKColor endColor, float progress, CssEasingTypeEnum easing)
+		{
+			float alphaBeg = 0f;
+			float alphaEnd = 0f;
+			float blueBeg = 0f;
+			float blueEnd = 0f;
+			float greenBeg = 0f;
+			float greenEnd = 0f;
+			float redBeg = 0f;
+			float redEnd = 0f;
+			SKColor result = SKColor.Empty;
+
+			//	TODO: Transfer the easing functions to the HTML library.
+
+			if(startColor != null && endColor != null)
+			{
+				alphaBeg = (float)startColor.Alpha;
+				alphaEnd = (float)endColor.Alpha;
+				redBeg = (float)startColor.Red;
+				redEnd = (float)endColor.Red;
+				greenBeg = (float)startColor.Green;
+				greenEnd = (float)endColor.Green;
+				blueBeg = (float)startColor.Blue;
+				blueEnd = (float)endColor.Blue;
+				alphaEnd = EaseInterpolate(alphaBeg, alphaEnd, progress, easing);
+				redEnd = EaseInterpolate(redBeg, redEnd, progress, easing);
+				greenEnd = EaseInterpolate(greenBeg, greenEnd, progress, easing);
+				blueEnd = EaseInterpolate(blueBeg, blueEnd, progress, easing);
+				result = new SKColor(
+					(byte)redEnd, (byte)greenEnd, (byte)blueEnd, (byte)alphaEnd);
+			}
+			return result;
+
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* EnumerateFilesAndDirectories																					*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -2774,6 +3067,14 @@ namespace SvgToolsLib
 				{
 					result = attribute.Value;
 				}
+				else
+				{
+					result = node.Attributes.GetStyle(attributeName);
+					if(result.Length == 0 && node.ParentNode != null)
+					{
+						result = GetAttributeValue(node.ParentNode, attributeName);
+					}
+				}
 			}
 			return result;
 		}
@@ -3112,6 +3413,196 @@ namespace SvgToolsLib
 				}
 			}
 			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	GetExtrapolatedString																									*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the resolved string from the template and supplied values.
+		/// </summary>
+		/// <param name="template">
+		/// The template string to resolve.
+		/// </param>
+		/// <param name="values">
+		/// Reference to the collection of named values to be used as replacements.
+		/// </param>
+		/// <returns>
+		/// Resolved string.
+		/// </returns>
+		/// <remarks>
+		/// <para>
+		/// Because curly braces are reserved for real time variables, keyword
+		/// patterns are specified in square braces, as in
+		/// 'BaseName-[Patterns].png', where multiple pattern sections can be
+		/// specified in a single template, as in
+		/// 'BaseName-[yyyyMMdd]-[Index:4].png'. The following patterns are
+		/// recognized.
+		/// </para>
+		/// <list type="bullet">
+		/// <item>'-' - Literal dash.</item>
+		/// <item>'_' - Literal underline.</item>
+		/// <item>'.' - Literal period.</item>
+		/// <item>'~' - Literal tilde.</item>
+		/// <item>Index - Index of the output file with no padding.</item>
+		/// <item>Index:n - Index of the output file within the collection,
+		/// left-padded with 'n' zeros.</item>
+		/// <item>AP - Single upper case 'A' or 'P' meridiem.</item>
+		/// <item>AMPM - Double upper case 'AM' or 'PM' meridiem.</item>
+		/// <item>ap - Single lower case 'a' or 'p' meridiem.</item>
+		/// <item>ampm - Double lower case 'am' or 'pm' meridiem.</item>
+		/// <item>d - Day of month with no padding.</item>
+		/// <item>dd - Two digit day of month.</item>
+		/// <item>f:n - Fraction of a second padded to 'n' places.</item>
+		/// <item>H - 24-hour base hour number with no padding.</item>
+		/// <item>HH - Two digit base hour number.</item>
+		/// <item>h - 12-hour base hour number with no padding.</item>
+		/// <item>hh - Two digit 12-hour base hour number.</item>
+		/// <item>M - Month number with no padding.</item>
+		/// <item>MM - Two digit month.</item>
+		/// <item>m - Minute with no padding.</item>
+		/// <item>mm - Two digit minute.</item>
+		/// <item>s - Seconds with no padding.</item>
+		/// <item>ss - Two digit seconds.</item>
+		/// <item>yy - Two digit year.</item>
+		/// <item>yyyy - Four digit year.</item>
+		/// </list>
+		/// </remarks>
+		public static string GetExtrapolatedString(string template,
+			NameValueCollection values)
+		{
+			int digitCount = 0;
+			MatchCollection elementMatches = null;
+			string elementValue = "";
+			StringBuilder builder = new StringBuilder();
+			MatchCollection matches = null;
+			string text = "";
+			DateTime time = DateTime.Now;
+
+			if(template?.Length > 0 && values != null)
+			{
+				matches = Regex.Matches(template, ResourceMain.rxPatternStatic);
+				foreach(Match matchItem in matches)
+				{
+					text = GetValue(matchItem, "pattern");
+					if(text.Length > 0)
+					{
+						elementMatches = Regex.Matches(text,
+							ResourceMain.rxPatternElement);
+						foreach(Match elementMatchItem in elementMatches)
+						{
+							elementValue = GetValue(elementMatchItem, "element");
+							switch(elementValue)
+							{
+								case "-":
+								case "_":
+								case ".":
+								case "~":
+									builder.Append(elementValue);
+									break;
+								case "Index":
+									elementValue = values.GetValue("Index");
+									if(elementValue.Length > 0)
+									{
+										builder.Append(elementValue);
+									}
+									break;
+								case "AP":
+									builder.Append(time.ToString("t").ToUpper());
+									break;
+								case "ap":
+									builder.Append(time.ToString("t").ToLower());
+									break;
+								case "AMPM":
+									builder.Append(time.ToString("tt").ToUpper());
+									break;
+								case "ampm":
+									builder.Append(time.ToString("tt").ToLower());
+									break;
+								case "D":
+								case "d":
+									builder.Append(time.Day.ToString());
+									break;
+								case "DD":
+								case "dd":
+									builder.Append(time.ToString("dd"));
+									break;
+								case "H":
+									builder.Append(time.ToString("H"));
+									break;
+								case "h":
+									builder.Append(time.ToString("h"));
+									break;
+								case "HH":
+									builder.Append(time.ToString("HH"));
+									break;
+								case "hh":
+									builder.Append(time.ToString("hh"));
+									break;
+								case "M":
+									builder.Append(time.Month.ToString());
+									break;
+								case "m":
+									builder.Append(time.Minute.ToString());
+									break;
+								case "MM":
+									builder.Append(time.ToString("MM"));
+									break;
+								case "mm":
+									builder.Append(time.ToString("mm"));
+									break;
+								case "S":
+								case "s":
+									builder.Append(time.Second);
+									break;
+								case "SS":
+								case "ss":
+									builder.Append(time.ToString("ss"));
+									break;
+								case "YY":
+								case "yy":
+									builder.Append(time.ToString("yy"));
+									break;
+								case "YYYY":
+								case "yyyy":
+									builder.Append(time.ToString("yyyy"));
+									break;
+								default:
+									if(Regex.IsMatch(elementValue,
+										ResourceMain.rxPatternElementIndexValue))
+									{
+										digitCount = ToInt(
+											GetValue(elementValue,
+												ResourceMain.rxPatternElementIndexValue, "value"));
+										elementValue = values.GetValue("Index");
+										builder.Append(
+											ToInt(elementValue).ToString().PadLeft(digitCount, '0'));
+									}
+									else if(Regex.IsMatch(elementValue,
+										ResourceMain.rxPatternElementFractionValue))
+									{
+										digitCount = ToInt(
+											GetValue(elementValue,
+												ResourceMain.rxPatternElementFractionValue, "value"));
+										builder.Append(
+											time.Millisecond.ToString(new string('0', digitCount)));
+									}
+									break;
+							}
+						}
+					}
+					else
+					{
+						text = GetValue(matchItem, "static");
+						if(text.Length > 0)
+						{
+							builder.Append(text);
+						}
+					}
+				}
+			}
+			return builder.ToString();
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -3947,6 +4438,41 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//* HexToBytes																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Convert the caller's hex pairs to a set of bytes.
+		/// </summary>
+		/// <param name="hex">
+		/// Hexadecimal value string.
+		/// </param>
+		/// <returns>
+		/// Array of bytes representing the supplied hex value, if legitimate.
+		/// Otherwise, an empty array.
+		/// </returns>
+		public static byte[] HexToBytes(string hex)
+		{
+			int index = 0;
+			ReadOnlySpan<char> span = null;
+			byte[] bytes = new byte[0];
+
+			if(hex?.Length > 0)
+			{
+				span = hex.AsSpan();
+				bytes = new byte[span.Length / 2];
+
+				for(index = 0; index < bytes.Length; index++)
+				{
+					bytes[index] = byte.Parse(
+						span.Slice(index * 2, 2), NumberStyles.HexNumber);
+				}
+			}
+
+			return bytes;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* InitializeCompatibleSvgStructure																			*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -3997,7 +4523,8 @@ namespace SvgToolsLib
 			if(pathName?.Length > 0)
 			{
 				result = mAbsStart.Any(x => pathName.StartsWith(x)) ||
-					mAbsIndex.Any(x => pathName.IndexOf(x) > -1);
+					pathName.IndexOf(':') == 1;
+					//mAbsIndex.Any(x => pathName.IndexOf(x) > -1);
 			}
 			return result;
 		}
@@ -4222,7 +4749,7 @@ namespace SvgToolsLib
 		/// </returns>
 		public static float Lerp(float start, float end, float progress)
 		{
-			return start * (1 - progress) + end * progress;
+			return (start * (1 - progress)) + (end * progress);
 		}
 		//*- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*
 		/// <summary>
@@ -4251,6 +4778,60 @@ namespace SvgToolsLib
 			{
 				result.X = Lerp(start.X, end.X, progress);
 				result.Y = Lerp(start.Y, end.Y, progress);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	LerpColor																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return a color corresponding to the interpolated waypoint between the
+		/// start and end colors.
+		/// </summary>
+		/// <param name="startColor">
+		/// The starting color to interpolate from.
+		/// </param>
+		/// <param name="endColor">
+		/// The ending color to which to interpolate.
+		/// </param>
+		/// <param name="progress">
+		/// The current placement between the two values as a decimal from 0 to 1.
+		/// </param>
+		/// <returns>
+		/// Reference to a color between the two specified colors, if legitimate.
+		/// Otherwise, an empty color.
+		/// </returns>
+		public static SKColor LerpColor(SKColor startColor, SKColor endColor,
+			float progress)
+		{
+			float alphaBeg = 0f;
+			float alphaEnd = 0f;
+			float blueBeg = 0f;
+			float blueEnd = 0f;
+			float greenBeg = 0f;
+			float greenEnd = 0f;
+			float redBeg = 0f;
+			float redEnd = 0f;
+			SKColor result = SKColor.Empty;
+
+			if(startColor != null && endColor != null)
+			{
+				alphaBeg = (float)startColor.Alpha;
+				alphaEnd = (float)endColor.Alpha;
+				redBeg = (float)startColor.Red;
+				redEnd = (float)endColor.Red;
+				greenBeg = (float)startColor.Green;
+				greenEnd = (float)endColor.Green;
+				blueBeg = (float)startColor.Blue;
+				blueEnd = (float)endColor.Blue;
+				alphaEnd = Lerp(alphaBeg, alphaEnd, progress);
+				redEnd = Lerp(redBeg, redEnd, progress);
+				greenEnd = Lerp(greenBeg, greenEnd, progress);
+				blueEnd = Lerp(blueBeg, blueEnd, progress);
+				result = new SKColor(
+					(byte)redEnd, (byte)greenEnd, (byte)blueEnd, (byte)alphaEnd);
 			}
 			return result;
 		}
@@ -5263,6 +5844,72 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	SetAttributeValue																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set the value of the nearest attribute value for the node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the HTML node at which the search will begin for a
+		/// property to set.
+		/// </param>
+		/// <param name="attributeName">
+		/// Name of the attribute to set.
+		/// </param>
+		/// <param name="attributeValue">
+		/// The value to be assigned to the attribute.
+		/// </param>
+		/// <remarks>
+		/// This method first attempts to find a pre-existing reference to the
+		/// specified attribute to be modified, starting in the style property,
+		/// then moving to the namesake property within the node's element area.
+		/// If the value isn't found, it is added as an attribute to the style
+		/// property.
+		/// </remarks>
+		public static void SetAttributeValue(HtmlNodeItem node,
+			string attributeName, string attributeValue)
+		{
+			HtmlAttributeItem property = null;
+			HtmlAttributeItem style = null;
+			string text = "";
+
+			if(node != null && attributeName?.Length > 0)
+			{
+				if(HtmlAttributeCollection.StyleExists(node.Attributes, attributeName))
+				{
+					style = node.Attributes.FirstOrDefault(x =>
+						string.Equals(x.Name, "style",
+							StringComparison.OrdinalIgnoreCase));
+				}
+				if(style == null)
+				{
+					property = node.Attributes.FirstOrDefault(x =>
+						string.Equals(x.Name, attributeName,
+							StringComparison.OrdinalIgnoreCase));
+				}
+				if(style != null || property == null)
+				{
+					//	Style overrides property.
+					if(style == null)
+					{
+						style = new HtmlAttributeItem()
+						{
+							Name = "style"
+						};
+						node.Attributes.Add(style);
+					}
+					HtmlAttributeItem.SetStyle(style, attributeName, attributeValue);
+				}
+				else
+				{
+					//	Property was defined.
+					property.Value = attributeValue;
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* SetPrecision																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -5613,6 +6260,38 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	ToHexColor																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return an HTML hex color code representing the caller's color.
+		/// </summary>
+		/// <param name="color">
+		/// Reference to the SkiaSharp color to convert.
+		/// </param>
+		/// <param name="includeAlpha">
+		/// Value indicating whether to include the alpha value in the result.
+		/// </param>
+		/// <returns>
+		/// The 6 or 8 digit HTML compatible hex color representing the
+		/// caller-supplied value.
+		/// </returns>
+		public static string ToHexColor(SKColor color, bool includeAlpha = true)
+		{
+			StringBuilder builder = new StringBuilder();
+
+			if(color != null)
+			{
+				builder.Append($"#{color.Red:X2}{color.Green:X2}{color.Blue:X2}");
+				if(includeAlpha)
+				{
+					builder.Append($"{color.Alpha:X2}");
+				}
+			}
+			return builder.ToString();
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* ToInt																																	*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -5954,6 +6633,47 @@ namespace SvgToolsLib
 							//	Value is already in pixels.
 							result = ToFloat($"{number:0.###}");
 						}
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ToSKColor																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the SkiaSharp SKColor representation of the caller's HTML color
+		/// value, which can include standard rgb, rgba, hsl, hsla, or hex
+		/// variations.
+		/// </summary>
+		/// <param name="htmlColor">
+		/// A standard HTML/CSS color expression or value.
+		/// </param>
+		/// <returns>
+		/// A reference to the SkiaSharp SKColor representation of the caller's
+		/// color, if legitimate. Otherwise, SKColor.Empty.
+		/// </returns>
+		public static SKColor ToSKColor(string htmlColor)
+		{
+			byte[] bytes = null;
+			string hexColor = "";
+			SKColor result = SKColor.Empty;
+
+			if(htmlColor?.Length > 0)
+			{
+				hexColor = HtmlColorParser.ToHexColor(htmlColor);
+				if(hexColor.Length == 7 || hexColor.Length == 9)
+				{
+					bytes = HexToBytes(hexColor.Substring(1));
+					if(bytes.Length == 3)
+					{
+						result = new SKColor(bytes[0], bytes[1], bytes[2]);
+					}
+					else if(bytes.Length == 4)
+					{
+						result = new SKColor(bytes[0], bytes[1], bytes[2], bytes[3]);
 					}
 				}
 			}

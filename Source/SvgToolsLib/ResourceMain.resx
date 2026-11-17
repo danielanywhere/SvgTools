@@ -177,6 +177,22 @@
     <value>^(?&lt;pre&gt;.*?)(?&lt;seed&gt;\d+)(?&lt;post&gt;.*)$</value>
     <comment>Regular expression to separate the numerical seed in the string and to return all of the parts of the string.</comment>
   </data>
+  <data name="rxPatternElement" xml:space="preserve">
+    <value>(?i:(?&lt;element&gt;ampm|ap|dd|d|hh|h|mm|m|ss|s|yyyy|yy|f(\:\d+){0,1}|index(\:\d+){0,1}|[\~\.-_]))</value>
+    <comment>Regular expression to separate the elements of the extrapolation pattern.</comment>
+  </data>
+  <data name="rxPatternElementFractionValue" xml:space="preserve">
+    <value>(?i:(?&lt;fraction&gt;f\:(?&lt;value&gt;\d+)))</value>
+    <comment>Regular expression to find the fraction element with value.</comment>
+  </data>
+  <data name="rxPatternElementIndexValue" xml:space="preserve">
+    <value>(?i:(?&lt;index&gt;index\:(?&lt;value&gt;\d+)))</value>
+    <comment>Regular expression to find the index element with value.</comment>
+  </data>
+  <data name="rxPatternStatic" xml:space="preserve">
+    <value>(?i:(\[(?&lt;pattern&gt;[^\]]*)\])|(?&lt;static&gt;[^\[]+))</value>
+    <comment>Regular expression to find the static and string pattern parts within a template.</comment>
+  </data>
   <data name="rxQualifiedSelector" xml:space="preserve">
     <value>(?i:^(?&lt;qualifier&gt;[a-z][a-z0-9-_\.]+)\:(?&lt;pattern&gt;.*))</value>
     <comment>Regular expression pattern to split a selector term into qualifier and pattern sections.</comment>

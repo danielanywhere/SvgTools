@@ -1,0 +1,2 @@
+svgtools /wait /action:Batch "/configfile:Scripts/AnimateMrNarrator.json"
+ "/workingpath:%SHAREDPATH%\Documents\Drawings\Inkscape\Characters"

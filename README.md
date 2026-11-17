@@ -6,9 +6,11 @@
 
 ## Table of Contents
 
--   🆕 [SVG-to-Plasma Cutter G-Code Conversion](#-svg-to-plasma-cutter-g-code-conversion).
+-   🆕 [What You Can Do With a Spreadsheet Timeline](#-what-you-can-do-with-a-spreadsheet-timeline).
 
--   🆕 [Switch Images in File](#-switch-images-in-file).
+-   [SVG-to-Plasma Cutter G-Code Conversion](#svg-to-plasma-cutter-g-code-conversion).
+
+-   [Switch Images in File](#switch-images-in-file).
 
 -   [Introducing Implied Form Design](#introducing-implied-form-design).
 
@@ -33,7 +35,79 @@
 
 <p>&nbsp;</p>
 
-## 🆕 SVG-to-Plasma Cutter G-Code Conversion
+## 🆕 What You Can Do With a Spreadsheet Timeline
+
+In this version, direct-to-frame rendering has been added to the **/action:AnimateTimeline** command, allowing you to take an SVG file and a spreadsheet file containing a timeline series sheet, then to render those directly into a set of frames that can be converted to a video in one final step using a command like FFmpeg.
+
+<p>&nbsp;</p>
+
+The following example command demonstrates a general use of this function. In this case, the batch file approach is being used, where the application settings are contained in a separate JSON file.
+
+```plaintext
+svgtools /wait /action:Batch "/configfile:Scripts/AnimateMrNarrator.json"
+ "/workingpath:%SHAREDPATH%\Documents\Drawings\Inkscape\Characters"
+
+```
+
+In the following JSON data loaded from this command, notice the property setting ```{ "Name": "Render", "Value": true }```, which indicates that the direct-to-frame conversion is going to take place.
+
+```plaintext
+{
+ "Action": "AnimateTimeline",
+ "InputFilename": "MrNarrator.svg",
+ "OutputFilename": "Frames/MrNarrator-{Index:4}.png",
+ "DataFilename": "Scripts/MrNarratorWorksheet.ods",
+ "Properties":
+ [
+  { "Name": "SheetName", "Value": "Timeline" },
+  { "Name": "Render", "Value": true },
+  { "Name": "FrameRate", "Value": 24 }
+ ]
+}
+
+```
+
+<p>&nbsp;</p>
+
+Using a spreadsheet timeline may seem a little vague or abstract to the newcomer, but once you have gotten the hang of it, you might never want to return to the point-and-drag approach again.
+
+<img src="Images/ExternalKeyframeAnimation-ColumnOverview02.png" width="80%" alt="Spreadsheet-based Animation Timeline" />
+
+<p>&nbsp;</p>
+
+Here are just a few advantages to using spreadsheet-based timelines for animation.
+
+<p>&nbsp;</p>
+
+### Non-Linear Arrangement Allowed
+
+When animating upon a spreadsheet, you can group all of the actions of a single object or single action in the same region on the page, allowing you to maintain a clear segregation of activities.
+
+On spreadsheet timelines, the time can be non-linear in that those timings are applied on an object-by-object basis. As long as the keyframe time is correct for an activity on a given object, those times can even be arranged backward on the sheet and be expected to come out in the correct sequence.
+
+The only restriction for timings is that an unspecified timing, during rendering, will be assigned to the last-known time in the preceding rows under the current sort.
+
+<p>&nbsp;</p>
+
+### Unlimited Sorting
+
+When working out how timings among objects relate to one another, you can sort a spreadsheet by the values in one or more columns, including custom columns you have added yourself, to arrange the activities in a clear enough order to facilitate a perfect editing result. After editing, the functional order of the list can be restored through sorting by Index.
+
+<p>&nbsp;</p>
+
+### Custom Filtering
+
+In a lot of cases, it is desirable to be presented only with information that applies in a particular context; a need easily filled using the row filtering capability of a modern spreadsheet. Define the filter for one or more columns, perform a perfectly accurate edit, then clear the filter at any time.
+
+<p>&nbsp;</p>
+
+### Workspace Expansion and Meta Data
+
+An unlimited amount of additional information can be defined on any row entry by simply adding and maintaining columns. You can use the cells in those columns to host static cell and range names, to perform calculations, to provide cross-reference information, to keep track of status, version, or simple annotations.
+
+<p>&nbsp;</p>
+
+## SVG-to-Plasma Cutter G-Code Conversion
 
 SVGTools now supports the generation of a general plasma cutter g-code file directly from an SVG drawing.
 
@@ -128,7 +202,7 @@ svgtools /wait /action:GeneratePlasmaGCode
 
 <p>&nbsp;</p>
 
-## 🆕 Switch Images in File
+## Switch Images in File
 
 The **ChangeImage** action is used to change
 
@@ -145,24 +219,24 @@ The following properties can be specified with the **ChangeImage** action.
 <td><b>Description</b></td>
 </tr>
 <tr class="even">
-<td><b>id</b></td>
+<td><b>Id</b></td>
 <td>(string)</td>
 <td>(blank)</td>
 <td>The unique ID of the SVG image to replace.</td>
 </tr>
 <tr class="odd">
-<td><b>filename</b></td>
+<td><b>Filename</b></td>
 <td>(string)</td>
 <td>(blank)</td>
 <td>The filename of the new image to use.</td>
 </tr>
 <tr class="even">
-<td><b>filemode</b></td>
-<td>base64, linked</td>
-<td>base64</td>
+<td><b>FileMode</b></td>
+<td>Base64, Linked</td>
+<td>Base64</td>
 <td><p>The method to use for attaching the image.</p>
-<p><b>base64</b> - The binary data of the new image is embedded directly into the SVG object.</p>
-<p><b>linked</b> - The image is loaded as an external reference each time the SVG loads.</p></td>
+<p><b>Base64</b> - The binary data of the new image is embedded directly into the SVG object.</p>
+<p><b>Linked</b> - The image is loaded as an external reference each time the SVG loads.</p></td>
 </tr>
 </tbody>
 </table>
@@ -479,6 +553,13 @@ All parameters can be prefixed with either '/' or '--'.
                                 data file, if a spreadsheet file was
                                 specified. If no sheet name is specified,
                                 the first sheet in the workbook is loaded.
+                            [Render] - (True|False). Default = false. If true,
+                                the sequence will be rendered directly to
+                                individual images and the outfile parameter
+                                will be treated as the filename pattern to
+                                generate.
+                            [FrameRate] - Number of frames to generate per
+                                second, if Render = true.
                     ApplyTransforms - Apply transformations on the
                         specified SVG document.
                         {/infile[ /outfile]|(working SVG)}
@@ -501,15 +582,15 @@ All parameters can be prefixed with either '/' or '--'.
                         the specified file, as indicated in the FileMode
                         property.
                         Properties:
-                            id: string, default = (blank). The ID of the SVG
+                            Id: string, default = (blank). The ID of the SVG
                                 image to replace.
-                            filename: string, default = (blank). The filename
+                            Filename: string, default = (blank). The filename
                                 of the new image to use.
-                            filemode: { base64 | linked }, default = base64.
+                            FileMode: { Base64 | Linked }, default = Base64.
                                 The method to use for attaching the image.
-                                'base64' - The binary data of the new image
+                                'Base64' - The binary data of the new image
                                     is embedded directly into the SVG object.
-                                'linked' - The image is loaded as an external
+                                'Linked' - The image is loaded as an external
                                     reference each time the SVG loads.
                     GeneratePlasmaGCode - Generate g-code for a plasma cutter.
                         /infile /outfile

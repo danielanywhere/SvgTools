@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2026 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2025-2026 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * 
  */
+
 #define Y_UP_POSITIVE
 
 using System;

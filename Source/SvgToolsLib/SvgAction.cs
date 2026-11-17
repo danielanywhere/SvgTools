@@ -690,12 +690,15 @@ namespace SvgToolsLib
 		{
 			ControlAreaCollection areas = null;
 			HtmlNodeItem baseNode = null;
+			bool bRender = false;
 			string css = "";
 			HtmlNodeItem childNode = null;
 			string content = "";
 			DataSet data = null;
 			FileInfo dataFile = null;
 			HtmlDocument doc = null;
+			string filenameTemplate = "";
+			float frameRate = 24f;
 			int index = 0;
 			List<string> names = null;
 			HtmlNodeItem node = null;
@@ -703,7 +706,9 @@ namespace SvgToolsLib
 			HtmlNodeCollection parent = null;
 			NameValueItem property = null;
 			string sheetName = "";
+			DirectoryInfo sourceDirectory = null;
 			FileInfo sourceFile = null;
+			DirectoryInfo targetDirectory = null;
 			FileInfo targetFile = null;
 
 			if(item != null)
@@ -726,7 +731,8 @@ namespace SvgToolsLib
 						targetFile = sourceFile;
 					}
 					property = item.mProperties.FirstOrDefault(x =>
-						x.Name.ToLower() == "sheetname");
+						string.Equals(x.Name, "sheetname",
+							StringComparison.OrdinalIgnoreCase));
 					if(property != null)
 					{
 						sheetName = property.Value;
@@ -760,56 +766,83 @@ namespace SvgToolsLib
 
 					item.mWorkingSvg = new SvgDocumentItem(doc);
 
-					css = SvgTimelineAnimation.GenerateAnimationCss(doc, data,
-						sheetName);
-					if(css.Length > 0)
+					bRender = ToBool(item.Properties.GetValue("render"), false);
+					if(bRender)
 					{
-						//	Abstract the explicit transforms on any referenced node, so
-						//	relative movement from starting location is honored.
-						names = SvgTimelineAnimation.GetObjectNames(data, sheetName);
-						foreach(string nameItem in names)
+						//	Render the animation directly.
+						if(CheckElements(item, ActionElementEnum.OutputFilename))
 						{
+							sourceDirectory = item.InputFiles[0].Directory;
+							targetFile = new FileInfo(AbsolutePath(
+								item.WorkingPath, item.OutputFilename));
+							targetDirectory = targetFile.Directory;
+							property = item.Properties.FirstOrDefault(x =>
+								string.Equals(x.Name, "framerate",
+									StringComparison.OrdinalIgnoreCase));
+							if(property != null)
+							{
+								frameRate = ToFloat(property.Value);
+							}
+							SvgTimelineAnimation.GenerateAnimationFrames(doc,
+								sourceDirectory, targetDirectory, targetFile.Name,
+								data, sheetName, frameRate);
+						}
+					}
+					else
+					{
+						css = SvgTimelineAnimation.GenerateAnimationCss(doc, data,
+							sheetName);
+						if(css.Length > 0)
+						{
+							//	Abstract the explicit transforms on any referenced node, so
+							//	relative movement from starting location is honored.
+							names = SvgTimelineAnimation.GetObjectNames(data, sheetName);
+							foreach(string nameItem in names)
+							{
+								node = originalDoc.Nodes.FindMatch(x =>
+									StringComparer.OrdinalIgnoreCase.Equals(x.Id, nameItem) &&
+									(x.Attributes.Exists(y => y.Name.ToLower() == "transform") ||
+									x.Attributes.GetStyle("transform").Length > 0));
+								if(node != null)
+								{
+									//	Create a shell around the original node and transfer the
+									//	name.
+									parent = node.Parent;
+									index = parent.IndexOf(node);
+									childNode = node;
+									parent.Remove(node);
+									node = new HtmlNodeItem("g");
+									node.Attributes.SetAttribute("id", childNode.Id);
+									childNode.Attributes.Remove("id");
+									node.Nodes.Add(childNode);
+									parent.Insert(index, node);
+								}
+							}
 							node = originalDoc.Nodes.FindMatch(x =>
-								StringComparer.OrdinalIgnoreCase.Equals(x.Id, nameItem) &&
-								(x.Attributes.Exists(y => y.Name.ToLower() == "transform") ||
-								x.Attributes.GetStyle("transform").Length > 0));
+								x.Id == "SvgToolsAnimateTimeline");
+							if(node == null)
+							{
+								baseNode = originalDoc.Nodes.FindMatch(x =>
+									x.NodeType == "svg");
+								if(baseNode != null)
+								{
+									node = new HtmlNodeItem();
+									node.NodeType = "style";
+									node.Attributes.SetAttribute("id",
+										"SvgToolsAnimateTimeline");
+									node.Attributes.SetAttribute("type", "text/css");
+									baseNode.Nodes.Insert(0, node);
+								}
+							}
 							if(node != null)
 							{
-								//	Create a shell around the original node and transfer the
-								//	name.
-								parent = node.Parent;
-								index = parent.IndexOf(node);
-								childNode = node;
-								parent.Remove(node);
-								node = new HtmlNodeItem("g");
-								node.Attributes.SetAttribute("id", childNode.Id);
-								childNode.Attributes.Remove("id");
-								node.Nodes.Add(childNode);
-								parent.Insert(index, node);
+								node.Text = $"\r\n{css}";
 							}
+							content = originalDoc.Html;
+							File.WriteAllText(targetFile.FullName, content);
+							Trace.WriteLine(" Target file written...",
+								$"{MessageImportanceEnum.Info}");
 						}
-						node = originalDoc.Nodes.FindMatch(x =>
-							x.Id == "SvgToolsAnimateTimeline");
-						if(node == null)
-						{
-							baseNode = originalDoc.Nodes.FindMatch(x => x.NodeType == "svg");
-							if(baseNode != null)
-							{
-								node = new HtmlNodeItem();
-								node.NodeType = "style";
-								node.Attributes.SetAttribute("id", "SvgToolsAnimateTimeline");
-								node.Attributes.SetAttribute("type", "text/css");
-								baseNode.Nodes.Insert(0, node);
-							}
-						}
-						if(node != null)
-						{
-							node.Text = $"\r\n{css}";
-						}
-						content = originalDoc.Html;
-						File.WriteAllText(targetFile.FullName, content);
-						Trace.WriteLine(" Target file written...",
-							$"{MessageImportanceEnum.Info}");
 					}
 				}
 			}
@@ -1406,7 +1439,7 @@ namespace SvgToolsLib
 					{
 						if(sendMessages)
 						{
-							Trace.WriteLine(" Error: No data files were specified.",
+							Trace.WriteLine("No data files were specified.",
 								$"{MessageImportanceEnum.Err}");
 						}
 						result = false;
@@ -3019,6 +3052,9 @@ namespace SvgToolsLib
 		/// </remarks>
 		private static void InitializeFilenames(SvgActionItem item)
 		{
+			bool bFileNotFound = false;
+			List<string> names = null;
+
 			if(item != null)
 			{
 				//	Input filenames.
@@ -3031,10 +3067,18 @@ namespace SvgToolsLib
 					if(item.mInputFilename?.Length > 0)
 					{
 						//	An input filename was provided at this level.
-						item.mInputNames.AddRange(
-							ResolveWildcards(
-								GetPropertyByName(item,
-									nameof(WorkingPath)), item.mInputFilename));
+						names = ResolveWildcards(
+							GetPropertyByName(item,
+								nameof(WorkingPath)), item.mInputFilename);
+						if(names.Count > 0)
+						{
+							item.mInputNames.AddRange(names);
+						}
+						else
+						{
+							Trace.WriteLine($"Input file not found: {item.mInputFilename}",
+								$"{MessageImportanceEnum.Err}");
+						}
 						//item.mInputNames.Add(item.mInputFilename);
 						item.mInputFilename = "";
 					}
@@ -3059,10 +3103,18 @@ namespace SvgToolsLib
 					if(item.mDataFilename?.Length > 0)
 					{
 						//	An data filename was provided at this level.
-						item.mDataNames.AddRange(
-							ResolveWildcards(
-								GetPropertyByName(item,
-									nameof(WorkingPath)), item.mDataFilename));
+						names = ResolveWildcards(
+							GetPropertyByName(item,
+								nameof(WorkingPath)), item.mDataFilename);
+						if(names.Count > 0)
+						{
+							item.mDataNames.AddRange(names);
+						}
+						else
+						{
+							Trace.WriteLine($"Data file not found: {item.mDataFilename}",
+								$"{MessageImportanceEnum.Err}");
+						}
 						item.mDataFilename = "";
 					}
 				}
@@ -4288,6 +4340,27 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	ErrorMessages																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="ErrorMessages">ErrorMessages</see>.
+		/// </summary>
+		private List<string> mErrorMessages = new List<string>();
+		/// <summary>
+		/// Get a reference to the collection of error messages to display when
+		/// running this task.
+		/// </summary>
+		/// <remarks>
+		/// This property is non-serialized and uninherited.
+		/// </remarks>
+		[JsonIgnore]
+		public List<string> ErrorMessages
+		{
+			get { return mErrorMessages; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetConditions																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -5435,6 +5508,10 @@ namespace SvgToolsLib
 					Trace.WriteLine($" Error: {Action} not implemented...",
 						$"{MessageImportanceEnum.Err}");
 					break;
+			}
+			foreach(string errorMessageItem in mErrorMessages)
+			{
+				Trace.WriteLine($"Err: {errorMessageItem}");
 			}
 		}
 		//*-----------------------------------------------------------------------*

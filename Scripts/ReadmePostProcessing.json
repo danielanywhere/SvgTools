@@ -102,5 +102,11 @@
 		"FindPattern": "(?i:\\]\\(\\#\\d+(?<linkText>[^\\)]+))",
 		"ReplacePattern": "](#${linkText}",
 		"UseRegEx": 1
+	},
+	{
+		"Remarks": "Format inline code block.",
+		"FindPattern": "(?i:(?<code>\\{/{0,1}code\\}))",
+		"ReplacePattern": "```",
+		"UseRegEx": 1
 	}
 ]

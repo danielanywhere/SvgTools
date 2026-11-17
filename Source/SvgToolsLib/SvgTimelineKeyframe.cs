@@ -1,5 +1,5 @@
 /*
- * Copyright (c). 2025 Daniel Patterson, MCSD (danielanywhere).
+ * Copyright (c). 2025-2026 Daniel Patterson, MCSD (danielanywhere).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 
 using Newtonsoft.Json;
+
+using Html;
 
 using static SvgToolsLib.SvgToolsUtil;
 
@@ -38,6 +41,12 @@ namespace SvgToolsLib
 		//*************************************************************************
 		//*	Private																																*
 		//*************************************************************************
+		/// <summary>
+		/// Recognized true display values.
+		/// </summary>
+		private static readonly string[] mDisplayValues =
+			new string[] { "inline", "1", "true" };
+
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
@@ -105,8 +114,14 @@ namespace SvgToolsLib
 							case "backcolor":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.BackColor;
 								break;
+							case "display":
+								colIndices[index] = SvgTimelineKeyframeFieldEnum.Display;
+								break;
 							case "forecolor":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.ForeColor;
+								break;
+							case "frame":
+								colIndices[index] = SvgTimelineKeyframeFieldEnum.FrameIndex;
 								break;
 							case "easing":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.Easing;
@@ -135,9 +150,11 @@ namespace SvgToolsLib
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.Repeat;
 								break;
 							case "scalexorigin":
+							case "originx":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.ScaleXOrigin;
 								break;
 							case "scaleyorigin":
+							case "originy":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.ScaleYOrigin;
 								break;
 							case "seconds":
@@ -181,6 +198,13 @@ namespace SvgToolsLib
 										entry.ActiveFields |=
 											SvgTimelineKeyframeFieldEnum.BackColor;
 										break;
+									case SvgTimelineKeyframeFieldEnum.Display:
+										entry.Display =
+											mDisplayValues.Contains(
+												cellItem.ToLower()).ToString();
+										entry.ActiveFields |=
+											SvgTimelineKeyframeFieldEnum.Display;
+										break;
 									case SvgTimelineKeyframeFieldEnum.Easing:
 										entry.Easing = cellItem;
 										entry.ActiveFields |=
@@ -190,6 +214,11 @@ namespace SvgToolsLib
 										entry.ForeColor = cellItem;
 										entry.ActiveFields |=
 											SvgTimelineKeyframeFieldEnum.ForeColor;
+										break;
+									case SvgTimelineKeyframeFieldEnum.FrameIndex:
+										entry.FrameIndex = ToInt(cellItem);
+										entry.ActiveFields |=
+											SvgTimelineKeyframeFieldEnum.FrameIndex;
 										break;
 									case SvgTimelineKeyframeFieldEnum.GroupName:
 										entry.GroupName = cellItem;
@@ -345,6 +374,24 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	Display																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Display">Display</see>.
+		/// </summary>
+		private string mDisplay = "True";
+		/// <summary>
+		/// Get/Set a value indicating whether the object is displayed at this
+		/// keyframe.
+		/// </summary>
+		public string Display
+		{
+			get { return mDisplay; }
+			set { mDisplay = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Easing																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -379,6 +426,23 @@ namespace SvgToolsLib
 		{
 			get { return mForeColor; }
 			set { mForeColor = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	FrameIndex																														*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="FrameIndex">FrameIndex</see>.
+		/// </summary>
+		private int mFrameIndex = -1;
+		/// <summary>
+		/// Get/Set the absolute frame index at which the keyframe is located.
+		/// </summary>
+		public int FrameIndex
+		{
+			get { return mFrameIndex; }
+			set { mFrameIndex = value; }
 		}
 		//*-----------------------------------------------------------------------*
 
@@ -430,6 +494,25 @@ namespace SvgToolsLib
 		{
 			get { return mIndex; }
 			set { mIndex = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	Node																																	*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Node">Node</see>.
+		/// </summary>
+		private HtmlNodeItem mNode = null;
+		/// <summary>
+		/// Get/Set a reference to the HTML document node from which this item was
+		/// created.
+		/// </summary>
+		[JsonIgnore]
+		public HtmlNodeItem Node
+		{
+			get { return mNode; }
+			set { mNode = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

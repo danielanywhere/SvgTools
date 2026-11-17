@@ -9,7 +9,7 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<RootNamespace>SvgToolsApp</RootNamespace>
-		<Version>26.3021.4505</Version>
+		<Version>26.3117.3007</Version>
 		<Authors>Daniel Patterson, MCSD (danielanywhere)</Authors>
 		<ApplicationIcon>SvgTools.ico</ApplicationIcon>
 	</PropertyGroup>
@@ -21,7 +21,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Dans.Html.Library" Version="26.3006.2520" />
+		<PackageReference Include="Dans.Html.Library" Version="26.3113.4052" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 

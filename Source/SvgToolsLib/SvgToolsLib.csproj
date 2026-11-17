@@ -9,7 +9,7 @@
 		<Platforms>AnyCPU;x64</Platforms>
 		<PackageId>Dans.SvgTools.Library</PackageId>
 		<Title>Dan's SvgTools Library</Title>
-		<Version>26.3021.4505</Version>
+		<Version>26.3117.3007</Version>
 		<Description>Dan's SvgTools Library.</Description>
 		<Copyright>Copyright(c) 2026. Daniel Patterson, MCSD (danielanywhere)</Copyright>
 		<PackageProjectUrl>https://github.com/danielanywhere/SvgTools</PackageProjectUrl>
@@ -38,10 +38,11 @@
 	<ItemGroup>
 		<PackageReference Include="Dans.ConversionCalc.Library" Version="25.3016.3818" />
 		<PackageReference Include="Dans.Geometry.Library" Version="26.3006.2520" />
-		<PackageReference Include="Dans.Html.Library" Version="26.3006.2520" />
+		<PackageReference Include="Dans.Html.Library" Version="26.3113.4052" />
 		<PackageReference Include="Flee" Version="2.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="SkiaSharp" Version="3.119.0" />
+		<PackageReference Include="SkiaSharp" Version="4.148.0" />
+		<PackageReference Include="Svg.Skia" Version="5.2.3" />
 	</ItemGroup>
 
 	<ItemGroup>
