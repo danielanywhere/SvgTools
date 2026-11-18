@@ -4018,6 +4018,33 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	GetRectangle																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the rectangle occupied by the provided HTML node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the node to measure.
+		/// </param>
+		/// <returns>
+		/// Reference to the rectangle defining the area of the provided node.
+		/// </returns>
+		public static FArea GetRectangle(HtmlNodeItem node)
+		{
+			FArea result = new FArea();
+
+			if(node != null)
+			{
+				result.X = GetX(node);
+				result.Y = GetY(node);
+				result.Width = GetWidth(node);
+				result.Height = GetHeight(node);
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//* GetValue																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -5870,35 +5897,33 @@ namespace SvgToolsLib
 			string attributeName, string attributeValue)
 		{
 			HtmlAttributeItem property = null;
-			HtmlAttributeItem style = null;
+			string style = "";
 			string text = "";
 
 			if(node != null && attributeName?.Length > 0)
 			{
 				if(HtmlAttributeCollection.StyleExists(node.Attributes, attributeName))
 				{
-					style = node.Attributes.FirstOrDefault(x =>
-						string.Equals(x.Name, "style",
-							StringComparison.OrdinalIgnoreCase));
+					style = HtmlAttributeCollection.GetStyle(node, attributeName);
 				}
-				if(style == null)
+				if(style.Length == 0)
 				{
 					property = node.Attributes.FirstOrDefault(x =>
 						string.Equals(x.Name, attributeName,
 							StringComparison.OrdinalIgnoreCase));
 				}
-				if(style != null || property == null)
+				if(style.Length > 0 || property == null)
 				{
 					//	Style overrides property.
-					if(style == null)
+					HtmlAttributeCollection.SetStyle(node,
+						attributeName, attributeValue);
+					if(attributeName == "transform")
 					{
-						style = new HtmlAttributeItem()
-						{
-							Name = "style"
-						};
-						node.Attributes.Add(style);
+						HtmlAttributeCollection.SetStyle(node,
+							"transform-box", "fill-box");
+						HtmlAttributeCollection.SetStyle(node,
+							"transform-origin", "center");
 					}
-					HtmlAttributeItem.SetStyle(style, attributeName, attributeValue);
 				}
 				else
 				{

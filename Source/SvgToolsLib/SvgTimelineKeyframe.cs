@@ -149,9 +149,18 @@ namespace SvgToolsLib
 							case "repeat":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.Repeat;
 								break;
+							case "rotation":
+								colIndices[index] = SvgTimelineKeyframeFieldEnum.Rotation;
+								break;
+							case "scalex":
+								colIndices[index] = SvgTimelineKeyframeFieldEnum.ScaleX;
+								break;
 							case "scalexorigin":
 							case "originx":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.ScaleXOrigin;
+								break;
+							case "scaley":
+								colIndices[index] = SvgTimelineKeyframeFieldEnum.ScaleY;
 								break;
 							case "scaleyorigin":
 							case "originy":
@@ -255,10 +264,25 @@ namespace SvgToolsLib
 										entry.ActiveFields |=
 											SvgTimelineKeyframeFieldEnum.Repeat;
 										break;
+									case SvgTimelineKeyframeFieldEnum.Rotation:
+										entry.Rotation = ToFloat(cellItem);
+										entry.ActiveFields |=
+											SvgTimelineKeyframeFieldEnum.Rotation;
+										break;
+									case SvgTimelineKeyframeFieldEnum.ScaleX:
+										entry.ScaleX = ToFloat(cellItem);
+										entry.ActiveFields |=
+											SvgTimelineKeyframeFieldEnum.ScaleX;
+										break;
 									case SvgTimelineKeyframeFieldEnum.ScaleXOrigin:
 										entry.ScaleXOrigin = cellItem;
 										entry.ActiveFields |=
 											SvgTimelineKeyframeFieldEnum.ScaleXOrigin;
+										break;
+									case SvgTimelineKeyframeFieldEnum.ScaleY:
+										entry.ScaleY = ToFloat(cellItem);
+										entry.ActiveFields |=
+											SvgTimelineKeyframeFieldEnum.ScaleY;
 										break;
 									case SvgTimelineKeyframeFieldEnum.ScaleYOrigin:
 										entry.ScaleYOrigin = cellItem;
@@ -585,6 +609,40 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	Rotation																															*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="Rotation">Rotation</see>.
+		/// </summary>
+		private float mRotation = 0f;
+		/// <summary>
+		/// Get/Set the rotation to apply to the object.
+		/// </summary>
+		public float Rotation
+		{
+			get { return mRotation; }
+			set { mRotation = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ScaleX																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="ScaleX">ScaleX</see>.
+		/// </summary>
+		private float mScaleX = 1f;
+		/// <summary>
+		/// Get/Set the overall scale to apply to the Width of the object.
+		/// </summary>
+		public float ScaleX
+		{
+			get { return mScaleX; }
+			set { mScaleX = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	ScaleXOrigin																													*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -602,6 +660,23 @@ namespace SvgToolsLib
 		{
 			get { return mScaleXOrigin; }
 			set { mScaleXOrigin = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ScaleY																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="ScaleY">ScaleY</see>.
+		/// </summary>
+		private float mScaleY = 1f;
+		/// <summary>
+		/// Get/Set the overall scale to apply to the Height of the object.
+		/// </summary>
+		public float ScaleY
+		{
+			get { return mScaleY; }
+			set { mScaleY = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

@@ -88,29 +88,41 @@ namespace SvgToolsLib
 		/// </summary>
 		Repeat =				0x00001000,
 		/// <summary>
+		/// Object rotation.
+		/// </summary>
+		Rotation =			0x00002000,
+		/// <summary>
+		/// Object scaling on X axis.
+		/// </summary>
+		ScaleX =				0x00004000,
+		/// <summary>
 		/// The x-scale origin type field.
 		/// </summary>
-		ScaleXOrigin =	0x00002000,
+		ScaleXOrigin =	0x00008000,
+		/// <summary>
+		/// Object scaling on Y axis.
+		/// </summary>
+		ScaleY =				0x00010000,
 		/// <summary>
 		/// The y-scale origin type field.
 		/// </summary>
-		ScaleYOrigin =	0x00004000,
+		ScaleYOrigin =	0x00020000,
 		/// <summary>
 		/// The current time field.
 		/// </summary>
-		Seconds =				0x00008000,
+		Seconds =				0x00040000,
 		/// <summary>
 		/// The width field.
 		/// </summary>
-		Width =					0x00010000,
+		Width =					0x00080000,
 		/// <summary>
 		/// The X position field.
 		/// </summary>
-		X =							0x00020000,
+		X =							0x00100000,
 		/// <summary>
 		/// The Y position field.
 		/// </summary>
-		Y =							0x00040000
+		Y =							0x00200000
 	}
 	//*-------------------------------------------------------------------------*
 

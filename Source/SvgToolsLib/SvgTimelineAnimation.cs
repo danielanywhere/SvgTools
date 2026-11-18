@@ -16,6 +16,7 @@
  * 
  */
 
+using Geometry;
 using Html;
 using SkiaSharp;
 using Svg.Skia;
@@ -412,6 +413,402 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//*	ProcessRotation																												*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Process rotation keyframes for the provided HTML node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the source HTML node item to process.
+		/// </param>
+		/// <param name="keyframes">
+		/// Reference to the collection of keyframes to process.
+		/// </param>
+		/// <param name="masterFrames">
+		/// Reference to the collection of master frames to be appended to.
+		/// </param>
+		/// <param name="objectName">
+		/// Name of the object to resolve.
+		/// </param>
+		private static void ProcessRotation(HtmlNodeItem node,
+			List<SvgTimelineKeyframeItem> keyframes,
+			SvgTimelineFrameCollection masterFrames,
+			string objectName)
+		{
+			string attributeValue = "";
+			int count = 0;
+			CssEasingTypeEnum easing = CssEasingTypeEnum.Linear;
+			CssEasingTypeEnum easingTest = CssEasingTypeEnum.None;
+			SvgTimelineKeyframeItem frame = null;
+			int frameDifference = 0;
+			int frameIndexCurrent = 0;
+			int frameIndexNext = 0;
+			int index = 0;
+			SvgTimelineFrameItem masterFrame = null;
+			SvgTimelineKeyframeItem matchingFrame = null;
+			List<SvgTimelineKeyframeItem> matchingFrames = null;
+			float progressPerFrame = 0f;
+			float progressValue = 0f;
+			TransformItem transform = null;
+			TransformCollection transforms = null;
+			float valueEnd = 0f;
+			float valueStart = 0f;
+
+			if(keyframes?.Count > 0 && masterFrames != null &&
+				objectName?.Length > 0)
+			{
+				matchingFrames = keyframes.FindAll(x =>
+					x.ObjectName == objectName &&
+					(x.ActiveFields & SvgTimelineKeyframeFieldEnum.Rotation) !=
+					SvgTimelineKeyframeFieldEnum.None);
+				count = matchingFrames.Count;
+				if(count > 0)
+				{
+					for(index = 0; index < count; index++)
+					{
+						//	Matching frame represents the first frame of the next set.
+						matchingFrame = matchingFrames[index];
+						if(((matchingFrame.ActiveFields &
+							SvgTimelineKeyframeFieldEnum.Easing) !=
+								SvgTimelineKeyframeFieldEnum.None) &&
+							Enum.TryParse<CssEasingTypeEnum>(matchingFrame.Easing,
+								true, out easingTest))
+						{
+							easing = easingTest;
+						}
+						if(index == 0)
+						{
+							frameIndexCurrent = 1;
+							attributeValue = GetAttributeValue(node, "transform");
+							transforms = TransformCollection.Parse(attributeValue);
+							transform = transforms.FirstOrDefault(x =>
+								x.TransformType == TransformTypeEnum.Rotate);
+							if(transform?.Parameters.Count > 0)
+							{
+								valueStart = transform.Parameters[0];
+							}
+							else
+							{
+								valueStart = matchingFrame.Rotation;
+							}
+							valueEnd = matchingFrame.Rotation;
+						}
+						else
+						{
+							frameIndexCurrent = frameIndexNext;
+							valueStart = valueEnd;
+							if(matchingFrame.Absolute)
+							{
+								valueEnd = matchingFrame.Rotation;
+							}
+							else
+							{
+								valueEnd += matchingFrame.Rotation;
+							}
+						}
+						frameIndexNext = matchingFrame.FrameIndex;
+						frameDifference = frameIndexNext - frameIndexCurrent - 1;
+						if(frameDifference > 0f)
+						{
+							progressPerFrame = 1f / (float)frameDifference;
+						}
+						else
+						{
+							progressPerFrame = 0f;
+						}
+						for(progressValue = 0f;
+							(index + 1 < count ?
+								frameIndexCurrent < frameIndexNext :
+								frameIndexCurrent <= frameIndexNext);
+							frameIndexCurrent++, progressValue += progressPerFrame)
+						{
+							masterFrame = masterFrames.GetFrame(frameIndexCurrent);
+							if(masterFrame != null)
+							{
+								frame = new SvgTimelineKeyframeItem()
+								{
+									ObjectName = objectName,
+									FrameIndex = frameIndexCurrent,
+									ActiveFields = SvgTimelineKeyframeFieldEnum.Rotation,
+									Rotation = ToFloat(
+									EaseInterpolate(valueStart, valueEnd, progressValue,
+										easing)),
+									Node = node
+								};
+								masterFrame.Entries.Add(frame);
+							}
+						}
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ProcessScaleX																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Process scale-x keyframes for the provided HTML node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the source HTML node item to process.
+		/// </param>
+		/// <param name="keyframes">
+		/// Reference to the collection of keyframes to process.
+		/// </param>
+		/// <param name="masterFrames">
+		/// Reference to the collection of master frames to be appended to.
+		/// </param>
+		/// <param name="objectName">
+		/// Name of the object to resolve.
+		/// </param>
+		private static void ProcessScaleX(HtmlNodeItem node,
+			List<SvgTimelineKeyframeItem> keyframes,
+			SvgTimelineFrameCollection masterFrames,
+			string objectName)
+		{
+			string attributeValue = "";
+			int count = 0;
+			CssEasingTypeEnum easing = CssEasingTypeEnum.Linear;
+			CssEasingTypeEnum easingTest = CssEasingTypeEnum.None;
+			SvgTimelineKeyframeItem frame = null;
+			int frameDifference = 0;
+			int frameIndexCurrent = 0;
+			int frameIndexNext = 0;
+			int index = 0;
+			SvgTimelineFrameItem masterFrame = null;
+			SvgTimelineKeyframeItem matchingFrame = null;
+			List<SvgTimelineKeyframeItem> matchingFrames = null;
+			float progressPerFrame = 0f;
+			float progressValue = 0f;
+			TransformItem transform = null;
+			TransformCollection transforms = null;
+			float valueEnd = 0f;
+			float valueStart = 0f;
+
+			if(keyframes?.Count > 0 && masterFrames != null &&
+				objectName?.Length > 0)
+			{
+				matchingFrames = keyframes.FindAll(x =>
+					x.ObjectName == objectName &&
+					(x.ActiveFields & SvgTimelineKeyframeFieldEnum.ScaleX) !=
+					SvgTimelineKeyframeFieldEnum.None);
+				count = matchingFrames.Count;
+				if(count > 0)
+				{
+					for(index = 0; index < count; index++)
+					{
+						//	Matching frame represents the first frame of the next set.
+						matchingFrame = matchingFrames[index];
+						if(((matchingFrame.ActiveFields &
+							SvgTimelineKeyframeFieldEnum.Easing) !=
+								SvgTimelineKeyframeFieldEnum.None) &&
+							Enum.TryParse<CssEasingTypeEnum>(matchingFrame.Easing,
+								true, out easingTest))
+						{
+							easing = easingTest;
+						}
+						if(index == 0)
+						{
+							frameIndexCurrent = 1;
+							attributeValue = GetAttributeValue(node, "transform");
+							transforms = TransformCollection.Parse(attributeValue);
+							transform = transforms.FirstOrDefault(x =>
+								x.TransformType == TransformTypeEnum.Scale);
+							if(transform?.Parameters.Count > 0)
+							{
+								valueStart = transform.Parameters[0];
+							}
+							else
+							{
+								valueStart = matchingFrame.ScaleX;
+							}
+							valueEnd = matchingFrame.ScaleX;
+						}
+						else
+						{
+							frameIndexCurrent = frameIndexNext;
+							valueStart = valueEnd;
+							if(matchingFrame.Absolute)
+							{
+								valueEnd = matchingFrame.ScaleX;
+							}
+							else
+							{
+								valueEnd += matchingFrame.ScaleX;
+							}
+						}
+						frameIndexNext = matchingFrame.FrameIndex;
+						frameDifference = frameIndexNext - frameIndexCurrent - 1;
+						if(frameDifference > 0f)
+						{
+							progressPerFrame = 1f / (float)frameDifference;
+						}
+						else
+						{
+							progressPerFrame = 0f;
+						}
+						for(progressValue = 0f;
+							(index + 1 < count ?
+								frameIndexCurrent < frameIndexNext :
+								frameIndexCurrent <= frameIndexNext);
+							frameIndexCurrent++, progressValue += progressPerFrame)
+						{
+							masterFrame = masterFrames.GetFrame(frameIndexCurrent);
+							if(masterFrame != null)
+							{
+								frame = new SvgTimelineKeyframeItem()
+								{
+									ObjectName = objectName,
+									FrameIndex = frameIndexCurrent,
+									ActiveFields = SvgTimelineKeyframeFieldEnum.ScaleX,
+									ScaleX = ToFloat(
+									EaseInterpolate(valueStart, valueEnd, progressValue,
+										easing)),
+									Node = node
+								};
+								masterFrame.Entries.Add(frame);
+							}
+						}
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	ProcessScaleY																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Process scale-y keyframes for the provided HTML node.
+		/// </summary>
+		/// <param name="node">
+		/// Reference to the source HTML node item to process.
+		/// </param>
+		/// <param name="keyframes">
+		/// Reference to the collection of keyframes to process.
+		/// </param>
+		/// <param name="masterFrames">
+		/// Reference to the collection of master frames to be appended to.
+		/// </param>
+		/// <param name="objectName">
+		/// Name of the object to resolve.
+		/// </param>
+		private static void ProcessScaleY(HtmlNodeItem node,
+			List<SvgTimelineKeyframeItem> keyframes,
+			SvgTimelineFrameCollection masterFrames,
+			string objectName)
+		{
+			string attributeValue = "";
+			int count = 0;
+			CssEasingTypeEnum easing = CssEasingTypeEnum.Linear;
+			CssEasingTypeEnum easingTest = CssEasingTypeEnum.None;
+			SvgTimelineKeyframeItem frame = null;
+			int frameDifference = 0;
+			int frameIndexCurrent = 0;
+			int frameIndexNext = 0;
+			int index = 0;
+			SvgTimelineFrameItem masterFrame = null;
+			SvgTimelineKeyframeItem matchingFrame = null;
+			List<SvgTimelineKeyframeItem> matchingFrames = null;
+			float progressPerFrame = 0f;
+			float progressValue = 0f;
+			TransformItem transform = null;
+			TransformCollection transforms = null;
+			float valueEnd = 0f;
+			float valueStart = 0f;
+
+			if(keyframes?.Count > 0 && masterFrames != null &&
+				objectName?.Length > 0)
+			{
+				matchingFrames = keyframes.FindAll(x =>
+					x.ObjectName == objectName &&
+					(x.ActiveFields & SvgTimelineKeyframeFieldEnum.ScaleY) !=
+					SvgTimelineKeyframeFieldEnum.None);
+				count = matchingFrames.Count;
+				if(count > 0)
+				{
+					for(index = 0; index < count; index++)
+					{
+						//	Matching frame represents the first frame of the next set.
+						matchingFrame = matchingFrames[index];
+						if(((matchingFrame.ActiveFields &
+							SvgTimelineKeyframeFieldEnum.Easing) !=
+								SvgTimelineKeyframeFieldEnum.None) &&
+							Enum.TryParse<CssEasingTypeEnum>(matchingFrame.Easing,
+								true, out easingTest))
+						{
+							easing = easingTest;
+						}
+						if(index == 0)
+						{
+							frameIndexCurrent = 1;
+							attributeValue = GetAttributeValue(node, "transform");
+							transforms = TransformCollection.Parse(attributeValue);
+							transform = transforms.FirstOrDefault(x =>
+								x.TransformType == TransformTypeEnum.Scale);
+							if(transform?.Parameters.Count > 1)
+							{
+								valueStart = transform.Parameters[1];
+							}
+							else
+							{
+								valueStart = matchingFrame.ScaleY;
+							}
+							valueEnd = matchingFrame.ScaleY;
+						}
+						else
+						{
+							frameIndexCurrent = frameIndexNext;
+							valueStart = valueEnd;
+							if(matchingFrame.Absolute)
+							{
+								valueEnd = matchingFrame.ScaleY;
+							}
+							else
+							{
+								valueEnd += matchingFrame.ScaleY;
+							}
+						}
+						frameIndexNext = matchingFrame.FrameIndex;
+						frameDifference = frameIndexNext - frameIndexCurrent - 1;
+						if(frameDifference > 0f)
+						{
+							progressPerFrame = 1f / (float)frameDifference;
+						}
+						else
+						{
+							progressPerFrame = 0f;
+						}
+						for(progressValue = 0f;
+							(index + 1 < count ?
+								frameIndexCurrent < frameIndexNext :
+								frameIndexCurrent <= frameIndexNext);
+							frameIndexCurrent++, progressValue += progressPerFrame)
+						{
+							masterFrame = masterFrames.GetFrame(frameIndexCurrent);
+							if(masterFrame != null)
+							{
+								frame = new SvgTimelineKeyframeItem()
+								{
+									ObjectName = objectName,
+									FrameIndex = frameIndexCurrent,
+									ActiveFields = SvgTimelineKeyframeFieldEnum.ScaleY,
+									ScaleY = ToFloat(
+									EaseInterpolate(valueStart, valueEnd, progressValue,
+										easing)),
+									Node = node
+								};
+								masterFrame.Entries.Add(frame);
+							}
+						}
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
@@ -613,6 +1010,7 @@ namespace SvgToolsLib
 			string filenameTemplate, DataSet data, string tableName = "",
 			float frameRate = 24f)
 		{
+			string attributeValue = "";
 			StringBuilder builder = new StringBuilder();
 			SKColor colorCurrent = SKColor.Empty;
 			SKColor colorNext = SKColor.Empty;
@@ -634,11 +1032,15 @@ namespace SvgToolsLib
 			HtmlNodeItem node = null;
 			List<string> objectNames = null;
 			string outputPath = "";
+			float paramValue = 0f;
 			int prevIndex = 0;
 			float progressPerFrame = 0f;
 			float progressValue = 0f;
+			//FArea rectangle = null;
 			SKSvg svg = null;
 			SvgTimelineNodeItem timelineNode = null;
+			TransformItem transform = null;
+			TransformCollection transforms = null;
 
 			if(doc != null && data?.Tables.Count > 0 && frameRate != 0f &&
 				targetDirectory != null && filenameTemplate?.Length > 0)
@@ -742,11 +1144,15 @@ namespace SvgToolsLib
 						ProcessLinearFloat(node, keyframes, masterFrames,
 							objectNameItem, "opacity",
 							SvgTimelineKeyframeFieldEnum.Opacity);
+						ProcessRotation(node, keyframes, masterFrames, objectNameItem);
+						ProcessScaleX(node, keyframes, masterFrames, objectNameItem);
+						ProcessScaleY(node, keyframes, masterFrames, objectNameItem);
 						ProcessDiscreteString(node, keyframes, masterFrames,
 							objectNameItem, "display",
 							SvgTimelineKeyframeFieldEnum.Display);
 					}
 				}
+
 				//	Apply changes and render output for every master frame.
 				if(targetDirectory != null)
 				{
@@ -804,6 +1210,131 @@ namespace SvgToolsLib
 										break;
 									case SvgTimelineKeyframeFieldEnum.Y:
 										SetAttributeValue(node, "y", keyframeItem.Y);
+										break;
+									case SvgTimelineKeyframeFieldEnum.Rotation:
+										//	TODO: Check absolute|relative.
+										//	TODO: Center is currently origin. Incorporate OriginX, OriginY.
+										transform = null;
+										attributeValue = GetAttributeValue(node, "transform");
+										if(attributeValue.Length > 0)
+										{
+											transforms = TransformCollection.Parse(attributeValue);
+											transform = transforms.FirstOrDefault(x =>
+												x.TransformType == TransformTypeEnum.Rotate);
+										}
+										else
+										{
+											transforms = new TransformCollection();
+										}
+										if(transform == null)
+										{
+											transform = new TransformItem()
+											{
+												TransformType = TransformTypeEnum.Rotate
+											};
+											transform.Parameters.Add(keyframeItem.Rotation);
+											transforms.Add(transform);
+										}
+										else
+										{
+											transform.Parameters[0] = keyframeItem.Rotation;
+										}
+										//	Set the pivot point for the shape.
+										//	Currently, this is being done in SetAttributeValue
+										//	through the following attributes.
+										//	transform-box: fill-box;
+										//	transform-origin: center;
+										//rectangle = GetRectangle(node);
+										//paramValue = rectangle.X + (rectangle.Width / 2f);
+										//if(transform.Parameters.Count > 1)
+										//{
+										//	transform.Parameters[1] = paramValue;
+										//}
+										//else
+										//{
+										//	transform.Parameters.Add(paramValue);
+										//}
+										//paramValue = rectangle.Y + (rectangle.Height / 2f);
+										//if(transform.Parameters.Count > 2)
+										//{
+										//	transform.Parameters[2] = paramValue;
+										//}
+										//else
+										//{
+										//	transform.Parameters.Add(paramValue);
+										//}
+										SetAttributeValue(node, "transform", transforms.ToString());
+										//Trace.WriteLine(
+										//	$"{keyframeItem.FrameIndex}. " +
+										//	$"Rotation: {keyframeItem.Rotation}, " +
+										//	$"Style: {HtmlAttributeCollection.GetAttributeValue(node, "style")}",
+										//	$" {MessageImportanceEnum.Info}");
+										break;
+									case SvgTimelineKeyframeFieldEnum.ScaleX:
+										//if(keyframeItem.ScaleX > 1f)
+										//{
+										//	Trace.WriteLine("SvgTimelineAnimation.GenerateAnimationFrames.ScaleX: Break here...");
+										//}
+										transform = null;
+										attributeValue = GetAttributeValue(node, "transform");
+										if(attributeValue.Length > 0)
+										{
+											transforms = TransformCollection.Parse(attributeValue);
+											transform = transforms.FirstOrDefault(x =>
+												x.TransformType == TransformTypeEnum.Scale);
+										}
+										else
+										{
+											transforms = new TransformCollection();
+										}
+										if(transform == null)
+										{
+											transform = new TransformItem()
+											{
+												TransformType = TransformTypeEnum.Scale
+											};
+											transform.Parameters.Add(keyframeItem.ScaleX);
+											transform.Parameters.Add(1f);
+											transforms.Add(transform);
+										}
+										else
+										{
+											transform.Parameters[0] = keyframeItem.ScaleX;
+										}
+										SetAttributeValue(node, "transform", transforms.ToString());
+										break;
+									case SvgTimelineKeyframeFieldEnum.ScaleY:
+										//if(keyframeItem.ScaleX > 1f)
+										//{
+										//	Trace.WriteLine("SvgTimelineAnimation.GenerateAnimationFrames.ScaleY: Break here...");
+										//}
+										transform = null;
+										attributeValue = GetAttributeValue(node, "transform");
+										if(attributeValue.Length > 0)
+										{
+											transforms = TransformCollection.Parse(attributeValue);
+											transform = transforms.FirstOrDefault(x =>
+												x.TransformType == TransformTypeEnum.Scale);
+										}
+										else
+										{
+											transforms = new TransformCollection();
+										}
+										if(transform == null)
+										{
+											transform = new TransformItem()
+											{
+												TransformType = TransformTypeEnum.Scale
+											};
+											transform.Parameters.Add(1f);
+											transform.Parameters.Add(keyframeItem.ScaleY);
+											transforms.Add(transform);
+										}
+										else
+										{
+											transform.Parameters[1] = keyframeItem.ScaleY;
+										}
+										SetAttributeValue(node, "transform", transforms.ToString());
 										break;
 									default:
 										//	Unrecognized field.

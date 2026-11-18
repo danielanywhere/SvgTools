@@ -31,7 +31,7 @@
     <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
     <HelpTitle>Dan&amp;#39%3bs SvgTools Library</HelpTitle>
-    <HelpFileVersion>26.3117.3450</HelpFileVersion>
+    <HelpFileVersion>26.3118.3652</HelpFileVersion>
     <NamingMethod>Guid</NamingMethod>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
     <RootNamespaceContainer>False</RootNamespaceContainer>
