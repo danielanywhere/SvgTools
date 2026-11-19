@@ -96,17 +96,17 @@ namespace SvgToolsLib
 		/// </summary>
 		ScaleX =				0x00004000,
 		/// <summary>
-		/// The x-scale origin type field.
+		/// The x origin type field.
 		/// </summary>
-		ScaleXOrigin =	0x00008000,
+		OriginX =				0x00008000,
 		/// <summary>
 		/// Object scaling on Y axis.
 		/// </summary>
 		ScaleY =				0x00010000,
 		/// <summary>
-		/// The y-scale origin type field.
+		/// The y origin type field.
 		/// </summary>
-		ScaleYOrigin =	0x00020000,
+		OriginY =	0x00020000,
 		/// <summary>
 		/// The current time field.
 		/// </summary>

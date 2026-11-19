@@ -473,20 +473,19 @@ namespace SvgToolsLib
 						}
 						break;
 				}
-				//	TODO: ScaleXOrigin will be named OriginX in next version.
-				keyframe = tKeyframes.FirstOrDefault(n =>
-					n.ScaleXOrigin.Length > 0);
-				if(keyframe != null)
-				{
-					animation.mOriginX = keyframe.ScaleXOrigin;
-				}
-				//	TODO: ScaleYOrigin will be named OriginY in next version.
-				keyframe = tKeyframes.FirstOrDefault(n =>
-					n.ScaleYOrigin.Length > 0);
-				if(keyframe != null)
-				{
-					animation.mOriginY = keyframe.ScaleYOrigin;
-				}
+				////	TODO: Repair OriginX and OriginY on CSS animation.
+				//keyframe = tKeyframes.FirstOrDefault(n =>
+				//	n.OriginX.Length > 0);
+				//if(keyframe != null)
+				//{
+				//	animation.mOriginX = keyframe.OriginX;
+				//}
+				//keyframe = tKeyframes.FirstOrDefault(n =>
+				//	n.OriginY.Length > 0);
+				//if(keyframe != null)
+				//{
+				//	animation.mOriginY = keyframe.OriginY;
+				//}
 				times = tKeyframes.Select(k => k.Seconds).Distinct().ToList();
 				times.Sort();
 				foreach(float timeItem in times)

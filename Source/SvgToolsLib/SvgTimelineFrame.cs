@@ -41,6 +41,54 @@ namespace SvgToolsLib
 		//*	Public																																*
 		//*************************************************************************
 		//*-----------------------------------------------------------------------*
+		//*	GetCommonFloatValue																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Return the common float value for the specified common property, as it
+		/// can be inferred for the named object at the given frame index.
+		/// </summary>
+		/// <param name="frameIndex">
+		/// The frame index at which the value is desired.
+		/// </param>
+		/// <param name="objectName">
+		/// The name of the object for which the value will be retrieved.
+		/// </param>
+		/// <param name="propertyName">
+		/// Name of the associated property to retrieve.
+		/// </param>
+		/// <returns>
+		/// The last-known value of the common property at or prior to the
+		/// given frame, if found. Otherwise, 0.
+		/// </returns>
+		public float GetCommonFloatValue(int frameIndex, string objectName,
+			string propertyName)
+		{
+			int currentFrameIndex = frameIndex;
+			SvgTimelineFrameItem frame = null;
+			float result = 0f;
+
+			if(objectName?.Length > 0 && propertyName?.Length > 0)
+			{
+				for(currentFrameIndex = frameIndex;
+					currentFrameIndex >= 0;
+					currentFrameIndex --)
+				{
+					frame = GetFrame(currentFrameIndex);
+					if(frame != null)
+					{
+						if(frame.CommonValues.FloatValueExists(objectName, propertyName))
+						{
+							result =
+								frame.CommonValues.GetFloatValue(objectName, propertyName);
+						}
+					}
+				}
+			}
+			return result;
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	GetFrame																															*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -83,6 +131,44 @@ namespace SvgToolsLib
 		//*************************************************************************
 		//*	Public																																*
 		//*************************************************************************
+		//*-----------------------------------------------------------------------*
+		//*	ApplyCommonValues																											*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Assign the shared common properties for the referenced object on the
+		/// current frame.
+		/// </summary>
+		/// <param name="keyframe">
+		/// Reference to the keyframe whose per-object common values will be
+		/// copied.
+		/// </param>
+		public void ApplyCommonValues(SvgTimelineKeyframeItem keyframe)
+		{
+			if(keyframe?.ObjectName?.Length > 0)
+			{
+				CommonValues.ApplyValues(keyframe);
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	CommonValues																													*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="CommonValues">CommonValues</see>.
+		/// </summary>
+		private SvgTimelineFrameCommonValueCollection mCommonValues =
+			new SvgTimelineFrameCommonValueCollection();
+		/// <summary>
+		/// Get a reference to the collection of common values shared per object
+		/// on this frame.
+		/// </summary>
+		public SvgTimelineFrameCommonValueCollection CommonValues
+		{
+			get { return mCommonValues; }
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*-----------------------------------------------------------------------*
 		//*	Entries																																*
 		//*-----------------------------------------------------------------------*

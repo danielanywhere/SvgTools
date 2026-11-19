@@ -809,6 +809,40 @@ namespace SvgToolsLib
 		}
 		//*-----------------------------------------------------------------------*
 
+		//*-----------------------------------------------------------------------*
+		//* SetCommonProperties																										*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Set common properties for entries on each master frame.
+		/// </summary>
+		/// <param name="keyframes">
+		/// Reference to the collection of timeline keyframes.
+		/// </param>
+		/// <param name="masterFrames">
+		/// Reference to the collection of master keyframes from which each output
+		/// frame will be rendered.
+		/// </param>
+		private static void SetCommonProperties(
+			List<SvgTimelineKeyframeItem> keyframes,
+			SvgTimelineFrameCollection masterFrames)
+		{
+			List<SvgTimelineKeyframeItem> matchingKeyframes = null;
+
+			if(keyframes?.Count > 0 && masterFrames?.Count > 0)
+			{
+				foreach(SvgTimelineFrameItem frameItem in masterFrames)
+				{
+					matchingKeyframes = keyframes.FindAll(x =>
+						x.FrameIndex == frameItem.FrameIndex);
+					foreach(SvgTimelineKeyframeItem keyframeItem in matchingKeyframes)
+					{
+						frameItem.ApplyCommonValues(keyframeItem);
+					}
+				}
+			}
+		}
+		//*-----------------------------------------------------------------------*
+
 		//*************************************************************************
 		//*	Protected																															*
 		//*************************************************************************
@@ -1031,6 +1065,8 @@ namespace SvgToolsLib
 			int maxIndex = 0;
 			HtmlNodeItem node = null;
 			List<string> objectNames = null;
+			float originX = 0f;
+			float originY = 0f;
 			string outputPath = "";
 			float paramValue = 0f;
 			int prevIndex = 0;
@@ -1123,6 +1159,7 @@ namespace SvgToolsLib
 							StringComparison.OrdinalIgnoreCase));
 					if(node != null)
 					{
+						SetCommonProperties(keyframes, masterFrames);
 						ProcessLinearHexColor(node, keyframes, masterFrames,
 							objectNameItem, "fill",
 							SvgTimelineKeyframeFieldEnum.BackColor);
@@ -1178,10 +1215,10 @@ namespace SvgToolsLib
 									case SvgTimelineKeyframeFieldEnum.Index:
 									case SvgTimelineKeyframeFieldEnum.None:
 									case SvgTimelineKeyframeFieldEnum.ObjectName:
+									case SvgTimelineKeyframeFieldEnum.OriginX:
+									case SvgTimelineKeyframeFieldEnum.OriginY:
 									case SvgTimelineKeyframeFieldEnum.Remark:
 									case SvgTimelineKeyframeFieldEnum.Repeat:
-									case SvgTimelineKeyframeFieldEnum.ScaleXOrigin:
-									case SvgTimelineKeyframeFieldEnum.ScaleYOrigin:
 									case SvgTimelineKeyframeFieldEnum.Seconds:
 										//	Control and reference fields.
 										break;
@@ -1212,9 +1249,15 @@ namespace SvgToolsLib
 										SetAttributeValue(node, "y", keyframeItem.Y);
 										break;
 									case SvgTimelineKeyframeFieldEnum.Rotation:
-										//	TODO: Check absolute|relative.
-										//	TODO: Center is currently origin. Incorporate OriginX, OriginY.
 										transform = null;
+										originX = masterFrames.GetCommonFloatValue(
+											masterFrameItem.FrameIndex,
+											keyframeItem.ObjectName,
+											"OriginX");
+										originY = masterFrames.GetCommonFloatValue(
+											masterFrameItem.FrameIndex,
+											keyframeItem.ObjectName,
+											"OriginY");
 										attributeValue = GetAttributeValue(node, "transform");
 										if(attributeValue.Length > 0)
 										{
@@ -1244,25 +1287,22 @@ namespace SvgToolsLib
 										//	through the following attributes.
 										//	transform-box: fill-box;
 										//	transform-origin: center;
-										//rectangle = GetRectangle(node);
-										//paramValue = rectangle.X + (rectangle.Width / 2f);
-										//if(transform.Parameters.Count > 1)
-										//{
-										//	transform.Parameters[1] = paramValue;
-										//}
-										//else
-										//{
-										//	transform.Parameters.Add(paramValue);
-										//}
-										//paramValue = rectangle.Y + (rectangle.Height / 2f);
-										//if(transform.Parameters.Count > 2)
-										//{
-										//	transform.Parameters[2] = paramValue;
-										//}
-										//else
-										//{
-										//	transform.Parameters.Add(paramValue);
-										//}
+										if(transform.Parameters.Count > 1)
+										{
+											transform.Parameters[1] = originX;
+										}
+										else
+										{
+											transform.Parameters.Add(originX);
+										}
+										if(transform.Parameters.Count > 2)
+										{
+											transform.Parameters[2] = originY;
+										}
+										else
+										{
+											transform.Parameters.Add(originY);
+										}
 										SetAttributeValue(node, "transform", transforms.ToString());
 										//Trace.WriteLine(
 										//	$"{keyframeItem.FrameIndex}. " +

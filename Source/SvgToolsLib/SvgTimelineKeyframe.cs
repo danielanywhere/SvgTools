@@ -143,6 +143,12 @@ namespace SvgToolsLib
 							case "opacity":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.Opacity;
 								break;
+							case "originx":
+								colIndices[index] = SvgTimelineKeyframeFieldEnum.OriginX;
+								break;
+							case "originy":
+								colIndices[index] = SvgTimelineKeyframeFieldEnum.OriginY;
+								break;
 							case "remark":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.Remark;
 								break;
@@ -155,16 +161,8 @@ namespace SvgToolsLib
 							case "scalex":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.ScaleX;
 								break;
-							case "scalexorigin":
-							case "originx":
-								colIndices[index] = SvgTimelineKeyframeFieldEnum.ScaleXOrigin;
-								break;
 							case "scaley":
 								colIndices[index] = SvgTimelineKeyframeFieldEnum.ScaleY;
-								break;
-							case "scaleyorigin":
-							case "originy":
-								colIndices[index] = SvgTimelineKeyframeFieldEnum.ScaleYOrigin;
 								break;
 							case "seconds":
 							case "time":
@@ -274,20 +272,20 @@ namespace SvgToolsLib
 										entry.ActiveFields |=
 											SvgTimelineKeyframeFieldEnum.ScaleX;
 										break;
-									case SvgTimelineKeyframeFieldEnum.ScaleXOrigin:
-										entry.ScaleXOrigin = cellItem;
+									case SvgTimelineKeyframeFieldEnum.OriginX:
+										entry.OriginX = ToFloat(cellItem);
 										entry.ActiveFields |=
-											SvgTimelineKeyframeFieldEnum.ScaleXOrigin;
+											SvgTimelineKeyframeFieldEnum.OriginX;
 										break;
 									case SvgTimelineKeyframeFieldEnum.ScaleY:
 										entry.ScaleY = ToFloat(cellItem);
 										entry.ActiveFields |=
 											SvgTimelineKeyframeFieldEnum.ScaleY;
 										break;
-									case SvgTimelineKeyframeFieldEnum.ScaleYOrigin:
-										entry.ScaleYOrigin = cellItem;
+									case SvgTimelineKeyframeFieldEnum.OriginY:
+										entry.OriginY = ToFloat(cellItem);
 										entry.ActiveFields |=
-											SvgTimelineKeyframeFieldEnum.ScaleYOrigin;
+											SvgTimelineKeyframeFieldEnum.OriginY;
 										break;
 									case SvgTimelineKeyframeFieldEnum.Seconds:
 										entry.Seconds = ToFloat(cellItem);
@@ -575,6 +573,48 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
+		//*	OriginX																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="OriginX">OriginX</see>.
+		/// </summary>
+		private float mOriginX = 0f;
+		/// <summary>
+		/// Get/Set the value of the X-scaling origin.
+		/// </summary>
+		/// <remarks>
+		/// The value in this property corresponds to the horizontal or second
+		/// parameter of the transform-origin CSS style.
+		/// </remarks>
+		public float OriginX
+		{
+			get { return mOriginX; }
+			set { mOriginX = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
+		//*	OriginY																																*
+		//*-----------------------------------------------------------------------*
+		/// <summary>
+		/// Private member for <see cref="OriginY">OriginY</see>.
+		/// </summary>
+		private float mOriginY = 0f;
+		/// <summary>
+		/// Get/Set the value of the Y-scaling origin.
+		/// </summary>
+		/// <remarks>
+		/// The value in this property corresponds to the vertical or first
+		/// parameter of the transform-origin CSS style.
+		/// </remarks>
+		public float OriginY
+		{
+			get { return mOriginY; }
+			set { mOriginY = value; }
+		}
+		//*-----------------------------------------------------------------------*
+
+		//*-----------------------------------------------------------------------*
 		//*	Remark																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -643,27 +683,6 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 
 		//*-----------------------------------------------------------------------*
-		//*	ScaleXOrigin																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="ScaleXOrigin">ScaleXOrigin</see>.
-		/// </summary>
-		private string mScaleXOrigin = "";
-		/// <summary>
-		/// Get/Set the value of the X-scaling origin.
-		/// </summary>
-		/// <remarks>
-		/// The value in this property corresponds to the horizontal or second
-		/// parameter of the transform-origin CSS style.
-		/// </remarks>
-		public string ScaleXOrigin
-		{
-			get { return mScaleXOrigin; }
-			set { mScaleXOrigin = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
 		//*	ScaleY																																*
 		//*-----------------------------------------------------------------------*
 		/// <summary>
@@ -677,27 +696,6 @@ namespace SvgToolsLib
 		{
 			get { return mScaleY; }
 			set { mScaleY = value; }
-		}
-		//*-----------------------------------------------------------------------*
-
-		//*-----------------------------------------------------------------------*
-		//*	ScaleYOrigin																													*
-		//*-----------------------------------------------------------------------*
-		/// <summary>
-		/// Private member for <see cref="ScaleYOrigin">ScaleYOrigin</see>.
-		/// </summary>
-		private string mScaleYOrigin = "";
-		/// <summary>
-		/// Get/Set the value of the Y-scaling origin.
-		/// </summary>
-		/// <remarks>
-		/// The value in this property corresponds to the vertical or first
-		/// parameter of the transform-origin CSS style.
-		/// </remarks>
-		public string ScaleYOrigin
-		{
-			get { return mScaleYOrigin; }
-			set { mScaleYOrigin = value; }
 		}
 		//*-----------------------------------------------------------------------*
 

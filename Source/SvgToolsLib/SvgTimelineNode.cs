@@ -148,18 +148,19 @@ namespace SvgToolsLib
 				{
 					repeat = keyframe.Repeat;
 				}
-				keyframe = node.mKeyframes.FirstOrDefault(n =>
-					n.ScaleXOrigin.Length > 0);
-				if(keyframe != null)
-				{
-					scaleXOrigin = keyframe.ScaleXOrigin;
-				}
-				keyframe = node.mKeyframes.FirstOrDefault(n =>
-					n.ScaleYOrigin.Length > 0);
-				if(keyframe != null)
-				{
-					scaleYOrigin = keyframe.ScaleYOrigin;
-				}
+				//	TODO: Repair OriginX and OriginY on SVG timeline node.
+				//keyframe = node.mKeyframes.FirstOrDefault(n =>
+				//	n.OriginX.Length > 0);
+				//if(keyframe != null)
+				//{
+				//	scaleXOrigin = keyframe.OriginX;
+				//}
+				//keyframe = node.mKeyframes.FirstOrDefault(n =>
+				//	n.OriginY.Length > 0);
+				//if(keyframe != null)
+				//{
+				//	scaleYOrigin = keyframe.OriginY;
+				//}
 				times = node.mKeyframes.Select(k => k.Seconds).Distinct().ToList();
 				times.Sort();
 				foreach(float timeItem in times)

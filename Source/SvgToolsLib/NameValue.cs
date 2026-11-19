@@ -48,7 +48,7 @@ namespace SvgToolsLib
 		//*-----------------------------------------------------------------------*
 		/// <summary>
 		/// Return the first matching property with the specified case-insensitive
-		/// name.
+		/// name, if found. Otherwise, null.
 		/// </summary>
 		/// <param name="name">
 		/// Name of the property to find.
@@ -57,13 +57,12 @@ namespace SvgToolsLib
 		{
 			get
 			{
-				string lowerName = "";
 				NameValueItem result = null;
 
 				if(name?.Length > 0)
 				{
-					lowerName = name.ToLower();
-					result = this.FirstOrDefault(x => x.Name.ToLower() == lowerName);
+					result = this.FirstOrDefault(x => string.Equals(x.Name, name,
+						StringComparison.OrdinalIgnoreCase));
 				}
 				return result;
 			}
@@ -163,13 +162,12 @@ namespace SvgToolsLib
 		/// </param>
 		public void SetValue(string name, string value)
 		{
-			string lowerName = "";
 			NameValueItem item = null;
 
 			if(name?.Length > 0)
 			{
-				lowerName = name.ToLower();
-				item = this.FirstOrDefault(x => x.Name.ToLower() == lowerName);
+				item = this.FirstOrDefault(x => string.Equals(x.Name, name,
+					StringComparison.OrdinalIgnoreCase));
 				if(item == null)
 				{
 					item = new NameValueItem()
